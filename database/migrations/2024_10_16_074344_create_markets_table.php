@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('markets', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_toko');
+            $table->string('slug')->unique();
+            $table->string('no_telp');
+            $table->text('alamat');
             $table->timestamps();
         });
     }

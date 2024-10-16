@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('login');
+// Route::get('/', function () {
+//     return view('login');
+// });
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', [AuthController::class, 'index'])->name('login');
+    Route::get('/register', [AuthController::class, 'create'])->name('registrasi');
+    Route::post('/login', [AuthController::class, 'login']);
 });
+
+route::middleware(['auth', 'role:admin', 'check.toko'])->group(function () {});
