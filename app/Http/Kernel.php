@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'check.toko' => \App\Http\Middleware\CheckToko::class,
+        'inject.toko' => \App\Http\Middleware\InjectToko::class,
     ];
 }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Login</title>
+    <title>registrasi</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/iconfonts/mdi/css/materialdesignicons.min.css') }}">
@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="{{ asset('plugins/css/sweetalert.css') }}">
     <link rel="stylesheet" href="{{ asset('css/login/style.css') }}">
     <link rel="shortcut icon" href="{{ asset('icons/favicon.png') }}"/>
+
+     
+
     <!-- End-CSS -->
 
   </head>
@@ -26,9 +29,43 @@
           <div class="row w-100">
             <div class="col-lg-4 mx-auto">
               <div class="auto-form-wrapper">
+
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $item)
+                        <li>{{$item}}</li>
+                            
+                        @endforeach
+                    </ul>
+                </div>
+                
+            @endif
+            @if (Session::get('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    <ul>
+                    <li>{{Session::get('success')}}</li>
+                            
+                    </ul>
+                </div>
+                
+            @endif
                
-                <form action="{{ url('/first_account') }}" method="post" name="create_form">
+                <form action="{{ url('/register') }}" method="post" name="create_form">
                   @csrf
+                  <div class="mb-3 text-center">
+                    <div class="row justify-content-center text-center">
+                        <div class=" text-center">
+                            <div class="position-relative" style="width: 150px; height: 150px;">
+                                <img src="{{asset('pictures/default.jpg')}}" alt="Image" style="width: 100%; height: 100%;" class="rounded-circle shadow p-1 mb-5" id="gambarPreview">
+                                <label for="foto">
+                                <i class="mdi mdi-camera fa-2x text-primary position-absolute"  style="bottom: 0; right: 0; margin: 5px; font-size: 50px;"></i>
+                                <input class="form-control" type="file" id="foto" name="foto"  style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;" onchange="previewImage(this)">
+                            </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                   <div class="form-group">
                     <label class="label">Nama</label>
                     <div class="input-group">
@@ -48,20 +85,20 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="label">Username</label>
+                    <label class="label">Nomor Karyawan</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" name="username_2" placeholder="Username">
+                      <input type="text" class="form-control" name="no_karyawan" placeholder="Nomor Karyawan">
                       <div class="input-group-append">
-                        <span class="input-group-text check-value" id="username_2_error"></span>
+                        <span class="input-group-text check-value" id="no_karyawan_error"></span>
                       </div>
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="label">Password</label>
                     <div class="input-group">
-                      <input type="password" class="form-control" name="password_2" placeholder="*********">
+                      <input type="password" class="form-control" name="password" placeholder="*********">
                       <div class="input-group-append">
-                        <span class="input-group-text check-value" id="password_2_error"></span>
+                        <span class="input-group-text check-value" id="password_error"></span>
                       </div>
                     </div>
                   </div>
@@ -94,7 +131,7 @@
         );
       @endif
 
-      @if ($message = Session::get('login_failed'))
+      @if ($message = Session::get('error'))
         swal(
             "Gagal!",
             "{{ $message }}",
@@ -102,6 +139,24 @@
         );
       @endif
     </script>
+
+<script>
+  function previewImage(input) {
+      var preview = document.getElementById('gambarPreview');
+      var file = input.files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+          preview.src = reader.result;
+      }
+
+      if (file) {
+          reader.readAsDataURL(file);
+      } else {
+          preview.src = "{{ asset('pictures/default.jpg') }}";
+      }
+  }
+</script>
     <!-- End-Javascript -->
 
   </body>

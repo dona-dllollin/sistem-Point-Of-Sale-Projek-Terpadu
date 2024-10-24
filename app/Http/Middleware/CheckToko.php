@@ -17,9 +17,12 @@ class CheckToko
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-        $tokoId = Market::where('slug', $request->route('slug_market'))->first();
+        $slugMarket = session('slug_market'); // Ambil slug dari session
 
-        if ($user->role === 'kasir' && $user->market_id !== $tokoId->id) {
+        // Cari toko berdasarkan slug yang tersimpan di session
+        $market = Market::where('slug', $slugMarket)->first();
+
+        if ($user->role === 'kasir' && $user->market_id !== $market->id) {
             return redirect()->route('kasir.dashboard')->with('error', 'Anda tidak berhak mengakses toko cabang ini.');
         }
         return $next($request);

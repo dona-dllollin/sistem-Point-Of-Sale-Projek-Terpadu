@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['guest'])->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('login');
     Route::get('/register', [AuthController::class, 'create'])->name('registrasi');
+    Route::post('/register', [AuthController::class, 'register'])->name('registrasi');
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-route::middleware(['auth', 'role:admin', 'check.toko'])->group(function () {});
+
+Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {
+    Route::get('/toko/{slug_market}', function () {
+        $toko = Auth::user()->market->nama_toko;
+        return view('home', compact('toko'));
+    })->name('kasir.dashboard');
+});

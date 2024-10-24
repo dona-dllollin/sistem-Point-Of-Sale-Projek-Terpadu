@@ -12,11 +12,12 @@ $(function() {
       	required: true,
       	email: true
       },
-      username_2: {
+      no_karyawan: {
         required: true,
-        minlength: 4
+        minlength: 6
+        
       },
-      password_2: {
+      password: {
         required: true,
         minlength: 5
       }
@@ -24,8 +25,8 @@ $(function() {
     messages: {
       nama: "<i class='mdi mdi-close-circle-outline'></i>",
       email: "<i class='mdi mdi-close-circle-outline'></i>",
-      username_2: "<i class='mdi mdi-close-circle-outline'></i>",
-      password_2: "<i class='mdi mdi-close-circle-outline'></i>"
+      no_karyawan: "<i class='mdi mdi-close-circle-outline'></i>",
+      password: "<i class='mdi mdi-close-circle-outline'></i>"
     },
     success: function(element) {
     	$(element).html("<i class='mdi mdi-check-circle-outline'></i>");
