@@ -14,4 +14,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Market::class, 'market_id');
     }
+
+    public function item()
+    {
+        return $this->hasMany(OrderItems::class);
+    }
 }

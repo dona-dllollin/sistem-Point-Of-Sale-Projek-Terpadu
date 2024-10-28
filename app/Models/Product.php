@@ -14,4 +14,10 @@ class Product extends Model
     {
         return $this->belongsTo(Market::class, 'market_id');
     }
+
+
+    public function categories()
+    {
+        return $this->belongsToMany(Categories::class, 'category_product', 'product_id', 'category_id');
+    }
 }

@@ -35,11 +35,11 @@
             <img src="{{ asset('icons/logo-mini.png') }}" alt="logo" /> </a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-center">
-          <form class="search-form d-none d-md-block" action="#">
+          {{-- <form class="search-form d-none d-md-block" action="#">
             <div class="form-group">
               <input type="search" class="form-control" name="search_page" placeholder="Cari Halaman">
             </div>
-          </form>
+          </form> --}}
           <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
               @php
@@ -193,7 +193,7 @@
               <div class="collapse" id="kelola_barang">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="">Daftar Barang</a>
+                    <a class="nav-link" href="{{Auth::user()->role === 'admin' ? route('admin.product') : route('kasir.product', ['slug_market' => session('slug_market')]) }}">Daftar Barang</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="">Pasok Barang</a>

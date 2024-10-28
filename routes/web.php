@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +32,12 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'viewDashboard'])->name('admin.dashboard');
+    Route::get('/product', [ProductController::class, 'viewProduct'])->name('admin.product');
+    Route::post('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
 });
 
 Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {
-    Route::get('/toko/{slug_market}', function () {
-        $toko = Auth::user()->market->nama_toko;
-        return view('home', compact('toko'));
-    })->name('kasir.dashboard');
+    Route::get('/toko/{slug_market}', [DashboardController::class, 'viewDashboard'])->name('kasir.dashboard');
+    Route::get('/toko/{slug_market}/product', [ProductController::class, 'viewProduct'])->name('kasir.product');
+    Route::post('/toko/{slug_market}/product/delete/{id}', [ProductController::class, 'deleteProductKasir'])->name('product.delete');
 });

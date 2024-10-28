@@ -19,7 +19,7 @@ class InjectToko
         $user = Auth::user();
 
         if ($user && $user->role == 'kasir' && $user->market_id) {
-            $slugMarket = $user->market->slug;
+            $slugMarket = session('slug_market');
 
             // Jika slug_market dari URL berbeda dengan slug market user, redirect ke URL yang benar
             if ($request->route('slug_market') !== $slugMarket) {

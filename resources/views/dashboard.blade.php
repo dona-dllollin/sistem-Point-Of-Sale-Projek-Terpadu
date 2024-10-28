@@ -7,9 +7,27 @@
   <div class="col-12">
     <div class="page-header d-flex justify-content-between align-items-center">
       <h4 class="page-title">Dashboard</h4>
-      <button class="setting-btn" data-toggle="modal" data-target="#pengaturanTokoModal">
+    
+      @if(auth()->user()->role === 'admin')
+      <div class=" period-form col-4">
+        <div class="form-group">
+              <p>Filter Berdasarkan Toko</p>
+            <select name="market_id" class="form-control form-control-lg market-select" style="width: 100%">
+              <option value="all" {{ request('market_id') === 'all' ? 'selected' : '' }}>semua Toko</option>
+                @foreach ($markets as $market)
+                    <option value="{{ $market->id }}" {{ $market->id == request('market_id') ? 'selected' : '' }}>{{ $market->nama_toko }}</option>
+                @endforeach
+            </select>
+        </div>
+      </div>
+      @endif
+      
+       
+    
+      {{-- <button class="setting-btn" data-toggle="modal" data-target="#pengaturanTokoModal">
         Pengaturan Toko
-      </button>
+      </button> --}}
+    
     </div>
   </div>
 </div>
@@ -161,7 +179,7 @@
                   </span>
                   <div class="ml-2">
                     <p class="kode_transaksi font-weight-semibold">{{ $transaksi->kode_transaksi }}</p>
-                    <p class="des-transaksi">Rp. {{ number_format($ket_transaksi->total,2,',','.') }} <span class="dot"><i class="mdi mdi-checkbox-blank-circle"></i></span> {{ $ket_transaksi->kasir }}</p>
+                    <p class="des-transaksi">Rp. {{ number_format($ket_transaksi->total_harga,2,',','.') }} <span class="dot"><i class="mdi mdi-checkbox-blank-circle"></i></span> {{ $ket_transaksi->kasir }}</p>
                   </div>
                 </div>
                 <span class="w-transaksi">{{ Carbon\Carbon::parse($ket_transaksi->created_at)->diffForHumans()}}</span>
@@ -205,8 +223,8 @@ var myChart = new Chart(ctx, {
             @if(count($incomes) != 0)
             @foreach($incomes as $income)
             @php
-            $total = \App\Transaction::whereDate('created_at', $income)
-            ->sum('total');
+            $total = \App\Models\Transaction::whereDate('created_at', $income)
+            ->sum('total_harga');
             @endphp
             "{{ $total }}",
             @endforeach
@@ -291,5 +309,17 @@ $(document).on('click', '.chart-filter', function(e){
 //     );
 //   }
 // });
+
+
+//filter market
+$(document).on('change', '.market-select', function(){
+  const url = new URL(window.location.href)
+  if ($(this).val() !== 'all'){
+    url.searchParams.set('market_id', $(this).val())
+  } else {
+    url.searchParams.delete('market_id')
+  }
+  window.location.href = url.toString()
+})
 </script>
 @endsection
