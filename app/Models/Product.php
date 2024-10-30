@@ -10,6 +10,22 @@ class Product extends Model
 {
     use HasFactory;
 
+    public $table = 'products';
+
+    protected $fillable = [
+        'kode_barang',
+        'image',
+        'nama_barang',
+        'satuan',
+        'stok',
+        'harga_beli',
+        'harga_jual',
+        'pemasok_id',
+        'keterangan',
+        'market_id'
+    ];
+
+
     public function market(): BelongsTo
     {
         return $this->belongsTo(Market::class, 'market_id');

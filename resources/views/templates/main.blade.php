@@ -120,8 +120,8 @@
                   <p class="mb-1 mt-3 font-weight-semibold">{{ auth()->user()->nama }}</p>
                   <p class="font-weight-light text-muted mb-0">{{ auth()->user()->email }}</p>
                 </div>
-                {{-- <a href="{{ url('/profile') }}" class="dropdown-item">Profil</a>
-                <a href="{{ url('/logout') }}" class="dropdown-item">Sign Out</a> --}}
+                <a href="{{ url('/profile') }}" class="dropdown-item">Profil</a>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Log Out</a>
               </div>
             </li>
           </ul>
@@ -133,6 +133,28 @@
       <!-- End-TopNav -->
 
       <div class="container-fluid page-body-wrapper">
+          <!-- Logout Modal-->
+          <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                      <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">×</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                  <div class="modal-footer">
+                      <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                      <form action="{{ url('/logout') }}" method="post">
+                      @csrf
+                        <button class="btn btn-primary" type="submit">Logout</button>
+
+                      </form>
+                  </div>
+              </div>
+            </div>
+           </div>
         <!-- SideNav -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">

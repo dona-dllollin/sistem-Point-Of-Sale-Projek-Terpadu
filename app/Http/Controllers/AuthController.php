@@ -53,7 +53,7 @@ class AuthController extends Controller
             }
         }
 
-        return redirect()->back()->withErrors('email atau pasword anda salah');
+        return redirect()->back()->with('login_failed', 'email atau pasword anda salah');
     }
 
     function register(Request $request)

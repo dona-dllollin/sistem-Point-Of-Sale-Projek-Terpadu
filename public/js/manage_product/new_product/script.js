@@ -1,31 +1,31 @@
-(function($) {
-  $.fn.inputFilter = function(inputFilter) {
-    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
-      if (inputFilter(this.value)) {
-        this.oldValue = this.value;
-        this.oldSelectionStart = this.selectionStart;
-        this.oldSelectionEnd = this.selectionEnd;
-      } else if (this.hasOwnProperty("oldValue")) {
-        this.value = this.oldValue;
-        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-      } else {
-        this.value = "";
-      }
-    });
-  };
-}(jQuery));
+// (function($) {
+//   $.fn.inputFilter = function(inputFilter) {
+//     return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
+//       if (inputFilter(this.value)) {
+//         this.oldValue = this.value;
+//         this.oldSelectionStart = this.selectionStart;
+//         this.oldSelectionEnd = this.selectionEnd;
+//       } else if (this.hasOwnProperty("oldValue")) {
+//         this.value = this.oldValue;
+//         this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+//       } else {
+//         this.value = "";
+//       }
+//     });
+//   };
+// }(jQuery));
 
-$(".number-input").inputFilter(function(value) {
-  return /^-?\d*$/.test(value); 
-});
+// $(".number-input").inputFilter(function(value) {
+//   return /^-?\d*$/.test(value); 
+// });
 
-$(document).on('input propertychange paste', '.number-input', function(e){
-  var val = $(this).val()
-  var reg = /^0/gi;
-  if (val.match(reg)) {
-      $(this).val(val.replace(reg, ''));
-  }
-});
+// $(document).on('input propertychange paste', '.number-input', function(e){
+//   var val = $(this).val()
+//   var reg = /^0/gi;
+//   if (val.match(reg)) {
+//       $(this).val(val.replace(reg, ''));
+//   }
+// });
 
 function stopScan(){
   Quagga.stop();
@@ -39,7 +39,7 @@ function startScan() {
       target: document.querySelector('#area-scan')
     },
     decoder : {
-      readers : ["ean_reader"],
+      readers : ["ean_reader", "upc_reader", "code_128_reader", "code_39_reader"],
       multiple: false
     },
     locate: false

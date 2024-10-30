@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('image');
             $table->string('nama_barang');
             $table->string('satuan')->nullable();
-            $table->string('stok');
+            $table->int('stok');
             $table->bigInteger('harga_beli');
             $table->bigInteger('harga_jual');
             $table->foreignId('pemasok_id')->nullable();

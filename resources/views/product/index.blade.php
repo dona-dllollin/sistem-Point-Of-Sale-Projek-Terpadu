@@ -1,6 +1,7 @@
 @extends('templates/main')
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/manage_product/product/style.css') }}">
+<link rel="stylesheet" href="{{ asset('css/manage_product/new_product/multiSelect.css') }}">
 @endsection
 @section('content')
 <div class="row page-title-header">
@@ -35,35 +36,35 @@
             </div>
           </div>
         </div>
-	      <a href="{{ url('/product/new') }}" class="btn btn-icons btn-inverse-primary btn-new ml-2">
+	      <a href="{{ Auth::user()->role === 'admin' ? url('/product/new') : url('/toko/' . session('slug_market') . '/product/new') }} " class="btn btn-icons btn-inverse-primary btn-new ml-2">
 	      	<i class="mdi mdi-plus"></i>
 	      </a>
       </div>
     </div>
   </div>
 </div>
+{{-- edit modal --}}
+@foreach ($products as $product)
 <div class="row modal-group">
-  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal fade" id="editModal{{$product->id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{$product->id}}" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form action="{{ url('/product/update') }}" method="post" name="update_form">
+        <form action="{{ url('/product/update') }}" method="post">
           <div class="modal-header">
-            <h5 class="modal-title" id="editModalLabel">Edit Barang</h5>
+            <h5 class="modal-title" id="editModalLabel{{$product->id}}">Edit Barang</h5>
             <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body" id="edit-modal-body">
               @csrf
-              <div class="row" hidden="">
                 <div class="col-12">
-                  <input type="text" name="id">
-                </div>
+                  <input type="hidden" name="id" value="{{$product->id}}">
               </div>
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Kode Barang</label>
                 <div class="col-lg-7 col-md-7 col-sm-10 col-10">
-                  <input type="text" class="form-control" name="kode_barang">
+                  <input type="text" class="form-control" name="kode_barang" value="{{$product->kode_barang}}">
                 </div>
                 <div class="col-lg-2 col-md-2 col-sm-2 col-2">
                   <button class="btn btn-inverse-primary btn-sm btn-scan shadow-sm" type="button"><i class="mdi mdi-crop-free"></i></button>
@@ -71,65 +72,108 @@
                 <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="kode_barang_error"></div>
               </div>
               <div class="form-group row">
-                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Jenis Barang</label>
-                <div class="col-lg-9 col-md-9 col-sm-12">
-                  <select class="form-control" name="jenis_barang">
-                    <option value="Produksi">Produksi</option>
-                    <option value="Konsumsi">Konsumsi</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Nama Barang</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                  <input type="text" class="form-control" name="nama_barang">
+                  <input type="text" class="form-control" name="nama_barang" value="{{$product->nama_barang}}">
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="nama_barang_error"></div>
               </div>
               <div class="form-group row">
-                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Berat Barang</label>
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Foto Barang</label>
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                  <input name="image" id="image" type="file" class="custom-file-input"
+                  accept="image/*"
+                  onchange="document.getElementById('output').src = window.URL.createObjectURL(this.files[0]); document.getElementById('fileLabel').textContent = this.files[0].name;">
+                  <label class="custom-file-label" id="fileLabel">{{$product->image}}</label>
+                     <div class="col-sm-12 text-center mt-3" ><img id="output" src="{{asset('pictures/product/'. $product->image)}}" class="img-fluid" style="width: 30%"></div>
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="foto_barang_error"></div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Satuan Barang</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
                   <div class="input-group">
-                      <input type="text" class="form-control number-input input-notzero" name="berat_barang">
+                    @php
+                       $satuan = explode(" ", $product->satuan)
+                    @endphp
+                      <input type="text" class="form-control number-input input-notzero" name="satuan" value="{{$satuan[0]}}">
                       <div class="input-group-append">
                         <select class="form-control" name="satuan_berat">
-                          <option value="kg">Kilogram</option>
-                          <option value="g">Gram</option>
-                          <option value="ml">Miligram</option>
-                          <option value="oz">Ons</option>
-                          <option value="l">Liter</option>
-                          <option value="ml">Mililiter</option>
+                          <option value="kg" {{"kg" == $satuan[1] ? 'selected' : ''}}>Kilogram</option>
+							  					<option value="g" {{"g" == $satuan[1] ? 'selected' : ''}}>Gram</option>
+							  					<option value="pcs" {{"pcs" == $satuan[1] ? 'selected' : ''}}>pcs</option>
+							  					<option value="saschet" {{"saschet" == $satuan[1] ? 'selected' : ''}}>saschet</option>
+							  					<option value="l" {{"l" == $satuan[1] ? 'selected' : ''}}>Liter</option>
+							  					<option value="kardus" {{"kardus" == $satuan[1] ? 'selected' : ''}}>kardus</option>
                         </select>
                       </div>
                     </div>
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Merek Barang</label>
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Toko</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                  <input type="text" class="form-control" name="merek">
+                  @if(Auth::user()->role === 'admin')
+                  <select class="form-control" name="toko">
+                      @foreach($toko as $tk)
+                  <option value="{{$tk->id}}" {{ $tk->id == $product->market_id ? 'selected' : '' }}>{{$tk->nama_toko}}</option>
+                   @endforeach
+                   </select>
+                  @else
+                  <input type="text" class="form-control" disabled value="{{Auth::user()->market->nama_toko}}">
+                  <input type="hidden" name="toko" value="{{ Auth::user()->market->id }}">
+                  @endif
                 </div>
               </div>
+
               <div class="form-group row">
-                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Stok Barang</label>
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Stok</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                  <input type="text" class="form-control number-input" name="stok">
+                  <input type="text" class="form-control number-input" name="stok" value="{{$product->stok}}">
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="stok_error"></div>
               </div>
+              
               <div class="form-group row">
-                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Harga Barang</label>
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Kategori</label>
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                  <select name="kategori_barang" id="" multiple data-multi-select>
+                    @forEach($kategori as $kt)
+                   
+                    <option value="{{$kt->id}}" {{$product->categories->contains('id', $kt->id) ? 'selected' : ''}}>{{$kt->name}}</option>
+                 
+                    @endforeach
+                  </select>
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="stok_error"></div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Harga Beli</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
                   <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text">Rp. </span>
                       </div>
-                      <input type="text" class="form-control number-input input-notzero" name="harga">
+                      <input type="text" class="form-control number-input input-notzero" name="harga_beli" value="{{$product->harga_beli}}">
                   </div>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="harga_error"></div>
               </div>
-          </div>
+              <div class="form-group row">
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Harga Jual</label>
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                  <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Rp. </span>
+                      </div>
+                      <input type="text" class="form-control number-input input-notzero" name="harga_jual" value="{{$product->harga_jual}}">
+                  </div>
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="harga_error"></div>
+              </div>
+               </div>
           <div class="modal-body" id="scan-modal-body" hidden="">
             <div class="row">
               <div class="col-12 text-center" id="area-scan">
@@ -154,6 +198,7 @@
     </div>
   </div>
 </div>
+@endforeach
 <div class="row">
   {{-- <div class="col-12">
     <div class="alert alert-primary d-flex justify-content-between align-items-center" role="alert">
@@ -192,7 +237,7 @@
                 @foreach($products as $product)
               	<tr>
                     <td>
-                        <img src="{{asset('pictures/'. $product->image)}}" alt="" >
+                        <img src="{{asset('pictures/product/'. $product->image)}}" alt="" >
                     </td>
                   <td>
                     <span class="kd-barang-field">{{ $product->kode_barang }}</span><br><br>
@@ -222,7 +267,7 @@
                     <span class="nama-barang-field">{{ $product->market->nama_toko }}</span>
                   </td>
                   <td>
-                    <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#editModal" data-edit="{{ $product->id }}">
+                    <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#editModal{{$product->id}}" data-edit="{{ $product->id }}">
                         <i class="mdi mdi-pencil"></i>
                     </button>
 
@@ -247,6 +292,7 @@
 @section('script')
 <script src="{{ asset('plugins/js/quagga.min.js') }}"></script>
 <script src="{{ asset('js/manage_product/product/script.js') }}"></script>
+<script src="{{ asset('js/manage_product/new_product/multiSelect.js') }}"></script>
 <script type="text/javascript">
   @if ($message = Session::get('create_success'))
     swal(
@@ -255,6 +301,19 @@
         "success"
     );
   @endif
+
+  @if ($errors->any())
+  @foreach($errors->all() as $error)
+  
+      swal(
+          "",
+          "{{ $error }}",
+          "error"
+      );
+  
+  @endforeach
+@endif
+
 
   @if ($message = Session::get('update_success'))
     swal(
@@ -289,27 +348,38 @@
   @endif
 
 
-  $(document).on('click', '.btn-edit', function(){
-    var data_edit = $(this).attr('data-edit');
-    $.ajax({
-      method: "GET",
-      url: "{{ url('/product/edit') }}/" + data_edit,
-      success:function(response)
-      {
-        $('input[name=id]').val(response.product.id);
-        $('input[name=kode_barang]').val(response.product.kode_barang);
-        $('input[name=nama_barang]').val(response.product.nama_barang);
-        $('input[name=merek]').val(response.product.merek);
-        $('input[name=stok]').val(response.product.stok);
-        $('input[name=harga]').val(response.product.harga);
-        var berat_barang = response.product.berat_barang.split(" ");
-        $('input[name=berat_barang]').val(berat_barang[0]);
-        $('select[name=jenis_barang] option[value="'+ response.product.jenis_barang +'"]').prop('selected', true);
-        $('select[name=satuan_berat] option[value="'+ berat_barang[1] +'"]').prop('selected', true);
-        validator.resetForm();
-      }
-    });
-  });
+  // $(document).on('click', '.btn-edit', function(){
+  //   var data_edit = $(this).attr('data-edit');
+  //   $.ajax({
+  //     method: "GET",
+  //     url: "{{ url('/product/edit') }}/" + data_edit,
+  //     success:function(response)
+  //     {
+      
+  //       $('input[name=id]').val(response.product.id);
+  //       $('input[name=kode_barang]').val(response.product.kode_barang);
+  //       $('input[name=nama_barang]').val(response.product.nama_barang);
+  //       $('input[name=merek]').val(response.product.merek);
+  //       $('input[name=stok]').val(response.product.stok);
+  //       $('input[name=harga]').val(response.product.harga);
+  //       $('#output').attr('src', '{{ asset('pictures/product/') }}' + '/' + response.product.image);
+  //       $('#fileLabel').text(response.product.image)
+  //       var berat_barang = response.product.satuan.split(" ");
+  //       $('input[name=berat_barang]').val(berat_barang[0]);
+  //       $('select[name=jenis_barang] option[value="'+ response.product.jenis_barang +'"]').prop('selected', true);
+  //       $('select[name=satuan_berat] option[value="'+ berat_barang[1] +'"]').prop('selected', true);
+  //       $('select[name=toko] option[value="'+ response.product.market_id +'"]').prop('selected', true);
+  //        // Mengisi kategori produk (misalnya menggunakan checkbox atau select multiple)
+  //        var categories = response.product.categories; // array dari kategori
+  //           categories.forEach(function(category) {
+  //               // Atau jika menggunakan select multiple
+  //               $('select[name="kategori_barang"] option[value="' + category.id + '"]').prop('selected', true);         
+  //           });
+  //           $('select[name="toko"]').trigger('change');
+  //       validator.resetForm();
+  //     }
+  //   });
+  // });
 
 
 function confirmDelete(event) {
