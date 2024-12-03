@@ -49,6 +49,7 @@
   <div class="modal fade" id="editModal{{$product->id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{$product->id}}" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
+    
         <form action="{{ url('/product/update') }}" method="post">
           <div class="modal-header">
             <h5 class="modal-title" id="editModalLabel{{$product->id}}">Edit Barang</h5>
@@ -69,14 +70,13 @@
                 <div class="col-lg-2 col-md-2 col-sm-2 col-2">
                   <button class="btn btn-inverse-primary btn-sm btn-scan shadow-sm" type="button"><i class="mdi mdi-crop-free"></i></button>
                 </div>
-                <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="kode_barang_error"></div>
+               
               </div>
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Nama Barang</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
                   <input type="text" class="form-control" name="nama_barang" value="{{$product->nama_barang}}">
                 </div>
-                <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="nama_barang_error"></div>
               </div>
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Foto Barang</label>
@@ -200,21 +200,6 @@
 </div>
 @endforeach
 <div class="row">
-  {{-- <div class="col-12">
-    <div class="alert alert-primary d-flex justify-content-between align-items-center" role="alert">
-      @if($supply_system->status == false)
-      <div class="text-instruction">
-        <i class="mdi mdi-information-outline mr-2"></i> Aktifkan sistem stok dan pasok barang dengan klik tombol disamping
-      </div>
-      <a href="{{ url('/supply/system/active') }}" class="btn stok-btn">Aktifkan</a>
-      @else
-      <div class="text-instruction">
-        <i class="mdi mdi-information-outline mr-2"></i> Nonaktifkan sistem stok dan pasok barang dengan klik tombol disamping
-      </div>
-      <a href="{{ url('/supply/system/nonactive') }}" class="btn stok-btn">Nonaktifkan</a>
-      @endif
-    </div>
-  </div> --}}
   <div class="col-12 grid-margin">
     <div class="card card-noborder b-radius">
       <div class="card-body">

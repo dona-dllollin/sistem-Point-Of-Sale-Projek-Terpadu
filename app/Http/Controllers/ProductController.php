@@ -177,7 +177,7 @@ class ProductController extends Controller
         } else {
             Session::flash('update_failed', 'Kode barang telah digunakan');
 
-            return back();
+            return;
         }
     }
 

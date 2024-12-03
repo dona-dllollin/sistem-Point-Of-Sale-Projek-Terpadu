@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/css/sweetalert.css') }}">
     <link rel="stylesheet" href="{{ asset('css/login/style.css') }}">
-    <link rel="shortcut icon" href="{{ asset('icons/favicon.png') }}"/>
+    <link rel="shortcut icon" href="{{ asset('icons/LOGO_dlollin.png') }}"/>
 
      
 

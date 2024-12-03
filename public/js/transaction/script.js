@@ -1,3 +1,20 @@
+$(document).ready(function () {
+  // Ambil nilai diskon dari Session Storage
+  const disc = sessionStorage.getItem('disc');
+  const diskon = parseInt(disc) || 0; // Gunakan 0 jika disc null
+
+  if (diskon > 0) {
+    // Update elemen-elemen HTML berdasarkan nilai di Session Storage
+    $('.nilai-diskon-td').html(diskon);
+    $('.diskon-input').val(diskon).prop('hidden', true);
+    $('.nilai-total1-td').html('Rp. ' + parseInt(sessionStorage.getItem('diskon') || 0).toLocaleString());
+    $('.nilai-total2-td').val(sessionStorage.getItem('diskon'));
+    $('.ubah-diskon-td').prop('hidden', false);
+    $('.simpan-diskon-td').prop('hidden', true);
+  }
+});
+
+
 (function($) {
   $.fn.inputFilter = function(inputFilter) {
     return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
@@ -43,37 +60,88 @@ $(function() {
   });
 });
 
-function subtotalBarang() {
-  var subtotal_barang = 0;
-  $('.total_barang').each(function(){
-    subtotal_barang += parseInt($(this).val());
-  });
-  $('.nilai-subtotal1-td').html('Rp. ' + parseInt(subtotal_barang).toLocaleString());
-  $('.nilai-subtotal2-td').val(subtotal_barang);
+function subtotalBarang(totalSubtotal) {
+  // var subtotal_barang = 0;
+  // $('.total_barang').each(function(){
+  //   subtotal_barang += parseInt($(this).val());
+  // });
+  $('.nilai-subtotal1-td').html('Rp. ' + parseInt(totalSubtotal).toLocaleString());
+  $('.nilai-subtotal2-td').val(totalSubtotal);
 }
 
 function diskonBarang() {
   var subtotal = parseInt($('input[name=subtotal]').val());
-  var diskon = parseInt($('input[name=diskon]').val());
-  var total = subtotal - (subtotal * diskon / 100);
-  $('.nilai-total1-td').html('Rp. ' + parseInt(total).toLocaleString());
-  $('.nilai-total2-td').val(total);
+  const disc = sessionStorage.getItem('disc') || 0
+  var total = subtotal - (subtotal * parseInt(disc)  / 100);
+  console.log(total)
+  sessionStorage.setItem('diskon', total.toString())
+  const  coba = sessionStorage.getItem('diskon')
+  console.log(coba)
+  $('.nilai-total1-td').html('Rp. ' + parseInt(coba).toLocaleString());
+  $('.nilai-total2-td').val(coba);
+
+  $('.diskon-input').val(parseInt(disc))
+  $('.nilai-diskon-td').html(disc)
 }
 
-function jumlahBarang(){
-  var jumlah_barang = 0;
-  $('.jumlah_barang_text').each(function(){
-    jumlah_barang += parseInt($(this).text());
-  });
-  $('.jml-barang-td').html(jumlah_barang + ' Barang');
+function jumlahBarang(totalQuantity){
+  // var jumlah_barang = 0;
+  // $('.jumlah_barang_text').each(function(){
+  //   jumlah_barang += parseInt($(this).text());
+  // });
+  $('.jml-barang-td').html(totalQuantity + ' Barang');
 }
 
-function tambahData(kode, nama, harga, stok, status) {
-  var tambah_data = '<tr><td><input type="text" name="kode_barang[]" hidden="" value="'+ kode +'"><span class="nama-barang-td">'+ nama +'</span><span class="kode-barang-td">'+ kode +'</span></td><td><input type="text" name="harga_barang[]" hidden="" value="'+ harga +'"><span>Rp. '+ parseInt(harga).toLocaleString() +'</span></td><td><div class="d-flex justify-content-start align-items-center"><input type="text" name="jumlah_barang[]" hidden="" value="1"><a href="#" class="btn-operate mr-2 btn-tambah"><i class="mdi mdi-plus"></i></a><span class="ammount-product mr-2" unselectable="on" onselectstart="return false;" onmousedown="return false;"><p class="jumlah_barang_text">1</p></span><a href="#" class="btn-operate btn-kurang"><i class="mdi mdi-minus"></i></a></div></td><td><input type="text" class="total_barang" name="total_barang[]" hidden="" value="'+ harga +'"><span>Rp. '+ parseInt(harga).toLocaleString() +'</span></td><td><a href="#" class="btn btn-icons btn-rounded btn-secondary ml-1 btn-hapus"><i class="mdi mdi-close"></i></a></td><td hidden=""><span>'+ stok +'</span><span>'+ status +'</span></td></tr>';
-  $('.table-checkout').append(tambah_data);
-  subtotalBarang();
+function tambahData(cart) {
+  let cartHtml = ''
+  let totalSubtotal = 0;
+  let totalQuantity = 0;
+  $.each(cart, function (id, item) {
+
+  cartHtml += `
+<tr>
+  <td>
+    <input type="text" name="kode_barang[]" hidden="" value="${item.kode_barang}">
+    <span class="nama-barang-td">${item.name}</span>
+    <span class="kode-barang-td">${item.kode_barang}</span>
+  </td>
+  <td>
+    <input type="text" name="harga_barang[]" hidden="" value="${item.kode_barang}">
+    <span>Rp. ${parseInt(item.price).toLocaleString()}</span>
+  </td>
+  <td>
+    <div class="d-flex justify-content-start align-items-center">
+      <input type="text" name="jumlah_barang[]" hidden="" value="1">
+      <a href="#" class="btn-operate mr-2 btn-tambah" onClick="increaseQuantity(${id})">
+        <i class="mdi mdi-plus"></i>
+      </a>
+      <span class="ammount-product mr-2" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+        <p class="jumlah_barang_text">${item.quantity}</p>
+      </span>
+      <a href="#" class="btn-operate btn-kurang" onClick="decreaseQuantity(${id})">
+        <i class="mdi mdi-minus"></i>
+      </a>
+    </div>
+  </td>
+  <td>
+    <input type="text" class="total_barang" name="total_barang[]" hidden="" value="${item.subtotal}">
+    <span>Rp. ${parseInt(item.subtotal).toLocaleString()}</span>
+  </td>
+  <td>
+    <a href="#" class="btn btn-icons btn-rounded btn-secondary ml-1 btn-hapus" onClick="removeItem(${id})">
+      <i class="mdi mdi-close"></i>
+    </a>
+  </td>
+</tr>
+`;
+        totalSubtotal += item.subtotal;
+        totalQuantity += item.quantity;
+  })
+
+  $('.table-checkout').html(cartHtml);
+  subtotalBarang(totalSubtotal);
   diskonBarang();
-  jumlahBarang();
+  jumlahBarang(totalQuantity);
   $('.close-btn').click();
 }
 
@@ -81,8 +149,9 @@ $(document).on('click', '.btn-tambah', function(e){
   e.preventDefault();
   var stok = parseInt($(this).parent().parent().next().next().next().children().first().text());
   var status = parseInt($(this).parent().parent().next().next().next().children().eq(1).text());
+ 
   var jumlah_barang = parseInt($(this).prev().val());
-  if((stok > jumlah_barang && status == 1) || status == 0){
+  if((stok > jumlah_barang )){
     var tambah_barang = jumlah_barang + 1;
     $(this).prev().val(tambah_barang);
     $(this).next().children().first().html(tambah_barang);
@@ -90,6 +159,8 @@ $(document).on('click', '.btn-tambah', function(e){
     var total_barang = harga * tambah_barang;
     $(this).parent().parent().next().children().first().val(total_barang);
     $(this).parent().parent().next().children().eq(1).html('Rp. ' + parseInt(total_barang).toLocaleString());
+
+    
     subtotalBarang();
     diskonBarang();
     jumlahBarang();
@@ -121,6 +192,8 @@ $(document).on('click', '.btn-hapus', function(e){
   jumlahBarang();
 });
 
+
+
 $(document).on('click', '.ubah-diskon-td', function(e){
   e.preventDefault();
   $('.diskon-input').prop('hidden', false);
@@ -135,6 +208,9 @@ $(document).on('click', '.simpan-diskon-td', function(e){
   $('.nilai-diskon-td').prop('hidden', false);
   $('.ubah-diskon-td').prop('hidden', false);
   $(this).prop('hidden', true);
+  var diskon = parseInt($('input[name=diskon]').val());
+  sessionStorage.setItem('disc', diskon.toString())
+ 
   diskonBarang();
 });
 
@@ -169,18 +245,17 @@ $('#scanModal').on('hidden.bs.modal', function(e) {
   stopScan();
 });
 
+
 $(document).ready(function(){
   $('input[name=search]').on('keyup', function(){
     var searchTerm = $(this).val().toLowerCase();
-    $(".product-list li").each(function(){
+    $(".productCard").each(function(){
       var lineStr = $(this).text().toLowerCase();
       console.log(lineStr);
       if(lineStr.indexOf(searchTerm) == -1){
-        $(this).addClass('non-active-list');
-        $(this).removeClass('active-list');
-      }else{
-        $(this).addClass('active-list');
-        $(this).removeClass('non-active-list');
+        $(this).closest('.col-12').css('display', 'none'); // Sembunyikan parent card
+      } else {
+          $(this).closest('.col-12').css('display', 'block'); // Tampilkan parent card
       }
     });
   });

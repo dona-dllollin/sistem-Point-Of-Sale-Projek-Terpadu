@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -31,9 +33,19 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    //product
     Route::post('/product/create', [ProductController::class, 'createProduct']);
     Route::get('/product/edit/{id}', [ProductController::class, 'editProduct']);
     Route::post('/product/update', [ProductController::class, 'updateProduct']);
+
+    // transaction
+    Route::post('/transaction/product/{id}', [TransactionController::class, 'transactionProduct']);
+    Route::get('/transaction/product/check/{id}', [TransactionController::class, 'transactionProductCheck']);
+    Route::post('/cart/increase/{id}', [TransactionController::class, 'increaseQuantity']);
+    Route::post('/cart/decrease/{id}', [TransactionController::class, 'decreaseQuantity']);
+    Route::post('/cart/remove/{id}', [TransactionController::class, 'removeItem']);
+    Route::post('/transaction/process', [TransactionController::class, 'transactionProcess']);
 });
 
 Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(function () {
@@ -41,6 +53,7 @@ Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(fu
     Route::get('/product', [ProductController::class, 'viewProduct'])->name('admin.product');
     Route::post('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
     Route::get('/product/new', [ProductController::class, 'viewNewProduct']);
+    Route::get('/transaksi', [TransactionController::class, 'index'])->name('admin.transaction');
 });
 
 Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {
@@ -48,4 +61,5 @@ Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(fu
     Route::get('/toko/{slug_market}/product', [ProductController::class, 'viewProduct'])->name('kasir.product');
     Route::post('/toko/{slug_market}/product/delete/{id}', [ProductController::class, 'deleteProductKasir'])->name('product.delete');
     Route::get('/toko/{slug_market}/product/new', [ProductController::class, 'viewNewProduct'])->name('product.new');
+    Route::get('/transaksi/{slug_market}', [TransactionController::class, 'index'])->name('kasir.transaction');
 });

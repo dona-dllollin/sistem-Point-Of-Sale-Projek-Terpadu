@@ -122,13 +122,16 @@
               <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
                 <h5 class="font-weight-semibold chart-title">Pemasukan 1 Minggu Terakhir</h5>
                 <div class="dropdown">
-                  <button class="btn btn-filter-chart icon-btn dropdown-toggle" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button class="btn btn-filter-chart" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Pemasukan
                   </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton1">
+                  {{-- <button class="btn btn-filter-chart icon-btn dropdown-toggle" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Pemasukan
+                  </button> --}}
+                  {{-- <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton1">
                     <a class="dropdown-item chart-filter" href="#" data-filter="pemasukan">Pemasukan</a>
                     <a class="dropdown-item chart-filter" href="#" data-filter="pelanggan">Pelanggan</a>
-                  </div>
+                  </div> --}}
                 </div>
               </div>
               <div class="col-12">
@@ -162,7 +165,7 @@
               $access = \App\Acces::where('user', auth()->user()->id)
               ->first();
               @endphp --}}
-              <button class="btn btn-view-transaction" type="button">Semua</button>
+              {{-- <button class="btn btn-view-transaction" type="button">Semua</button> --}}
             </div>  
           </div>
           <div class="col-12">

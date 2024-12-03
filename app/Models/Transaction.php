@@ -10,6 +10,18 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    public $table = 'transactions';
+
+    protected $fillable = [
+        'user_id',
+        'kode_transaksi',
+        'total_harga',
+        'diskon',
+        'bayar',
+        'kembali',
+        'market_id'
+    ];
+
     public function market(): BelongsTo
     {
         return $this->belongsTo(Market::class, 'market_id');

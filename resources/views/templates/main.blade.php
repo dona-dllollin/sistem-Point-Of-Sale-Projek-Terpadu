@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/demo_1/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main/style.css') }}">
-    {{-- <link rel="shortcut icon" href="{{ asset('icons/favicon.png') }}"/> --}}
+    <link rel="shortcut icon" href="{{ asset('icons/LOGO_dlollin.png') }}"/>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
   
     @yield('css')
@@ -191,7 +191,7 @@
             @if(auth()->user()->role === 'admin')
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#kelola_akun" aria-expanded="false" aria-controls="kelola_akun">
-                <span class="menu-title">Kelola Akun</span>
+                <span class="menu-title">Kelola Karyawan</span>
                 <i class="menu-arrow"></i>
               </a>
               <div class="collapse" id="kelola_akun">
@@ -200,7 +200,7 @@
                     <a class="nav-link" href="">Daftar Akun</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="">Hak Akses</a>
+                    <a class="nav-link" href="">Daftar Karyawan</a>
                   </li>
                 </ul>
               </div>
@@ -217,18 +217,26 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{{Auth::user()->role === 'admin' ? route('admin.product') : route('kasir.product', ['slug_market' => session('slug_market')]) }}">Daftar Barang</a>
                   </li>
-                  <li class="nav-item">
+                  {{-- <li class="nav-item">
                     <a class="nav-link" href="">Pasok Barang</a>
-                  </li>
+                  </li> --}}
                 </ul>
               </div>
             </li>
           
             <li class="nav-item">
-              <a class="nav-link" href="">
+              <a class="nav-link" href="{{Auth::user()->role === 'admin' ? route('admin.transaction') : route('kasir.transaction', ['slug_market' => session('slug_market')] )}}">
                 <span class="menu-title">Transaksi</span>
               </a>
             </li>
+
+            @if(auth()->user()->role === 'admin')
+            <li class="nav-item">
+              <a class="nav-link" href="">
+                <span class="menu-title">Kelola Toko</span>
+              </a>
+            </li>
+            @endif
          
            
             <li class="nav-item">
@@ -242,7 +250,7 @@
                     <a class="nav-link" href="">Laporan Transaksi</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="">Laporan Pegawai</a>
+                    <a class="nav-link" href="">Laporan Barang</a>
                   </li>
                 </ul>
               </div>

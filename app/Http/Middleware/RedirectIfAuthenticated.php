@@ -21,7 +21,12 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                $user = Auth::guard($guard)->user();
+                $redirectUrl = $user->role === 'admin'
+                    ? '/dashboard'
+                    : '/toko/' . session('slug_market');
+                // return redirect(RouteServiceProvider::HOME);
+                return redirect($redirectUrl);
             }
         }
 
