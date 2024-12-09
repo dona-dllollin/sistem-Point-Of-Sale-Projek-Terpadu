@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Transaction;
@@ -46,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/decrease/{id}', [TransactionController::class, 'decreaseQuantity']);
     Route::post('/cart/remove/{id}', [TransactionController::class, 'removeItem']);
     Route::post('/transaction/process', [TransactionController::class, 'transactionProcess']);
+    Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction']);
 });
 
 Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(function () {
@@ -54,6 +56,12 @@ Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(fu
     Route::post('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
     Route::get('/product/new', [ProductController::class, 'viewNewProduct']);
     Route::get('/transaksi', [TransactionController::class, 'index'])->name('admin.transaction');
+
+    //karyawan
+    Route::get('/karyawan', [KaryawanController::class, 'index'])->name('admin.karyawan');
+    Route::post('/karyawan', [KaryawanController::class, 'store']);
+    Route::post('/karyawan/delete/{id}', [KaryawanController::class, 'delete']);
+    Route::post('/karyawan/edit', [KaryawanController::class, 'edit']);
 });
 
 Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {

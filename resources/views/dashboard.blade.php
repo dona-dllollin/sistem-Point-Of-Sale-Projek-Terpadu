@@ -182,7 +182,7 @@
                   </span>
                   <div class="ml-2">
                     <p class="kode_transaksi font-weight-semibold">{{ $transaksi->kode_transaksi }}</p>
-                    <p class="des-transaksi">Rp. {{ number_format($ket_transaksi->total_harga,2,',','.') }} <span class="dot"><i class="mdi mdi-checkbox-blank-circle"></i></span> {{ $ket_transaksi->kasir }}</p>
+                    <p class="des-transaksi">Rp. {{ number_format($ket_transaksi->total_harga,2,',','.') }} <span class="dot"><i class="mdi mdi-checkbox-blank-circle"></i></span> {{ $ket_transaksi->kasir->nama }}</p>
                   </div>
                 </div>
                 <span class="w-transaksi">{{ Carbon\Carbon::parse($ket_transaksi->created_at)->diffForHumans()}}</span>

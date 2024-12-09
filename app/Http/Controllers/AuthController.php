@@ -65,6 +65,9 @@ class AuthController extends Controller
                 'email' => 'required|unique:users|email',
                 'no_karyawan' => 'required|unique:users,no_karyawan',
                 'password' => 'required|min:8'
+            ],
+            [
+                'no_karyawan.unique' => 'nomor karyawan sudah digunakan'
             ]
         );
 

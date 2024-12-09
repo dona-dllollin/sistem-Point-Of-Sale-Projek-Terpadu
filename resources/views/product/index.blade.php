@@ -23,7 +23,7 @@
             <a href="{{Auth::user()->role === 'admin' ? route('admin.product', ['filter' => 'harga_jual']) : route('kasir.product', ['slug_market' => session('slug_market'), 'filter' => 'harga_jual'])}}" class="dropdown-item filter-btn" data-filter="harga">Harga Barang</a>
             <a href="{{Auth::user()->role === 'admin' ? route('admin.product', ['filter' => 'market_id']) : route('kasir.product', ['slug_market' => session('slug_market'), 'filter' => 'market_id'])}}" class="dropdown-item filter-btn" data-filter="toko"> Toko</a>
 	        </div>
-	    </div>
+	     </div>
         <div class="dropdown dropdown-search">
           <button class="btn btn-icons btn-inverse-primary btn-filter shadow-sm ml-2" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="mdi mdi-magnify"></i>
@@ -270,6 +270,9 @@
         	</div>
         </div>
       </div>
+    </div>
+    <div style="margin-top: 10px; position: absolute; right:30px">
+      {{$products->links()}}
     </div>
   </div>
 </div>

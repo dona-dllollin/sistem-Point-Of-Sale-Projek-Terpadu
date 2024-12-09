@@ -270,7 +270,7 @@
     -moz-transition: width 0.25s ease, background 0.25s ease;
     -ms-transition: width 0.25s ease, background 0.25s ease;
     background: #1c45ef;
-    width: 270px;
+    width: 230px;
     height: 63px; }
     .navbar.default-layout .navbar-brand-wrapper .navbar-brand {
       color: #ffffff;
@@ -302,7 +302,7 @@
     color: #001737;
     padding-left: 15px;
     padding-right: 15px;
-    width: calc(100% - 270px);
+    width: calc(100% - 230px);
     height: 63px;
     -webkit-box-shadow: 0 4px 16px 0 rgba(167, 175, 183, 0.33);
     box-shadow: 0 4px 16px 0 rgba(167, 175, 183, 0.33); }
@@ -656,7 +656,8 @@
 .main-panel {
   -webkit-transition: width 0.25s ease, margin 0.25s ease;
   transition: width 0.25s ease, margin 0.25s ease;
-  width: calc(100% - 270px);
+  /* width: calc(100% - 270px); */
+  width: 100%;
   min-height: calc(100vh - 63px);
   display: -webkit-box;
   display: -ms-flexbox;

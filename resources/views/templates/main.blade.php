@@ -27,14 +27,19 @@
       <!-- TopNav -->
       <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
-          <a class="navbar-brand brand-logo" style="padding-top: 10%" href="{{ url('/dashboard') }}">
+          <a class="navbar-brand brand-logo" style="padding-top: 10%" href="{{ Auth::user()->role === 'admin' ? url('/dashboard') : route('kasir.dashboard', ['slug_market' => session('slug_market')])}}">
             {{-- <img src="{{ asset('icons/logo.png') }}" alt="logo" /> </a> --}}
             <h1 style="font-family: Arial, Helvetica, sans-serif; font-weight:bold; font-size:100%">Point Of Sales</h1>
           </a>
-          <a class="navbar-brand brand-logo-mini" href="{{ url('/dashboard') }}">
+          <a class="navbar-brand brand-logo-mini" href="{{ Auth::user()->role === 'admin' ? url('/dashboard') : route('kasir.dashboard', ['slug_market' => session('slug_market')])}}">
             <img src="{{ asset('icons/logo-mini.png') }}" alt="logo" /> </a>
-        </div>
-        <div class="navbar-menu-wrapper d-flex align-items-center">
+          </div>
+
+          <div class="navbar-menu-wrapper d-flex align-items-center">
+         
+            <button class="navbar-toggler toggle-sidebar align-self-center" type="button">
+              <span class="mdi mdi-menu"></span>
+            </button>  
           {{-- <form class="search-form d-none d-md-block" action="#">
             <div class="form-group">
               <input type="search" class="form-control" name="search_page" placeholder="Cari Halaman">
@@ -127,7 +132,7 @@
           </ul>
           <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
             <span class="mdi mdi-menu"></span>
-          </button> 
+          </button>  
         </div>
       </nav>
       <!-- End-TopNav -->
@@ -156,7 +161,7 @@
             </div>
            </div>
         <!-- SideNav -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <nav class="sidebar sidebar-visible sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item nav-profile">
               <a href="" class="nav-link">
@@ -180,7 +185,7 @@
             </li>
             <li class="nav-item nav-category">Daftar Menu</li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url('/dashboard') }}">
+              <a class="nav-link" href="{{ Auth::user()->role === 'admin' ? url('/dashboard') : route('kasir.dashboard', ['slug_market' => session('slug_market')])}} ">
                 <span class="menu-title">Dashboard</span>
               </a>
             </li>
@@ -200,7 +205,7 @@
                     <a class="nav-link" href="">Daftar Akun</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="">Daftar Karyawan</a>
+                    <a class="nav-link" href="{{route('admin.karyawan')}}">Daftar Karyawan</a>
                   </li>
                 </ul>
               </div>
@@ -260,7 +265,7 @@
           
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
-        </nav>
+    </nav>
         <!-- End-SideNav -->
 
         <div class="main-panel">
@@ -378,5 +383,44 @@
     
     @yield('script')
     <!-- End-Javascript -->
+
+    <script>
+      // Script untuk toggle sidebar
+      document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleButton = document.querySelector('.toggle-sidebar');
+
+        toggleButton.addEventListener('click', () => {
+          if (sidebar.classList.contains('sidebar-visible')) {
+            sidebar.classList.remove('sidebar-visible');
+            sidebar.classList.add('sidebar-hidden');
+          } else {
+            sidebar.classList.remove('sidebar-hidden');
+            sidebar.classList.add('sidebar-visible');
+          }
+        });
+      });
+
+    </script>
+
+    <style>
+      /* Tambahan class untuk menyembunyikan dan menampilkan sidebar */
+      .sidebar-hidden {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.25s ease;
+      }
+
+      .sidebar-visible {
+        width: 270px; /* Sesuaikan dengan lebar default sidebar */
+        transition: width 0.25s ease;
+      }
+
+      /* Menyembunyikan teks pada sidebar saat disembunyikan */
+      .sidebar-hidden .menu-title {
+        display: none;
+      }
+
+    </style>
   </body>
 </html>

@@ -106,31 +106,30 @@
               <img src="{{ asset('gif/success4.gif') }}">
               <h4 class="transaction-success-text">Transaksi Berhasil</h4>
             </div>
-            @php
-            $transaksi = \App\models\Transaction::where('transactions.kode_transaksi', '=', $message)
-            ->select('transactions.*')
-            ->first();
-            @endphp
             <div class="col-12">
               <table class="table-receipt">
                 <tr>
                   <td>
                     <span class="d-block little-td">Kode Transaksi</span>
-                    <span class="d-block font-weight-bold">{{ $message }}</span>
+                    <span class="d-block font-weight-bold">{{ $message->kode_transaksi }}</span>
                   </td>
                   <td>
                     <span class="d-block little-td">Tanggal</span>
-                    <span class="d-block font-weight-bold">{{ date('d M, Y', strtotime($transaksi->created_at)) }}</span>
+                    <span class="d-block font-weight-bold">{{ date('d M, Y', strtotime($message->created_at)) }}</span>
                   </td>
                 </tr>
                 <tr>
                   <td>
                     <span class="d-block little-td">Kasir</span>
-                    <span class="d-block font-weight-bold">{{ $transaksi->kasir }}</span>
+                    <span class="d-block font-weight-bold">{{ $message->kasir->nama }}</span>
                   </td>
                   <td>
+                      @php
+                       $diskon = $message->total_harga * $message->diskon / 100;
+                       $total = $message->total_harga - $diskon;
+                      @endphp
                     <span class="d-block little-td">Total</span>
-                    <span class="d-block font-weight-bold text-success">Rp. {{ number_format($transaksi->total_harga,2,',','.') }}</span>
+                    <span class="d-block font-weight-bold text-success">Rp. {{ number_format($total,2,',','.') }}</span>
                   </td>
                 </tr>
               </table>
@@ -140,11 +139,11 @@
                 </tr>
                 <tr>
                   <td class="little-td big-td">Bayar</td>
-                  <td>Rp. {{ number_format($transaksi->bayar,2,',','.') }}</td>
+                  <td>Rp. {{ number_format($message->bayar,2,',','.') }}</td>
                 </tr>
                 <tr>
                   <td class="little-td big-td">Kembali</td>
-                  <td>Rp. {{ number_format($transaksi->kembali,2,',','.') }}</td>
+                  <td>Rp. {{ number_format($message->kembali,2,',','.') }}</td>
                 </tr>
               </table>
             </div>
@@ -152,7 +151,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-sm btn-close-modal" data-dismiss="modal">Tutup</button>
-          <a href="{{ url('/transaction/receipt/' . $message) }}" target="_blank" class="btn btn-sm btn-cetak-pdf">Cetak Struk</a>
+          <a href="{{ url('/transaction/receipt/' . $message->id) }}" target="_blank" class="btn btn-sm btn-cetak-pdf">Cetak Struk</a>
         </div>
       </div>
     </div>
@@ -203,12 +202,12 @@
                     <div class="row d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex overflow-auto filter-chips-container">
                         <a href="{{ Auth::user()->role === 'admin' ? route('admin.transaction', ['category_id' => 'all']) : route('kasir.transaction', ['category_id' => 'all', 'slug_market' => session('slug_market')]) }}" 
-                           class="btn btn-outline-primary btn-sm me-2 mr-1 {{ request('category_id') == 'all' || !request('category_id') ? 'active' : '' }}">
+                           class="btn btn-outline-primary category-link btn-sm me-2 mr-1 {{ request('category_id') == 'all' || !request('category_id') ? 'active' : ''  }}" data-category-id="all" >
                             All
                         </a>
                         @foreach ($categories as $category)
                         <a href="{{ Auth::user()->role === 'admin' ? route('admin.transaction', ['category_id' => $category->id]) : route('kasir.transaction', ['category_id' => $category->id, 'slug_market' => session('slug_market')]) }}" 
-                           class="btn btn-outline-primary btn-sm me-2 mr-1 {{ request('category_id') == $category->id ? 'active' : '' }}">
+                           class="btn btn-outline-primary category-link btn-sm me-2 mr-1 {{ request('category_id') == $category->id ? 'active' : '' }}" data-category-id="{{ $category->id }}" >
                             {{ $category->name }}
                         </a>
                         @endforeach
@@ -217,9 +216,9 @@
                     @if(auth()->user()->role === 'admin')
                     <div class=" period-form col-4">
                       <div class="form-group">
-                            <p>Filter Berdasarkan Toko</p>
+                            <p>Pilih Toko Terlebih Dahulu</p>
                           <select name="market_id" class="form-control form-control-lg market-select" style="width: 100%">
-                            <option value="all" {{ request('market_id') === 'all' ? 'selected' : '' }}>semua Toko</option>
+                            <option value="all" {{ request('market_id') === 'all' ? 'selected' : '' }}>Pilih Toko</option>
                               @foreach ($markets as $market)
                                   <option value="{{ $market->id }}" {{ $market->id == request('market_id') ? 'selected' : '' }}>{{ $market->nama_toko }}</option>
                               @endforeach
@@ -229,9 +228,9 @@
                     @endif
                 </div>
 
-                    <div class="row">
+                    <div class="row card-product" {{ Auth::user()->role === 'admin' ? 'hidden' : '' }}>
                         @foreach ($products as $product)
-                        <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-4">
+                        <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-2">
                             <div class="productCard border rounded shadow-sm h-100 d-flex flex-column">
                                 <div class="productImage position-relative pb-3" style="border-bottom: 1px solid #efefef;">
                                     {{-- <form action="{{ url('/transaction/product', $product->kode_barang) }}" method="POST">
@@ -256,7 +255,7 @@
                                         </div>
                                     {{-- </form> --}}
                                 </div>
-                                <div class="card-body text-center d-flex flex-column flex-grow-1">
+                                <div class=" text-center flex-column flex-grow-1" style="margin-bottom: 2%; margin-top:2%; padding-bottom:5%">
                                     
                                     <h6 class="card-title font-weight-bold text-truncate"
                                         title="{{ $product->nama_barang }}">{{ Str::words($product->nama_barang, 4) }}
@@ -268,7 +267,7 @@
                                     <h6 class="card-title font-weight-bold text-truncate">
                                       (<span class="stok-display" data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}">{{ $jumlahStok }}</span>)
                                     </h6>
-                                    <p>{{$product->market->nama_toko}}</p>
+                                    <p class="card-text">{{$product->market->nama_toko}}</p>
                                     <p class="card-text text-success font-weight-bold">Rp. {{ number_format($product->harga_jual, 2, ',', '.') }}</p>
                                     <!-- Chips -->
                                     {{-- <div class="product-chips">
@@ -309,7 +308,7 @@
                 <p class="m-0 text-black-50">Daftar Pesanan</p>
               </div>
               <div class="col-12 mt-3 table-responsive">
-                <table class="table table-checkout">
+                <table class="table table-checkout" style="font-size: 8px">
                   @if(session('cart'))
                   @foreach(session('cart') as $id => $details)
                   <tr>
@@ -325,10 +324,10 @@
                     <td>
                       <div class="d-flex justify-content-start align-items-center">
                         <input type="text" name="jumlah_barang[]" hidden="" value="1">
-                        <a href="#" class="btn-operate mr-2 btn-tambah" onClick="increaseQuantity({{$id}})">
+                        <a href="#" class="btn-operate mr-1 btn-tambah" onClick="increaseQuantity({{$id}})">
                           <i class="mdi mdi-plus"></i>
                         </a>
-                        <span class="ammount-product mr-2" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+                        <span class="ammount-product mr-1" unselectable="on" onselectstart="return false;" onmousedown="return false;">
                           <p class="jumlah_barang_text">{{$details['quantity']}}</p>
                         </span>
                         <a href="#" class="btn-operate btn-kurang" onClick="decreaseQuantity({{$id}})">
@@ -341,12 +340,9 @@
                       <span>Rp. {{$details['subtotal']}}</span>
                     </td>
                     <td>
-                      <a href="#" class="btn btn-icons btn-rounded btn-secondary ml-1 btn-hapus" onClick="removeItem({{$id}})">
+                      <a href="#" class="btn btn-icons btn-rounded btn-secondary btn-hapus" onClick="removeItem({{$id}})">
                         <i class="mdi mdi-close"></i>
                       </a>
-                    </td>
-                    <td hidden="">
-                      
                     </td>
                   </tr>
                   @endforeach
@@ -726,15 +722,66 @@ $(document).on('click', '.btn-bayar', function(){
 
 
 //filter market
-$(document).on('change', '.market-select', function(){
-  const url = new URL(window.location.href)
-  if ($(this).val() !== 'all'){
-    url.searchParams.set('market_id', $(this).val())
-  } else {
-    url.searchParams.delete('market_id')
-  }
-  window.location.href = url.toString()
-})
+// $(document).on('change', '.market-select', function(){
+//   const url = new URL(window.location.href)
+//   if ($(this).val() !== 'all'){
+//     url.searchParams.set('market_id', $(this).val())
+
+//   } else {
+//     url.searchParams.delete('market_id')
+//   }
+//   window.location.href = url.toString()
+// })
+
+@if(Auth::user()->role == 'admin')
+$(document).ready(function () {
+    const url = new URL(window.location.href);
+    const marketId = url.searchParams.get('market_id'); // Ambil nilai parameter market_id
+
+    if (!marketId) {
+        // Jika parameter market_id tidak ada, sembunyikan semua produk
+        $(".card-product").prop('hidden', true);
+    } else {
+        // Jika parameter market_id ada, tampilkan produk sesuai market_id
+        $(".card-product").prop('hidden', false)
+    }
+});
+@endif
+
+
+
+
+$(document).on('change', '.market-select', function () {
+    const url = new URL(window.location.href); // Ambil URL saat ini
+
+    // Tambahkan atau ubah query parameter 'market_id'
+    if ($(this).val() !== 'all') {
+        url.searchParams.set('market_id', $(this).val());
+    } else {
+        url.searchParams.delete('market_id');
+    }
+
+    // Redirect ke URL yang diperbarui
+    window.location.href = url.toString();
+
+});
+
+$(document).on('click', '.category-link', function (e) {
+    e.preventDefault(); // Mencegah aksi default link
+    const url = new URL(window.location.href); // Ambil URL saat ini
+    const category_id = $(this).data('category-id'); // Ambil ID kategori dari atribut data
+
+    // Tambahkan atau ubah query parameter 'category_id'
+    if (category_id !== 'all') {
+        url.searchParams.set('category_id', category_id);
+    } else {
+        url.searchParams.delete('category_id');
+    }
+
+    // Redirect ke URL yang diperbarui
+    window.location.href = url.toString();
+});
+
 </script>
 
 <style>

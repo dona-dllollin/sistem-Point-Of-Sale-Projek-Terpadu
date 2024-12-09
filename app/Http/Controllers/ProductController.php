@@ -25,9 +25,9 @@ class ProductController extends Controller
         $user = Auth::user();
         if ($user->role === 'admin') {
 
-            $products = Product::orderBy($filter)->get();
+            $products = Product::orderBy($filter)->paginate(20);
         } elseif ($user->role === 'kasir') {
-            $products = Product::where('market_id', $user->market_id)->orderBy($filter)->get();
+            $products = Product::where('market_id', $user->market_id)->orderBy($filter)->paginate(20);
         } else {
             return back();
         }

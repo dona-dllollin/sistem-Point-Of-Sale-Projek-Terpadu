@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Categories;
 use App\Models\Market;
 use App\Models\OrderItems;
 use App\Models\Product;
 use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -281,7 +283,7 @@ class TransactionController extends Controller
             $transaksi = Transaction::create([
                 'user_id' => $user_id,
                 'kode_transaksi' => $req->kode_transaksi,
-                'total_harga' => $req->total,
+                'total_harga' => $req->subtotal,
                 'diskon' => $req->diskon,
                 'bayar' => $req->bayar,
                 'kembali' => $req->bayar - $req->total,
@@ -307,12 +309,24 @@ class TransactionController extends Controller
 
             DB::commit();
 
-            Session::flash('transaction_success', $req->kode_transaksi);
+            Session::flash('transaction_success', $transaksi);
 
             return back();
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('transaction_error', 'Terjadi kesalahan saat menambahkan transaksi. error' . $e->getMessage());
         }
+    }
+
+    public function receiptTransaction($id)
+    {
+        $transaction = Transaction::find($id);
+        $market = Market::find($transaction->market_id);
+        $items = OrderItems::where('transaction_id', $id)->get();
+        $diskon = $transaction->total_harga * $transaction->diskon / 100;
+        $total = $transaction->total_harga - $diskon;
+        $customPaper = array(0, 0, 400.00, 283.80);
+        $pdf = Pdf::loadview('transaction.nota_transaksi', compact('transaction', 'market', 'items', 'diskon', 'total'))->setPaper($customPaper, 'landscape');
+        return $pdf->stream();
     }
 }
