@@ -95,7 +95,7 @@
 
 
    {{-- Edit Modal --}}
-<div class="row modal-group">
+{{-- <div class="row modal-group">
   <div class="modal fade" id="editModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{$item->id}}" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -110,7 +110,8 @@
           <div class="modal-body" id="tambah-modal-body">
               @csrf
                 <div class="col-12">
-                  <input type="hidden" name="id" value="{{$item->id}}">
+                  <input type="hidden" name="id" value="{{old('id', $item->id)}}">
+                  <input type="hidden" name="modal_type" value="edit">
               </div>
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">No Karyawan</label>
@@ -143,7 +144,7 @@
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Alamat</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                  {{-- <input type="text" class="form-control" name="email" value=""> --}}
+                
                   <textarea name="alamat" class="form-control" rows="3" id="">{{old('alamat',$item->alamat)}}</textarea>
                 </div>
               </div>
@@ -175,11 +176,11 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
    @endforeach
 
 {{-- Tambah Modal --}}
-<div class="row modal-group">
+{{-- <div class="row modal-group">
     <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -194,7 +195,7 @@
             <div class="modal-body" id="tambah-modal-body">
                 @csrf
                   <div class="col-12">
-                    <input type="hidden" name="id" value="">
+                    <input type="hidden" name="modal_type" value="tambah">
                 </div>
                 @if ($errors->any())
                 <div class="alert alert-danger" role="alert">
@@ -236,7 +237,6 @@
                 <div class="form-group row">
                   <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Alamat</label>
                   <div class="col-lg-9 col-md-9 col-sm-12">
-                    {{-- <input type="text" class="form-control" name="email" value=""> --}}
                     <textarea name="alamat" class="form-control" rows="3" id="">{{old('alamat')}}</textarea>
                   </div>
                 </div>
@@ -269,14 +269,109 @@
         </div>
       </div>
     </div>
+  </div> --}}
+
+
+  {{-- karyawan modal --}}
+  <div class="row modal-group">
+    <div class="modal fade" id="karyawanModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+      
+          <form method="post" id="karyawanForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle">Tambah / Edit karyawan</h5>
+              <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="tambah-modal-body">
+                @csrf
+                  <div class="col-12">
+                    <input type="hidden" name="_method" id="method" value="POST">
+                    <input type="hidden" name="id" id="karyawanId">
+                </div>
+                @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    @foreach($errors->all() as $error)
+                    <ul>
+                      <li>{{$error}}</li>
+                    </ul>
+                    @endforeach
+                  </div>
+                  @endif
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">No Karyawan</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    <input type="text" class="form-control" name="no_karyawan" id="no_karyawan" value="{{old('no_karyawan')}}">
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Nama</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    <input type="text" class="form-control" name="nama" id="nama" value="{{old('nama')}}">
+                  </div>
+                </div>
+                
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Nomor HP</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    <input type="text" class="form-control" name="no_hp" id="no_hp" value="{{old('no_hp')}}">
+                  </div>
+                </div>
+                
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Email</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    <input type="text" class="form-control" name="email" id="email" value="{{old('email')}}">
+                  </div>
+                </div>
+                
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Alamat</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    {{-- <input type="text" class="form-control" name="email" value=""> --}}
+                    <textarea name="alamat" class="form-control" rows="3" id="alamat">{{old('alamat')}}</textarea>
+                  </div>
+                </div>
+                
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Tanggal Masuk</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    <input type="date" class="form-control" name="tanggal_masuk" id="tanggal_masuk" value="{{old('tanggal_masuk')}}">
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Toko</label>
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+   
+                    <select class="form-control" name="market_id" id="market_id">
+                        <option value="">pilih toko</option>
+                        @foreach($toko as $tk)
+                    <option value="{{$tk->id}}" {{$tk->id == old('no_karyawan') ? 'selected' : ''}} >{{$tk->nama_toko}}</option>
+                     @endforeach
+                     </select>
+                  </div>
+                </div>
+
+            </div>
+            <div class="modal-footer" id="edit-modal-footer">
+              <button type="submit" id="modalSubmit" class="btn btn-primary"><i class="mdi mdi-content-save"></i>Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 
-<!-- DataTales Example -->
+  <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
         
-            <a href="" class="btn btn-icons btn-primary btn-new ml-2" data-toggle="modal" data-target="#tambahModal" >
+            <a href="" class="btn btn-icons btn-primary btn-new ml-2" id="btnTambah" >
                 <i class="mdi mdi-plus"></i>
             </a>
     </div>
@@ -303,7 +398,16 @@
                         <td>{{date('d M, Y', strtotime($item->tanggal_masuk))}}</td>
                         <td>{{$item->market->nama_toko}}</td>
                         <td>
-                            <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#editModal{{$item->id}}" data-edit="{{ $item->id }}">
+                            <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary btnEdit" style="background-color: yellow"
+                              data-id="{{ $item->id }}" 
+                              data-nama="{{ $item->nama }}"
+                              data-email="{{ $item->email }}"
+                              data-no_karyawan="{{ $item->no_karyawan }}"
+                              data-no_hp="{{ $item->no_hp }}"
+                              data-alamat="{{ $item->alamat }}"
+                              data-tanggal_masuk="{{ $item->tanggal_masuk }}"
+                              data-market_id="{{ $item->market_id }}"
+                              >
                                 <i class="mdi mdi-pencil"></i>
                             </button>
 
@@ -372,13 +476,62 @@ function confirmDelete(event) {
 
 </script>
 
-@if (count($errors) > 0)
+@if ($errors->any())
     <script>
         $( document ).ready(function() {
-            $('#tambahModal').modal('show');
+            $('#karyawanModal').modal('show');
         });
     </script>
 @endif
+
+
+<script>
+  $(document).ready(function () {
+    // Fungsi untuk membuka modal tambah
+    $('#btnTambah').click(function () {
+        $('#karyawanForm').attr('action', '/karyawan'); // URL untuk tambah
+        $('#method').val('POST'); // Method untuk tambah
+        $('#modalTitle').text('Tambah Karyawan');
+        $('#modalSubmit').text('Tambah');
+        $('#karyawanForm')[0].reset(); // Reset semua field
+        $('#karyawanModal').modal('show');
+    });
+
+    // Fungsi untuk membuka modal edit
+    $('.btnEdit').click(function () {
+        const id = $(this).data('id');
+        const url = `/karyawan/edit`;
+        
+        // Ambil data karyawan dari tombol edit
+        const nama = $(this).data('nama');
+        const email = $(this).data('email');
+        const no_karyawan = $(this).data('no_karyawan');
+        const no_hp = $(this).data('no_hp');
+        const alamat = $(this).data('alamat');
+        const tanggal_masuk = $(this).data('tanggal_masuk');
+        const toko = $(this).data('toko');
+
+        // Set data ke form
+        $('#karyawanForm').attr('action', url); // URL untuk edit
+        $('#method').val('PUT'); // Method untuk edit
+        $('#modalTitle').text('Edit Karyawan');
+        $('#modalSubmit').text('Update');
+        $('#karyawanId').val(id);
+        $('#nama').val(nama);
+        $('#email').val(email);
+        $('#no_karyawan').val(no_karyawan);
+        $('#no_hp').val(no_hp);
+        $('#alamat').val(alamat);
+        $('#tanggal_masuk').val(tanggal_masuk);
+        $('#market_id').val(toko);
+
+        $('#karyawanModal').modal('show');
+    });
+});
+
+</script>
+
+
 
 
 

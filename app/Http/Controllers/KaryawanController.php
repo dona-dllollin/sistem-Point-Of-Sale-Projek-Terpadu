@@ -37,7 +37,8 @@ class KaryawanController extends Controller
                 'no_karyawan.unique' => 'nomor karyawan sudah digunakan',
                 'no_hp.required' => 'nomor hp harus diisi',
                 'tanggal_masuk' => 'tanggal masuk harus diisi',
-                'market_id.required' => 'toko harus diisi'
+                'market_id.required' => 'toko harus diisi',
+                'modal_type' => $request->modal_type
             ]
         );
 
@@ -78,7 +79,8 @@ class KaryawanController extends Controller
                 'no_karyawan.unique' => 'nomor karyawan sudah digunakan',
                 'no_hp.required' => 'nomor hp harus diisi',
                 'tanggal_masuk' => 'tanggal masuk harus diisi',
-                'market_id.required' => 'toko harus diisi'
+                'market_id.required' => 'toko harus diisi',
+                'modal_type' => $req->modal_type
             ]
         );
 
@@ -98,7 +100,7 @@ class KaryawanController extends Controller
             'market_id' => $validatedData['market_id'],
         ]);
 
-        return back()->with('success', 'Data karyawan berhasil diEdit!');
+        return back()->with('success', 'Data karyawan berhasil diEdit!')->withInput()->withErrors($validatedData);
     }
 
 
