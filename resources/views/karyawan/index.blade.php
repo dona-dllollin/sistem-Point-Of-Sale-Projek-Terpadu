@@ -92,8 +92,6 @@
       </div>
     </div>
    </div>
-
-
    @endforeach
 
 
@@ -196,7 +194,7 @@
     <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
         
-            <a href="" class="btn btn-icons btn-primary btn-new ml-2" id="btnTambah" >
+            <a href="" class="btn btn-icons btn-primary btn-new ml-2 btnTambah" id="btnTambah" >
                 <i class="mdi mdi-plus"></i>
             </a>
     </div>
@@ -313,7 +311,8 @@ function confirmDelete(event) {
 <script>
   $(document).ready(function () {
     // Fungsi untuk membuka modal tambah
-    $('#btnTambah').click(function () {
+    $('.btnTambah').click(function (e) {
+        e.preventDefault()
         $('#karyawanForm').attr('action', '/karyawan'); // URL untuk tambah
         $('#method').val('POST'); // Method untuk tambah
         $('#modalTitle').text('Tambah Karyawan');
