@@ -171,9 +171,9 @@
                   <div class="col-lg-9 col-md-9 col-sm-12">
    
                     <select class="form-control" name="market_id" id="market_id">
-                        <option value="">pilih toko</option>
+                        <option value="" id="optionPilihToko">pilih toko</option>
                         @foreach($toko as $tk)
-                    <option value="{{$tk->id}}" {{$tk->id == old('no_karyawan') ? 'selected' : ''}} >{{$tk->nama_toko}}</option>
+                    <option value="{{$tk->id}}" {{$tk->id == old('market_id') ? 'selected' : ''}} >{{$tk->nama_toko}}</option>
                      @endforeach
                      </select>
                   </div>
@@ -313,6 +313,7 @@ function confirmDelete(event) {
     // Fungsi untuk membuka modal tambah
     $('.btnTambah').click(function (e) {
         e.preventDefault()
+        $('#optionPilihToko').removeAttr('hidden')
         $('#karyawanForm').attr('action', '/karyawan'); // URL untuk tambah
         $('#method').val('POST'); // Method untuk tambah
         $('#modalTitle').text('Tambah Karyawan');
@@ -333,7 +334,7 @@ function confirmDelete(event) {
         const no_hp = $(this).data('no_hp');
         const alamat = $(this).data('alamat');
         const tanggal_masuk = $(this).data('tanggal_masuk');
-        const toko = $(this).data('toko');
+        const toko = $(this).data('market_id');
 
         // Set data ke form
         $('#karyawanForm').attr('action', url); // URL untuk edit
@@ -347,9 +348,17 @@ function confirmDelete(event) {
         $('#no_hp').val(no_hp);
         $('#alamat').val(alamat);
         $('#tanggal_masuk').val(tanggal_masuk);
+        $('#optionPilihToko').attr('hidden', true)
         $('#market_id').val(toko);
 
         $('#karyawanModal').modal('show');
+    });
+
+     // Reset modal saat ditutup
+     $('#karyawanModal').on('hidden.bs.modal', function () {
+        const optionPilihToko = $('#optionPilihToko');
+        optionPilihToko.removeAttr('hidden'); // Tampilkan opsi "pilih toko" kembali
+        $('#market_id').val(''); // Reset nilai select
     });
 });
 
