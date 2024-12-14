@@ -50,7 +50,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
     
-        <form action="{{ url('/product/update') }}" method="post">
+        <form action="{{ url('/product/update') }}" method="post" enctype="multipart/form-data">
           <div class="modal-header">
             <h5 class="modal-title" id="editModalLabel{{$product->id}}">Edit Barang</h5>
             <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close">
@@ -84,8 +84,8 @@
                   <input name="image" id="image" type="file" class="custom-file-input"
                   accept="image/*"
                   onchange="document.getElementById('output').src = window.URL.createObjectURL(this.files[0]); document.getElementById('fileLabel').textContent = this.files[0].name;">
-                  <label class="custom-file-label" id="fileLabel">{{$product->image}}</label>
-                     <div class="col-sm-12 text-center mt-3" ><img id="output" src="{{asset('pictures/product/'. $product->image)}}" class="img-fluid" style="width: 30%"></div>
+                  <label class="custom-file-label" id="fileLabel" data-default="{{$product->image}}">{{$product->image}}</label>
+                     <div class="col-sm-12 text-center mt-3" ><img id="output" src="{{asset('pictures/product/' . $product->image)}}" class="img-fluid" style="width: 30%"></div>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="foto_barang_error"></div>
               </div>
@@ -252,7 +252,7 @@
                     <span class="nama-barang-field">{{ $product->market->nama_toko }}</span>
                   </td>
                   <td>
-                    <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#editModal{{$product->id}}" data-edit="{{ $product->id }}">
+                    <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#editModal{{$product->id}}" data-edit="{{ $product->id }} " data-gambar="{{$product->image}}">
                         <i class="mdi mdi-pencil"></i>
                     </button>
 
@@ -336,38 +336,22 @@
   @endif
 
 
-  // $(document).on('click', '.btn-edit', function(){
-  //   var data_edit = $(this).attr('data-edit');
-  //   $.ajax({
-  //     method: "GET",
-  //     url: "{{ url('/product/edit') }}/" + data_edit,
-  //     success:function(response)
-  //     {
-      
-  //       $('input[name=id]').val(response.product.id);
-  //       $('input[name=kode_barang]').val(response.product.kode_barang);
-  //       $('input[name=nama_barang]').val(response.product.nama_barang);
-  //       $('input[name=merek]').val(response.product.merek);
-  //       $('input[name=stok]').val(response.product.stok);
-  //       $('input[name=harga]').val(response.product.harga);
-  //       $('#output').attr('src', '{{ asset('pictures/product/') }}' + '/' + response.product.image);
-  //       $('#fileLabel').text(response.product.image)
-  //       var berat_barang = response.product.satuan.split(" ");
-  //       $('input[name=berat_barang]').val(berat_barang[0]);
-  //       $('select[name=jenis_barang] option[value="'+ response.product.jenis_barang +'"]').prop('selected', true);
-  //       $('select[name=satuan_berat] option[value="'+ berat_barang[1] +'"]').prop('selected', true);
-  //       $('select[name=toko] option[value="'+ response.product.market_id +'"]').prop('selected', true);
-  //        // Mengisi kategori produk (misalnya menggunakan checkbox atau select multiple)
-  //        var categories = response.product.categories; // array dari kategori
-  //           categories.forEach(function(category) {
-  //               // Atau jika menggunakan select multiple
-  //               $('select[name="kategori_barang"] option[value="' + category.id + '"]').prop('selected', true);         
-  //           });
-  //           $('select[name="toko"]').trigger('change');
-  //       validator.resetForm();
-  //     }
-  //   });
-  // });
+  document.getElementById('image').addEventListener('change', function () {
+    const file = this.files[0];
+    const label = document.getElementById('fileLabel');
+    const preview = document.getElementById('output');
+
+    // Mengambil nilai default dari data atribut
+    const defaultImage = label.getAttribute('data-default');
+
+    if (file) {
+        label.textContent = file.name;
+        preview.src = URL.createObjectURL(file);
+    } else {
+        label.textContent = defaultImage; // Reset ke gambar default
+        preview.src = "{{ asset('pictures/product/' . $product->image) }}"; // Gambar default
+    }
+});
 
 
 function confirmDelete(event) {

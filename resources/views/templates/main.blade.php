@@ -219,7 +219,7 @@
               <div class="collapse" id="kelola_ks">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="">Kategori</a>
+                    <a class="nav-link" href="{{route('admin.kategori')}}">Kategori</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.satuan')}}">Satuan</a>

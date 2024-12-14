@@ -161,7 +161,7 @@ class ProductController extends Controller
                 $image->move(public_path('pictures/product'), $imageName);
 
                 // Update nama gambar di produk
-                $product->gambar = $imageName;
+                $product->image = $imageName;
             }
             Log::info('Before saving product: ', $product->toArray());
             if ($product->save()) {
