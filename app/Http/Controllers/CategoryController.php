@@ -90,6 +90,8 @@ class CategoryController extends Controller
             $image = $req->file('gambar');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('pictures/'), $imageName);
+        } else {
+            $imageName = $kategori->gambar;
         }
 
         $kategori->update([
