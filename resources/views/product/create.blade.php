@@ -118,12 +118,14 @@
 							  			<input type="text" class="form-control number-input" name="satuan" placeholder="Masukkan Satuan Barang">
 							  			<div class="input-group-append">
 							  				<select class="form-control" name="satuan_berat">
-							  					<option value="kg">Kilogram</option>
-							  					<option value="g">Gram</option>
+												@foreach ($satuan as $item)						
+												<option value="{{$item->id}}">{{$item->nama}}</option>
+												@endforeach
+							  					{{-- <option value="g">Gram</option>
 							  					<option value="pcs">pcs</option>
 							  					<option value="saschet">saschet</option>
 							  					<option value="l">Liter</option>
-							  					<option value="kardus">kardus</option>
+							  					<option value="kardus">kardus</option> --}}
 							  				</select>
 							  			</div>
 							  		</div>

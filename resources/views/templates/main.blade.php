@@ -210,6 +210,23 @@
                 </ul>
               </div>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#kelola_ks" aria-expanded="false" aria-controls="kelola_ks">
+                <span class="menu-title">Kategori & satuan</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="kelola_ks">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="">Kategori</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.satuan')}}">Satuan</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
             @endif
            
             <li class="nav-item">

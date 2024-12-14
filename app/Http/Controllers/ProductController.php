@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use App\Models\Market;
 use App\Models\Product;
+use App\Models\Satuan;
 use App\Models\Supply;
 use App\Models\Transaction;
 use GuzzleHttp\Handler\Proxy;
@@ -39,7 +40,8 @@ class ProductController extends Controller
     {
         $kategori = Categories::all();
         $toko = Market::all();
-        return view('product.create', compact('kategori', 'toko'));
+        $satuan = Satuan::all();
+        return view('product.create', compact('kategori', 'toko', 'satuan'));
     }
 
     // fungsi tambah barang

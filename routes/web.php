@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,12 @@ Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(fu
     Route::post('/karyawan', [KaryawanController::class, 'store']);
     Route::post('/karyawan/delete/{id}', [KaryawanController::class, 'delete']);
     Route::post('/karyawan/edit', [KaryawanController::class, 'edit']);
+
+    //satuan
+    Route::get('/satuan', [SatuanController::class, 'index'])->name('admin.satuan');
+    Route::post('/satuan', [SatuanController::class, 'create']);
+    Route::post('/satuan/edit', [SatuanController::class, 'edit']);
+    Route::post('/satuan/delete/{id}', [SatuanController::class, 'delete']);
 });
 
 Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {

@@ -122,13 +122,13 @@
               <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
                 <h5 class="font-weight-semibold chart-title">Pemasukan 1 Minggu Terakhir</h5>
                 <div class="dropdown">
-                  <button class="btn btn-filter-chart" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{-- <button class="btn btn-filter-chart" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Pemasukan
                   </button>
-                  {{-- <button class="btn btn-filter-chart icon-btn dropdown-toggle" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button class="btn btn-filter-chart icon-btn dropdown-toggle" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Pemasukan
-                  </button> --}}
-                  {{-- <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton1">
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton1">
                     <a class="dropdown-item chart-filter" href="#" data-filter="pemasukan">Pemasukan</a>
                     <a class="dropdown-item chart-filter" href="#" data-filter="pelanggan">Pelanggan</a>
                   </div> --}}
@@ -182,7 +182,8 @@
                   </span>
                   <div class="ml-2">
                     <p class="kode_transaksi font-weight-semibold">{{ $transaksi->kode_transaksi }}</p>
-                    <p class="des-transaksi">Rp. {{ number_format($ket_transaksi->total_harga,2,',','.') }} <span class="dot"><i class="mdi mdi-checkbox-blank-circle"></i></span> {{ $ket_transaksi->kasir->nama }}</p>
+                    <p class="des-transaksi">Rp. {{ number_format($ket_transaksi->total_harga,2,',','.') }} <span class="dot"><i class="mdi mdi-checkbox-blank-circle"></i></span>{{ optional($ket_transaksi->kasir)->nama ?? 'kasir' }}
+                    </p>
                   </div>
                 </div>
                 <span class="w-transaksi">{{ Carbon\Carbon::parse($ket_transaksi->created_at)->diffForHumans()}}</span>
@@ -249,7 +250,7 @@ var myChart = new Chart(ctx, {
                     beginAtZero: true,
                     callback: function(value, index, values) {
                       if (parseInt(value) >= 1000) {
-                         return 'Rp. ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                         return 'Rp. ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                       } else {
                          return 'Rp. ' + value;
                       }
