@@ -163,6 +163,10 @@ class ProductController extends Controller
                 // Update nama gambar di produk
                 $product->image = $imageName;
             }
+
+            // Sinkronkan kategori dengan produk
+            $product->categories()->sync($request->input('kategori_barang'));
+
             Log::info('Before saving product: ', $product->toArray());
             if ($product->save()) {
                 Log::info('Product saved successfully.');
@@ -197,6 +201,16 @@ class ProductController extends Controller
             // Menghapus relasi kategori di tabel pivot
             $product->categories()->detach();
 
+            // Jika gambar bukan default, hapus file gambar dari folder
+            if ($product->image !== 'default.png') {
+                $gambarPath = public_path('pictures/product/' . $product->image);
+
+                // Periksa apakah file gambar ada di folder
+                if (file_exists($gambarPath)) {
+                    unlink($gambarPath); // Hapus file gambar
+                }
+            }
+
             // Menghapus produk
             $product->delete();
 
@@ -220,6 +234,16 @@ class ProductController extends Controller
 
             // Menghapus relasi kategori di tabel pivot
             $product->categories()->detach();
+
+            // Jika gambar bukan default, hapus file gambar dari folder
+            if ($product->image !== 'default.png') {
+                $gambarPath = public_path('pictures/product/' . $product->image);
+
+                // Periksa apakah file gambar ada di folder
+                if (file_exists($gambarPath)) {
+                    unlink($gambarPath); // Hapus file gambar
+                }
+            }
 
             // Menghapus produk
             $product->delete();

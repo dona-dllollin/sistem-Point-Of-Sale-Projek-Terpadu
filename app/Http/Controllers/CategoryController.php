@@ -102,21 +102,38 @@ class CategoryController extends Controller
         return back()->with('success', 'data kategori berhasil diubah');
     }
 
+
+
     public function delete($id)
     {
-
+        // Temukan kategori berdasarkan ID
         $kategori = Categories::find($id);
 
+        // Jika kategori tidak ditemukan, kembalikan pesan error
         if (!$kategori) {
-            Session::flash('error', 'data kategori tidak ditemukan');
-            return;
-        } else {
-            $kategori->products()->detach();
-            $kategori->delete();
-
-            Session::flash('success', 'Data kategori berhasil dihapus');
-
+            Session::flash('error', 'Data kategori tidak ditemukan');
             return redirect()->back();
         }
+
+        // Jika gambar bukan default, hapus file gambar dari folder
+        if ($kategori->gambar !== 'default.jpg') {
+            $gambarPath = public_path('pictures/' . $kategori->gambar);
+
+            // Periksa apakah file gambar ada di folder
+            if (file_exists($gambarPath)) {
+                unlink($gambarPath); // Hapus file gambar
+            }
+        }
+
+        // Hapus relasi di tabel pivot
+        $kategori->products()->detach();
+
+        // Hapus data kategori
+        $kategori->delete();
+
+        // Tampilkan pesan sukses
+        Session::flash('success', 'Data kategori berhasil dihapus');
+
+        return redirect()->back();
     }
 }
