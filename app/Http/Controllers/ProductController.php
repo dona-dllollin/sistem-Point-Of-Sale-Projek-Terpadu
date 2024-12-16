@@ -23,6 +23,7 @@ class ProductController extends Controller
         $kategori = Categories::all();
         $toko = Market::all();
         $filter = $request->query('filter', 'kode_barang');
+        $satuans = Satuan::all();
         $user = Auth::user();
         if ($user->role === 'admin') {
 
@@ -32,7 +33,7 @@ class ProductController extends Controller
         } else {
             return back();
         }
-        return view('product.index', compact('products', 'toko', 'kategori'));
+        return view('product.index', compact('products', 'toko', 'kategori', 'satuans'));
     }
 
     // halaman tambah barang

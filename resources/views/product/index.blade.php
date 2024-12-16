@@ -81,11 +81,11 @@
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Foto Barang</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                  <input name="image" id="image" type="file" class="custom-file-input"
+                  <input name="image" id="image{{$product->id}}" type="file" class="custom-file-input"
                   accept="image/*"
-                  onchange="document.getElementById('output').src = window.URL.createObjectURL(this.files[0]); document.getElementById('fileLabel').textContent = this.files[0].name;">
-                  <label class="custom-file-label" id="fileLabel" data-default="{{$product->image}}">{{$product->image}}</label>
-                     <div class="col-sm-12 text-center mt-3" ><img id="output" src="{{asset('pictures/product/' . $product->image)}}" class="img-fluid" style="width: 30%"></div>
+                  onchange="document.getElementById('output{{$product->id}}').src = window.URL.createObjectURL(this.files[0]); document.getElementById('fileLabel{{$product->id}}').textContent = this.files[0].name;">
+                  <label class="custom-file-label" id="fileLabel{{$product->id}}" data-default="{{$product->image}}">{{$product->image}}</label>
+                     <div class="col-sm-12 text-center mt-3" ><img id="output{{$product->id}}" src="{{asset('pictures/product/' . $product->image)}}" class="img-fluid" style="width: 30%"></div>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="foto_barang_error"></div>
               </div>
@@ -100,12 +100,9 @@
                       <input type="text" class="form-control number-input input-notzero" name="satuan" value="{{$satuan[0]}}">
                       <div class="input-group-append">
                         <select class="form-control" name="satuan_berat">
-                          <option value="kg" {{"kg" == $satuan[1] ? 'selected' : ''}}>Kilogram</option>
-							  					<option value="g" {{"g" == $satuan[1] ? 'selected' : ''}}>Gram</option>
-							  					<option value="pcs" {{"pcs" == $satuan[1] ? 'selected' : ''}}>pcs</option>
-							  					<option value="saschet" {{"saschet" == $satuan[1] ? 'selected' : ''}}>saschet</option>
-							  					<option value="l" {{"l" == $satuan[1] ? 'selected' : ''}}>Liter</option>
-							  					<option value="kardus" {{"kardus" == $satuan[1] ? 'selected' : ''}}>kardus</option>
+                          @foreach ($satuans as $item)           
+                          <option value="{{$item->nama}}" {{$item->nama == $satuan[1] ? 'selected' : ''}}>{{$item->nama}}</option>
+                          @endforeach
                         </select>
                       </div>
                     </div>
