@@ -254,7 +254,7 @@
 
             @if(auth()->user()->role === 'admin')
             <li class="nav-item">
-              <a class="nav-link" href="">
+              <a class="nav-link" href="{{route('admin.toko')}}">
                 <span class="menu-title">Kelola Toko</span>
               </a>
             </li>

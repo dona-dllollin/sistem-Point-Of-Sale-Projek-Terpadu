@@ -12,6 +12,14 @@ class Market extends Model
     public $table = 'markets';
     use HasFactory;
 
+    protected $fillable = [
+        'nama_toko',
+        'slug',
+        'kas',
+        'no_telp',
+        'alamat'
+    ];
+
     // public function user(): HasMany
     // {
     //     return $this->hasMany(User::class);

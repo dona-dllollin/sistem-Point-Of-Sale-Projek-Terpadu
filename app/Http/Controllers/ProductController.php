@@ -51,6 +51,22 @@ class ProductController extends Controller
         $check_product = Product::where('kode_barang', $request->kode_barang)
             ->count();
 
+        $request->validate(
+            [
+                'nama_barang' => 'required',
+                'kode_barang' => 'required',
+                'stok' => 'required|integer',
+                'harga_beli' => 'required|numeric',
+                'harga_jual' => 'required|numeric',
+                'market_id' => 'required',
+
+            ],
+            [
+                'nama_barang.required' => 'nama barang harus diisi',
+
+            ]
+        );
+
         if ($request->hasFile('image')) {
             $request->validate(
                 [
@@ -113,7 +129,13 @@ class ProductController extends Controller
 
         $request->validate(
             [
-                'nama_barang' => 'required'
+                'nama_barang' => 'required',
+                'kode_barang' => 'required',
+                'stok' => 'required|integer',
+                'harga_beli' => 'required|numeric',
+                'harga_jual' => 'required|numeric',
+                'market_id' => 'required',
+
             ],
             [
                 'nama_barang.required' => 'nama barang harus diisi',

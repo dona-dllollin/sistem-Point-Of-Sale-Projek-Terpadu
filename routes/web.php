@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\MarketController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\TransactionController;
@@ -77,6 +78,12 @@ Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(fu
     Route::post('/kategori', [CategoryController::class, 'create']);
     Route::post('/kategori/edit', [CategoryController::class, 'edit']);
     Route::post('/kategori/delete/{id}', [CategoryController::class, 'delete']);
+
+    // Kelola Toko
+    Route::get('/toko', [MarketController::class, 'index'])->name('admin.toko');
+    Route::post('/toko', [MarketController::class, 'create']);
+    Route::post('/toko/update', [MarketController::class, 'update']);
+    Route::post('/toko/delete/{id}', [MarketController::class, 'delete']);
 });
 
 Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {

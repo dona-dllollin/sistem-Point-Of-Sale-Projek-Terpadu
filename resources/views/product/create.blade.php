@@ -81,7 +81,9 @@
 					  			</div>
 					  		</div>
 					  	</div>
-						<div class="col-12 error-notice" id="kode_barang_error"></div>
+						@error('kode_barang')
+						<div class="col-12 error-notice text-danger">{{$message}}</div>
+						@enderror
 					</div>
 					<div class="form-group row">
 					  	<div class="col-lg-6 col-md-6 col-sm-12 space-bottom">
@@ -90,25 +92,29 @@
 							  	<div class="col-12">
 							  		<input type="text" class="form-control" name="nama_barang" placeholder="Masukkan Nama Barang">
 							  	</div>
-								<div class="col-12 error-notice" id="nama_barang_error"></div>
-					  		</div>
-					  	</div>
-					  	<div class="col-lg-6 col-md-6 col-sm-12">
-					  		<div class="row">
-					  			<label class="col-12 font-weight-bold col-form-label">Foto Barang <span class="text-danger">*</span></label>
-							  	<div class="col-12">
-                                            <input name="image" id="image" type="file" class="custom-file-input"
-                                                accept="image/*"
-                                                onchange="document.getElementById('output').src = window.URL.createObjectURL(this.files[0]); document.getElementById('fileLabel').textContent = this.files[0].name;">
-                                                <label class="custom-file-label" id="fileLabel">Choose File</label>
-                                    
-                                    <div class="col-sm-12 text-center mt-3" ><img id="output" src="" class="img-fluid" style="width: 30%"></div>
-
-							  	</div>
-								<div class="col-12 error-notice" id="jenis_barang_error"></div>
+								  @error('nama_barang')
+								  <div class="col-12 error-notice text-danger">{{$message}}</div>
+								  @enderror
 					  		</div>
 					  	</div>
 					</div>
+					<div class="form-group row">
+					  	<div class="col-lg-6 col-md-6 col-sm-12 space-bottom">
+					  		<div class="row">
+					  			<label class="col-12 font-weight-bold col-form-label">Foto Barang <span class="text-danger">*</span></label>
+							  	<div class="col-12">
+                                            <input name="image" id="image" type="file" class="custom-file-input" 
+                                                accept="image/*"
+                                                onchange="document.getElementById('output').src = window.URL.createObjectURL(this.files[0]); document.getElementById('fileLabel').textContent = this.files[0].name;">
+                                                <label class=" custom-file-label" id="fileLabel">Choose File</label>
+                                    
+                                      <div class="col-sm-12 text-center mt-3" ><img id="output" src="" class="img-fluid" style="width: 30%"></div>
+
+							  	</div>
+					  		</div>
+					  	</div>
+					</div>
+					
 					<div class="form-group row">
 					  	<div class="col-lg-6 col-md-6 col-sm-12 space-bottom">
 					  		<div class="row">
@@ -119,13 +125,8 @@
 							  			<div class="input-group-append">
 							  				<select class="form-control" name="satuan_berat">
 												@foreach ($satuan as $item)						
-												<option value="{{$item->id}}">{{$item->nama}}</option>
+												<option value="{{$item->nama}}">{{$item->nama}}</option>
 												@endforeach
-							  					{{-- <option value="g">Gram</option>
-							  					<option value="pcs">pcs</option>
-							  					<option value="saschet">saschet</option>
-							  					<option value="l">Liter</option>
-							  					<option value="kardus">kardus</option> --}}
 							  				</select>
 							  			</div>
 							  		</div>
@@ -147,6 +148,9 @@
                                     <input type="hidden" name="toko" value="{{ Auth::user()->market->id }}">
                                     @endif
 							  	</div>
+								  @error('toko')
+								  <div class="col-12 error-notice text-danger">{{$message}}</div>
+								  @enderror
 					  		</div>
 					  	</div>
 					</div>
@@ -160,7 +164,9 @@
                                     <input type="text" class="form-control number-input" name="stok" placeholder="Masukkan jumlah stok barang">
                                
                               </div>
-                              <div class="col-12 error-notice" id="stok_error"></div>
+							  @error('stok')
+							  <div class="col-12 error-notice text-danger">{{$message}}</div>
+							  @enderror
                             </div>
                         </div>
                     
@@ -176,7 +182,6 @@
 							  		</select>
                                     
                                 </div>
-                              <div class="col-12 error-notice" id="harga_error"></div>
                             </div>
                         </div>
                   </div>
@@ -193,7 +198,9 @@
 							  		<input type="text" class="form-control number-input" name="harga_beli" placeholder="Masukkan Harga Beli Barang">
 							  	</div>
                                 </div>
-								<div class="col-12 error-notice" id="stok_error"></div>
+								@error('harga_beli')
+								<div class="col-12 error-notice text-danger">{{$message}}</div>
+								@enderror
 					  		</div>
 					  	</div>
 					  
@@ -208,7 +215,9 @@
 							  			<input type="text" class="form-control number-input" name="harga_jual" placeholder="Masukkan Harga Jual Barang">
 							  		</div>
 							  	</div>
-								<div class="col-12 error-notice" id="harga_error"></div>
+								  @error('harga_jual')
+								  <div class="col-12 error-notice text-danger">{{$message}}</div>
+								  @enderror
 					  		</div>
 					  	</div>
 					</div>
