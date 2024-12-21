@@ -152,6 +152,21 @@ function confirmDelete(event) {
 @if ($errors->any())
     <script>
         $( document ).ready(function() {
+
+          @if (session('modal_mode') === 'edit')
+            $('#karyawanForm').attr('action', '/satuan/edit'); // URL untuk edit
+            $('#method').val('POST'); // Method untuk edit
+            $('#modalTitle').text('Edit Satuan');
+            $('#modalSubmit').text('Update');
+            $('#karyawanId').val('{{session('modal_data.id')}}');
+            $('#nama').val('{{session('modal_data.nama')}}');
+          @else
+            $('#karyawanForm').attr('action', '/satuan'); // URL untuk tambah
+            $('#method').val('POST'); // Method untuk tambah
+            $('#modalTitle').text('Tambah Satuan');
+            $('#modalSubmit').text('Tambah');
+            $('#karyawanForm')[0].reset(); // Reset semua field
+          @endif
             $('#karyawanModal').modal('show');
         });
     </script>
@@ -163,7 +178,6 @@ function confirmDelete(event) {
     // Fungsi untuk membuka modal tambah
     $('.btnTambah').click(function (e) {
         e.preventDefault()
-        $('#optionPilihToko').removeAttr('hidden')
         $('#karyawanForm').attr('action', '/satuan'); // URL untuk tambah
         $('#method').val('POST'); // Method untuk tambah
         $('#modalTitle').text('Tambah Satuan');
@@ -183,11 +197,10 @@ function confirmDelete(event) {
         // Set data ke form
         $('#karyawanForm').attr('action', url); // URL untuk edit
         $('#method').val('POST'); // Method untuk edit
-        $('#modalTitle').text('Edit Karyawan');
+        $('#modalTitle').text('Edit Satuan');
         $('#modalSubmit').text('Update');
         $('#karyawanId').val(id);
         $('#nama').val(nama);
-
         $('#karyawanModal').modal('show');
     });
 

@@ -58,7 +58,7 @@ class ProductController extends Controller
                 'stok' => 'required|integer',
                 'harga_beli' => 'required|numeric',
                 'harga_jual' => 'required|numeric',
-                'market_id' => 'required',
+                'toko' => 'required',
 
             ],
             [
@@ -134,7 +134,7 @@ class ProductController extends Controller
                 'stok' => 'required|integer',
                 'harga_beli' => 'required|numeric',
                 'harga_jual' => 'required|numeric',
-                'market_id' => 'required',
+                'toko' => 'required',
 
             ],
             [

@@ -346,7 +346,7 @@
         preview.src = URL.createObjectURL(file);
     } else {
         label.textContent = defaultImage; // Reset ke gambar default
-        preview.src = "{{ asset('pictures/product/' . $product->image) }}"; // Gambar default
+        preview.src = "{{ asset('pictures/product/default.png') }}"; // Gambar default
     }
 });
 

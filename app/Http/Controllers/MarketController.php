@@ -38,7 +38,7 @@ class MarketController extends Controller
 
         if ($validator->fails()) {
             // Mode edit atau tambah berdasarkan apakah ada 'id'
-            session()->flash('modal_mode', $req->has('id') ? 'edit' : 'add');
+            session()->flash('modal_mode', $req->id !== null ? 'edit' : 'add');
             session()->flash('modal_data', $req->all());
 
             return redirect()->back()->withErrors($validator);
@@ -92,7 +92,13 @@ class MarketController extends Controller
             return;
         }
 
-        $market->update($req->all());
+        $market->update([
+            'nama_toko' => $req->nama_toko,
+            'slug' => Str::slug($req->nama_toko),
+            'kas' => $req->kas,
+            'no_telp' => $req->no_telp,
+            'alamat' => $req->alamat
+        ]);
 
         return back()->with('success', 'data toko berhasil diubah');
     }

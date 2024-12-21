@@ -167,6 +167,30 @@ function confirmDelete(event) {
 @if ($errors->any())
     <script>
         $( document ).ready(function() {
+
+          @if (session('modal_mode')  === 'edit')
+          // Set data ke form
+        $('#karyawanForm').attr('action', '/kategori/edit'); // URL untuk edit
+        $('#method').val('POST'); // Method untuk edit
+        $('#modalTitle').text('Edit Kategori');
+        $('#modalSubmit').text('Update');
+        $('#karyawanId').val('{{session('modal_data.id')}}');
+        $('#name').val('{{session('modal_data.nama')}}');
+
+        const btnEdit = $(`.btnEdit[data-id="{{ session('modal_data.id') }}"]`);// Pilih tombol yang diinginkan
+        const gambar = btnEdit.data('gambar');
+            // Atur label dan gambar
+        const gambarPath = `{{ asset('pictures') }}/${gambar}`; // Path gambar dengan Laravel asset helper
+        $('#gambar').val(''); // Kosongkan input file
+        $('#fileLabel').text(gambar); // Set nama file sebagai label
+        $('#output').attr('src', gambarPath); // Set src untuk preview gambar
+          @else
+        $('#karyawanForm').attr('action', '/kategori'); // URL untuk tambah
+        $('#method').val('POST'); // Method untuk tambah
+        $('#modalTitle').text('Tambah Kategori');
+        $('#modalSubmit').text('Tambah');
+        $('#karyawanForm')[0].reset(); // Reset semua field
+          @endif
             $('#karyawanModal').modal('show');
         });
     </script>
@@ -178,7 +202,6 @@ function confirmDelete(event) {
     // Fungsi untuk membuka modal tambah
     $('.btnTambah').click(function (e) {
         e.preventDefault()
-        $('#optionPilihToko').removeAttr('hidden')
         $('#karyawanForm').attr('action', '/kategori'); // URL untuk tambah
         $('#method').val('POST'); // Method untuk tambah
         $('#modalTitle').text('Tambah Kategori');

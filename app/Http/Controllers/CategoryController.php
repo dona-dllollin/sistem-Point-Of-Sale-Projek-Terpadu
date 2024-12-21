@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -17,12 +18,22 @@ class CategoryController extends Controller
 
     public function create(Request $req)
     {
-        $req->validate([
+        $roles = [
             'name' => 'required|max:255'
-        ], [
-            'name.required' => 'nama satuan tidak boleh kosong'
-        ]);
+        ];
 
+        $messages = [
+            'name.required' => 'nama satuan tidak boleh kosong'
+        ];
+
+        $validator = Validator::make($req->all(), $roles, $messages);
+
+        if ($validator->fails()) {
+            session()->flash('modal_mode', $req->id !== null ? 'edit' : 'add');
+            session()->flash('modal_data', $req->except('gambar'));
+
+            return redirect()->back()->withErrors($validator);
+        }
 
         if ($req->hasFile('gambar')) {
             $req->validate(
@@ -54,11 +65,24 @@ class CategoryController extends Controller
 
     public function edit(Request $req)
     {
-        $req->validate([
+        $roles = [
             'name' => 'required|max:255'
-        ], [
+        ];
+
+        $messages = [
             'name.required' => 'nama satuan tidak boleh kosong'
-        ]);
+        ];
+
+        $validator = Validator::make($req->all(), $roles, $messages);
+
+        if ($validator->fails()) {
+            $filteredData = $req->except('gambar');
+            session()->flash('modal_mode', $req->id !== null ? 'edit' : 'add');
+            session()->flash('modal_data', $filteredData);
+
+            return redirect()->back()->withErrors($validator);
+        }
+
 
         $kategori = Categories::find($req->id);
         if (!$kategori) {

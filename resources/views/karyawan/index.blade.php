@@ -299,10 +299,37 @@ function confirmDelete(event) {
 
 </script>
 
+
+
 @if ($errors->any())
     <script>
         $( document ).ready(function() {
-            $('#karyawanModal').modal('show');
+
+      @if (session('modal_mode') === 'edit')
+
+        $('#karyawanForm').attr('action', '/karyawan/edit'); // URL untuk edit
+        $('#method').val('POST'); // Method untuk edit
+        $('#modalTitle').text('Edit Karyawan');
+        $('#modalSubmit').text('Update');
+        $('#karyawanId').val('{{ session('modal_data.id') }}');
+        $('#nama').val('{{ session('modal_data.nama') }}');
+        $('#email').val('{{ session('modal_data.email') }}');
+        $('#no_karyawan').val('{{ session('modal_data.no_karyawan') }}');
+        $('#no_hp').val('{{ session('modal_data.no_hp') }}');
+        $('#alamat').val('{{ session('modal_data.alamat') }}');
+        $('#tanggal_masuk').val('{{ session('modal_data.tanggal_masuk') }}');
+        $('#optionPilihToko').attr('hidden', true)
+        $('#market_id').val('{{ session('modal_data.market_id') }}');
+      @else
+        $('#optionPilihToko').removeAttr('hidden')
+        $('#karyawanForm').attr('action', '/karyawan'); // URL untuk tambah
+        $('#method').val('POST'); // Method untuk tambah
+        $('#modalTitle').text('Tambah Karyawan');
+        $('#modalSubmit').text('Tambah');
+        $('#karyawanForm')[0].reset(); // Reset semua field
+      @endif
+
+          $('#karyawanModal').modal('show');
         });
     </script>
 @endif
