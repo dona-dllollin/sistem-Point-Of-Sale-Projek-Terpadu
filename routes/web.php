@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\MarketController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\TransactionController;
@@ -33,6 +34,7 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/register', [AuthController::class, 'create'])->name('registrasi');
     Route::post('/register', [AuthController::class, 'register'])->name('registrasi');
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/midtrans/callback', [PaymentController::class, 'handleCallback']);
 });
 
 Route::middleware(['auth'])->group(function () {

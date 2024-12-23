@@ -13,9 +13,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Midtrans\Snap;
 
 class TransactionController extends Controller
 {
+
+    public function __construct()
+    {
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        \Midtrans\Config::$isProduction = false; // Set true jika production
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+    }
+
     public function index(Request $request)
     {
         $categories = Categories::all();
@@ -280,14 +290,19 @@ class TransactionController extends Controller
             $market_id = 0;
             $market_id = $user->market_id ?? $req->market_id;
 
+            $status = $req->payment_method === 'manual' ? 'completed' : 'pending';
+            $bayar = $req->payment_method === 'manual' ? $req->bayar : $req->total;
+
             $transaksi = Transaction::create([
                 'user_id' => $user_id,
                 'kode_transaksi' => $req->kode_transaksi,
                 'total_harga' => $req->subtotal,
                 'diskon' => $req->diskon,
-                'bayar' => $req->bayar,
-                'kembali' => $req->bayar - $req->total,
+                'bayar' => $bayar,
+                'kembali' => $bayar - $req->total,
                 'market_id' => $market_id,
+                'status' => $status,
+                'metode' => $req->payment_method
             ]);
 
             foreach ($cart as $product_id => $item) {
@@ -307,11 +322,21 @@ class TransactionController extends Controller
             // Hapus data keranjang di session
             session()->forget('cart');
 
-            DB::commit();
-
-            Session::flash('transaction_success', $transaksi);
-
-            return back();
+            if ($req->payment_method === 'manual') {
+                DB::commit();
+                Session::flash('transaction_success', $transaksi);
+                return back();
+            } else {
+                DB::commit();
+                $snapToken = $this->createSnapToken($transaksi);
+                if ($snapToken) {
+                    session()->flash('transaksi', $transaksi);
+                    session()->flash('snapToken', $snapToken);
+                    return back();
+                } else {
+                    return back()->with('transaction_error', 'Gagal mendapatkan snap token.');
+                }
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('transaction_error', 'Terjadi kesalahan saat menambahkan transaksi. error' . $e->getMessage());
@@ -328,5 +353,33 @@ class TransactionController extends Controller
         $customPaper = array(0, 0, 400.00, 283.80);
         $pdf = Pdf::loadview('transaction.nota_transaksi', compact('transaction', 'market', 'items', 'diskon', 'total'))->setPaper($customPaper, 'landscape');
         return $pdf->stream();
+    }
+
+
+
+    public function createSnapToken(Transaction $transaksi)
+    {
+        $diskon = $transaksi->total_harga * $transaksi->diskon / 100;
+        $total = $transaksi->total_harga - $diskon;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaksi->kode_transaksi,
+                'gross_amount' => $total,
+            ],
+
+            'customer_details' => [
+                'first_name' => auth()->user()->nama,
+                'email' => auth()->user()->email
+            ]
+
+        ];
+
+        try {
+            $snapToken = Snap::getSnapToken($params);
+            return $snapToken;
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

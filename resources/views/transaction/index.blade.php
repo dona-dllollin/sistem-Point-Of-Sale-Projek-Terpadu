@@ -405,6 +405,19 @@
             <div class="col-12 mt-2">
               <table class="table-payment-3">
                 <tr>
+                  <label for="payment_method">Metode Pembayaran</label>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="input-group">
+                      <select name="payment_method" id="payment_method" class="form-control">
+                        <option value="manual">Manual</option>
+                        <option value="electronic">Elektronik</option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+                <tr id="bayar-row">
                   <td>
                     <div class="input-group">
                       <div class="input-group-prepend">
@@ -432,13 +445,24 @@
 </form>
 @endsection
 @section('script')
+
 <script src="{{ asset('plugins/js/quagga.min.js') }}"></script>
 <script src="{{ asset('js/transaction/script.js') }}"></script>
+<script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{config('midtrans.client_key')}}"></script>
+
 <script type="text/javascript">
 
 @if ($message = Session::get('transaction_success'))
   $('#successModal').modal('show');
 @endif
+
+@if ($message = Session::get('transaction_error'))
+    swal(
+        "",
+        "{{ $message }}",
+        "error"
+    );
+  @endif
 
 // $(document).on('click', '.btn-pilih', function(e){
 //   e.preventDefault();
@@ -682,10 +706,14 @@ $(document).on('click', '.btn-continue', function(e){
   });
 });
 
+
+
 $(document).on('click', '.btn-bayar', function(){
+  let paymentMethod = $('select[name="payment_method"]').val();
+  var check_barang = parseInt($('.jumlah_barang_text').length);
+  if (paymentMethod === 'manual') {
   var total = parseInt($('.nilai-total2-td').val());
   var bayar = parseInt($('.bayar-input').val());
-  var check_barang = parseInt($('.jumlah_barang_text').length);
   if(bayar >= total){
     $('.nominal-error').prop('hidden', true);
     if(check_barang != 0){
@@ -718,7 +746,25 @@ $(document).on('click', '.btn-bayar', function(){
       );
     }
   }
+} else {
+  if(check_barang != 0){
+      if($('.diskon-input').attr('hidden') != 'hidden'){
+        $('.diskon-input').addClass('is-invalid');
+      }else{
+        sessionStorage.removeItem('disc')
+        sessionStorage.removeItem('diskon')
+        $('#transaction_form').submit();
+      }
+    }else{
+      swal(
+          "",
+          "Pesanan Kosong",
+          "error"
+      );
+    }
+}
 });
+
 
 
 //filter market
@@ -782,7 +828,55 @@ $(document).on('click', '.category-link', function (e) {
     window.location.href = url.toString();
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    const paymentMethod = document.getElementById("payment_method");
+    const bayarRow = document.getElementById("bayar-row");
+
+    // Fungsi untuk mengontrol tampilan input
+    function toggleBayarInput() {
+      if (paymentMethod.value === "manual") {
+        bayarRow.style.display = ""; // Tampilkan
+      } else {
+        bayarRow.style.display = "none"; // Sembunyikan
+      }
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    toggleBayarInput();
+
+    // Tambahkan event listener untuk perubahan select
+    paymentMethod.addEventListener("change", toggleBayarInput);
+  });
+
+
+
 </script>
+
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{config('midtrans.client_key')}}"></script>
+
+@if (session('snapToken'))
+    <script>
+         snap.pay('{{ session('snapToken') }}', {
+            onSuccess: function(result) {
+                alert('Pembayaran berhasil!');
+                
+            },
+            onPending: function(result) {
+                alert('Pembayaran tertunda.');
+            },
+            onError: function(result) {
+                alert('Terjadi kesalahan pembayaran.');
+            },
+            onClose: function() {
+                alert('Anda belum menyelesaikan pembayaran.');
+            }
+        });
+    </script>
+    
+@endif
+
+
 
 <style>
     .productCard {

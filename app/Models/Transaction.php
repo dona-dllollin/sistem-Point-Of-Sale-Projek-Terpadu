@@ -19,7 +19,9 @@ class Transaction extends Model
         'diskon',
         'bayar',
         'kembali',
-        'market_id'
+        'market_id',
+        'status',
+        'metode'
     ];
 
     public function market(): BelongsTo
