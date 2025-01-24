@@ -248,7 +248,7 @@ function confirmDelete(event) {
                 // Jika mode tambah
                 $('#tokoForm').attr('action', '/toko'); // URL untuk tambah
                 $('#method').val('POST'); // Method untuk tambah
-                $('#modalTitle').text('Tambah Karyawan');
+                $('#modalTitle').text('Tambah Toko');
                 $('#modalSubmit').text('Tambah');
                 $('#tokoForm')[0].reset(); // Reset form
             @endif
@@ -265,7 +265,7 @@ function confirmDelete(event) {
         e.preventDefault()
         $('#tokoForm').attr('action', '/toko'); // URL untuk tambah
         $('#method').val('POST'); // Method untuk tambah
-        $('#modalTitle').text('Tambah Karyawan');
+        $('#modalTitle').text('Tambah Toko');
         $('#modalSubmit').text('Tambah');
         $('#tokoForm')[0].reset(); // Reset semua field
         $('#tokoModal').modal('show');
