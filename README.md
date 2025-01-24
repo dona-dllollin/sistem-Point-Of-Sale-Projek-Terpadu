@@ -7,6 +7,22 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## User Access
+# Admin
+- Email : dona@gmail.com
+- password : 12345678
+# Kasir
+- Email : kasir@gmail.com
+- password : 12345678
+
+## How To Run This Project
+- download this project on github
+- copy .env.example file and change the name to .env
+- edit database config in .env
+- type command "php artisan key:generate"
+- make a migration with this command "php artisan migrate"
+- import database in folder db
+- run project with command "php artisan serve"
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
@@ -65,19 +81,4 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-## User Access
-# Admin
-- Email : dona@gmail.com
-- password : 12345678
-# Kasir
-- Email : kasir@gmail.com
-- password : 12345678
 
-## How To Run This Project
-- download this project on github
-- copy .env.example file and change the name to .env
-- edit database config in .env
-- type command "php artisan key:generate"
-- make a migration with this command "php artisan migrate"
-- import database in folder db
-- run project with command "php artisan serve"
