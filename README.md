@@ -12,7 +12,7 @@
 - Email : dona@gmail.com
 - password : 12345678
 # Kasir
-- Email : kasir@gmail.com
+- Email : kasir@kasir.com
 - password : 12345678
 
 ## How To Run This Project
