@@ -9,8 +9,8 @@ html {
     background-color: #b42d04;
 }
 
-.bg-green {
-    background-color: #07ba7b;
+.bg-hijau {
+    background-color: #49c599;
 }
 
 .bg-blue-2 {
@@ -83,7 +83,7 @@ html {
 .icon-round-3 {
     border-radius: 10px;
     border: 1px solid #e14343;
-    background: #650303;
+    background: #790303;
     font-size: 18px;
     font-weight: bold;
     line-height: 25px;
@@ -97,7 +97,7 @@ html {
 .icon-round-4 {
     border-radius: 10px;
     border: 1px solid #5ce5b5;
-    background: #19d895;
+    background: #1ec98d;
     font-size: 18px;
     font-weight: bold;
     line-height: 25px;

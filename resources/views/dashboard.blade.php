@@ -115,16 +115,16 @@
         </div>
       </div>
       <div class="col-lg-6 col-md-12 col-sm-6 col-12 mb-4">
-        <div class="card b-radius card-noborder">
-          <div class="card-body custom-card-p bg-green">
+        <div class="card b-radius card-noborder bg-hijau">
+          <div class="card-body custom-card-p">
             <div class="row">
               <div class="col-12 d-flex justify-content-start align-items-center icon-card">
-                <div class="icon-round-4">
-                  <i class="mdi mdi-account-multiple"></i>
+                <div class="icon-round-4 text-white">
+                  Rp
                 </div>
                 <div class="ml-3">
-                  <p class="m-0">Total Keuntungan</p>
-                  <h5>{{ $customers_daily }} Orang</h5>
+                  <p class="m-0 text-white">Total Keuntungan</p>
+                  <h5 class="text-white">{{ $customers_daily }} Orang</h5>
                 </div>
               </div>
             </div>
