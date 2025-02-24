@@ -18,43 +18,36 @@ class DashboardController extends Controller
 
 
 
-            $marketId = $request->query('market_id');
+            // $marketId = $request->query('market_id');
 
 
-            $kd_transaction = Transaction::select('kode_transaksi')
-                ->when($marketId, function ($query) use ($marketId) {
-                    return $query->where('market_id', $marketId);
-                })
-                ->latest()
-                ->distinct()
-                ->take(5)
-                ->get();
+            // $kd_transaction = Transaction::select('kode_transaksi')
+            //     ->when($marketId, function ($query) use ($marketId) {
+            //         return $query->where('market_id', $marketId);
+            //     })
+            //     ->latest()
+            //     ->distinct()
+            //     ->take(5)
+            //     ->get();
 
-            $transactions = Transaction::when($marketId, function ($query) use ($marketId) {
-                return $query->where('market_id', $marketId);
-            })->get();
+            $transactions = Transaction::get();
 
             $kode_transaksi_dis = Transaction::select('kode_transaksi')
-                ->when($marketId, function ($query) use ($marketId) {
-                    return $query->where('market_id', $marketId);
-                })
                 ->distinct()
                 ->get();
 
-            $kode_transaksi_dis_daily = Transaction::when($marketId, function ($query) use ($marketId) {
-                return $query->where('market_id', $marketId);
-            })
-                ->whereDate('created_at', Carbon::now())
+            $kode_transaksi_dis_daily = Transaction::
+                  whereDate('created_at', Carbon::now())
                 ->select('kode_transaksi')
                 ->distinct()
                 ->get();
         } elseif ($user->role === 'kasir') {
-            $kd_transaction = Transaction::where('market_id', $user->market_id)
-                ->select('kode_transaksi')
-                ->latest()
-                ->distinct()
-                ->take(5)
-                ->get();
+            // $kd_transaction = Transaction::where('market_id', $user->market_id)
+            //     ->select('kode_transaksi')
+            //     ->latest()
+            //     ->distinct()
+            //     ->take(5)
+            //     ->get();
 
             $transactions = Transaction::where('market_id', $user->market_id)->get();
 
@@ -96,22 +89,22 @@ class DashboardController extends Controller
 
 
         $all_incomes = 0;
-        $incomes_daily = 0;
+        // $incomes_daily = 0;
 
         foreach ($kode_transaksi_dis as $kode) {
             $transaksi = Transaction::where('kode_transaksi', $kode->kode_transaksi)->first();
             $all_incomes += $transaksi->total_harga;
         }
 
-        foreach ($kode_transaksi_dis_daily as $kode) {
-            $transaksi_daily = Transaction::where('kode_transaksi', $kode->kode_transaksi)->first();
-            $incomes_daily += $transaksi_daily->total_harga;
-        }
-        $customers_daily = count($kode_transaksi_dis_daily);
+        // foreach ($kode_transaksi_dis_daily as $kode) {
+        //     $transaksi_daily = Transaction::where('kode_transaksi', $kode->kode_transaksi)->first();
+        //     $incomes_daily += $transaksi_daily->total_harga;
+        // }
+        $customers_daily = count($kode_transaksi_dis);
         $min_date = Transaction::min('created_at');
         $max_date = Transaction::max('created_at');
-        $markets = Market::all();
+        
 
-        return view('dashboard', compact('kd_transaction', 'incomes', 'incomes_daily', 'customers_daily', 'all_incomes', 'min_date', 'max_date', 'markets'));
+        return view('dashboard', compact('incomes', 'customers_daily', 'all_incomes', 'min_date', 'max_date'));
     }
 }
