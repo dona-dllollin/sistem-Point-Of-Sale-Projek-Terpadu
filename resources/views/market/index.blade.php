@@ -139,11 +139,12 @@
   <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-        
+        <h6 class="m-0 font-weight-bold text-primary">Data Toko</h6>
+            @if ($markets->count() < 1)
             <a href="" class="btn btn-icons btn-primary btn-new ml-2 btnTambah" id="btnTambah" >
                 <i class="mdi mdi-plus"></i>
             </a>
+            @endif
     </div>
 
     <div class="card-body">
@@ -180,12 +181,7 @@
                                 <i class="mdi mdi-eye"></i>
                             </button>
         
-                         <form action="{{url('/toko/delete/'. $item->id)}}" method="POST" onsubmit="return confirmDelete(event)" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-icons btn-rounded btn-secondary ml-1 btn-delete" style="background-color: rgb(255, 75, 75)" >
-                                <i class="mdi mdi-close"></i>
-                            </button>
-                        </form>
+                         
                           </td>
                         
                     </tr>
@@ -209,23 +205,6 @@
     );
   @endif
 
-function confirmDelete(event) {
-        event.preventDefault(); // Menghentikan form dari pengiriman langsung
-
-        swal({
-      title: "Apa Anda Yakin?",
-      text: "Data Toko akan terhapus, klik oke untuk melanjutkan",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-         }).then((willDelete) => {
-            if (willDelete) {
-                event.target.submit();
-            } else {
-                swal('batal menghapus data Toko');
-            }
-        });
-    }
 
 </script>
 
@@ -299,20 +278,6 @@ function confirmDelete(event) {
 });
 
 </script>
-
-
-
-
-
-        {{-- <!-- Bootstrap core JavaScript-->
-        <script src="{{asset('sbAdmin/vendor/jquery/jquery.min.js')}}"></script>
-        <script src="{{asset('sbAdmin/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
-        <!-- Core plugin JavaScript-->
-        <script src="{{asset('sbAdmin/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
-
-        <!-- Custom scripts for all pages-->
-        <script src="{{asset('sbAdmin/js/sb-admin-2.min.js')}}"></script> --}}
 
       <!-- Page level plugins -->
       <script src="{{asset('sbAdmin/vendor/datatables/jquery.dataTables.min.js')}}"></script>

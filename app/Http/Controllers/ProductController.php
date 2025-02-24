@@ -215,22 +215,20 @@ class ProductController extends Controller
     function deleteProduct($id)
     {
 
-        // Temukan produk berdasarkan ID
+
         $product = Product::find($id);
-        // Jika produk ditemukan, hapus relasi kategori
+
 
         if ($product) {
 
-            // Menghapus relasi kategori di tabel pivot
             $product->categories()->detach();
 
-            // Jika gambar bukan default, hapus file gambar dari folder
+
             if ($product->image !== 'default.png') {
                 $gambarPath = public_path('pictures/product/' . $product->image);
 
-                // Periksa apakah file gambar ada di folder
                 if (file_exists($gambarPath)) {
-                    unlink($gambarPath); // Hapus file gambar
+                    unlink($gambarPath);
                 }
             }
 

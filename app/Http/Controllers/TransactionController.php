@@ -63,6 +63,14 @@ class TransactionController extends Controller
             $products = $products->get();
         } else if ($user->role === 'kasir') {
             $products = Product::where('market_id', $user->market_id);
+
+            // Filter berdasarkan kategori untuk kasir
+            if ($request->has('category_id') && $request->category_id != 'all') {
+                $products->whereHas('categories', function ($query) use ($request) {
+                    $query->where('categories.id', $request->category_id);
+                });
+            }
+
             $products = $products->get();
         }
 
@@ -168,7 +176,7 @@ class TransactionController extends Controller
         ]);
     }
 
-
+    // fungsi menambah item di session
     public function increaseQuantity($id)
     {
         $product = Product::find($id);

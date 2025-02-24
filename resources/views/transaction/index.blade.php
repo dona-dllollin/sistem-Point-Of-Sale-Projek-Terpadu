@@ -158,8 +158,7 @@
   </div>
   @endif
 </div>
-{{-- <form method="POST" name="transaction_form" id="transaction_form" action="{{ url('/transaction/process') }}">
-  @csrf --}}
+
   <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-12 mb-4">
       <div class="row">
@@ -179,9 +178,7 @@
                     </div>
                   </div>
                   <div class="btn-group mt-h">
-                    {{-- <button class="btn btn-search" data-toggle="modal" data-target="#tableModal" type="button">
-                      <i class="mdi mdi-magnify"></i>
-                    </button> --}}
+                 
                     <button class="btn btn-search btn-scan" data-toggle="modal" data-target="#scanModal" type="button">
                       <i class="mdi mdi-crop-free" style="font-size: 20px"></i>
                     </button>
@@ -213,28 +210,14 @@
                         @endforeach
                     </div>
 
-                    @if(auth()->user()->role === 'admin')
-                    <div class=" period-form col-4">
-                      <div class="form-group">
-                            <p>Pilih Toko Terlebih Dahulu</p>
-                          <select name="market_id" class="form-control form-control-lg market-select" style="width: 100%">
-                            <option value="all" {{ request('market_id') === 'all' ? 'selected' : '' }}>Pilih Toko</option>
-                              @foreach ($markets as $market)
-                                  <option value="{{ $market->id }}" {{ $market->id == request('market_id') ? 'selected' : '' }}>{{ $market->nama_toko }}</option>
-                              @endforeach
-                          </select>
-                      </div>
-                    </div>
-                    @endif
                 </div>
 
-                    <div class="row card-product" {{ Auth::user()->role === 'admin' ? 'hidden' : '' }}>
+                    <div class="row card-product">
                         @foreach ($products as $product)
                         <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-2">
                             <div class="productCard border rounded shadow-sm h-100 d-flex flex-column">
                                 <div class="productImage position-relative pb-3" style="border-bottom: 1px solid #efefef;">
-                                    {{-- <form action="{{ url('/transaction/product', $product->kode_barang) }}" method="POST">
-                                        @csrf --}}
+                                    
                                             @php
                                       $cart = session()->get('cart', []);
                                       $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
@@ -253,7 +236,7 @@
                                                 <i class="mdi mdi-cart"></i>
                                             </button>
                                         </div>
-                                    {{-- </form> --}}
+                                  
                                 </div>
                                 <div class=" text-center flex-column flex-grow-1" style="margin-bottom: 2%; margin-top:2%; padding-bottom:5%">
                                     
@@ -269,25 +252,15 @@
                                     </h6>
                                     <p class="card-text">{{$product->market->nama_toko}}</p>
                                     <p class="card-text text-success font-weight-bold">Rp. {{ number_format($product->harga_jual, 2, ',', '.') }}</p>
-                                    <!-- Chips -->
-                                    {{-- <div class="product-chips">
-                                        @foreach ($categories->take(3) as $category)
-                                        <span class="chip">{{ $category->name }}</span>
-                                        @endforeach
-                                        @if ($categories->count() > 3)
-                                        <span class="chip more-chip" onclick="toggleChips(this)">More</span>
-                                        <div class="more-chips d-none">
-                                            @foreach ($categories->slice(3) as $category)
-                                            <span class="chip">{{ $category->name }}</span>
-                                            @endforeach
-                                        </div>
-                                        @endif
-                                    </div> --}}
+                                  
                                 </div>
                             </div>
                         </div>
                         @endforeach
                     </div>
+                    @if ($products->count() === 0)
+                    <p>Produk Kosong</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -298,7 +271,7 @@
     <div class="col-lg-4 col-md-4 col-sm-12">
       <div class="card card-noborder b-radius">
         <div class="card-body">
-<form method="POST" name="transaction_form" id="transaction_form" action="{{ url('/transaction/process') }}">
+        <form method="POST" name="transaction_form" id="transaction_form" action="{{ url('/transaction/process') }}">
             @csrf
           <div class="row">
             <div class="col-12 d-flex justify-content-start align-items-center">
@@ -464,37 +437,17 @@
     );
   @endif
 
-// $(document).on('click', '.btn-pilih', function(e){
-//   e.preventDefault();
-//   var kode_barang = $(this).prev().text();
-//   $.ajax({
-//     url: "{{ url('/transaction/product') }}/" + kode_barang,
-//     method: "GET",
-//     success:function(response){
-//       var check = $('.kode-barang-td:contains('+ response.product.kode_barang +')').length;
-//       if(check == 0){
-//         tambahData(response.product.kode_barang, response.product.nama_barang, response.product.harga_jual, response.product.stok, response.status);
-//       }else{
-//         swal(
-//             "",
-//             "Barang telah ditambahkan",
-//             "error"
-//         );
-//       }
-//     }
-//   });
-// });
 
 function addToCart(kodeBarang) {
         $.ajax({
             url: '/transaction/product/' + kodeBarang, // Sesuaikan dengan route Anda
             method: 'POST',
             data: {
-                _token: '{{ csrf_token() }}' // Jangan lupa menambahkan CSRF token
+                _token: '{{ csrf_token() }}'
             },
             success: function (response) {
                 if (response.success) {
-                    // alert(response.message); // Tampilkan notifikasi sukses
+                    // alert(response.message); 
                     console.log(response); // Debug data keranjang
                     tambahData(response.cart)
                      // Update stok di tampilan
@@ -678,20 +631,11 @@ $(document).on('click', '.btn-continue', function(e){
     url: "{{ url('/transaction/product/check') }}/" + kode_barang,
     method: "GET",
     success:function(response){
-      // var check = $('.kode-barang-td:contains('+ response.product.kode_barang +')').length;
       if(response.success){
-        // if(check == 0){
           tambahData(response.cart);
-
           $(`.stok-display[data-product-kode="${kode_barang}"]`).text(response.jumlahStok);
           $('.close-btn').click();  
-        // }else{
-        //   swal(
-        //       "",
-        //       "Barang telah ditambahkan",
-        //       "error"
-        //   );
-        // }
+      
       }else if (response.errorBarang){
         swal(
                     "",
@@ -767,32 +711,6 @@ $(document).on('click', '.btn-bayar', function(){
 
 
 
-//filter market
-// $(document).on('change', '.market-select', function(){
-//   const url = new URL(window.location.href)
-//   if ($(this).val() !== 'all'){
-//     url.searchParams.set('market_id', $(this).val())
-
-//   } else {
-//     url.searchParams.delete('market_id')
-//   }
-//   window.location.href = url.toString()
-// })
-
-@if(Auth::user()->role == 'admin')
-$(document).ready(function () {
-    const url = new URL(window.location.href);
-    const marketId = url.searchParams.get('market_id'); // Ambil nilai parameter market_id
-
-    if (!marketId) {
-        // Jika parameter market_id tidak ada, sembunyikan semua produk
-        $(".card-product").prop('hidden', true);
-    } else {
-        // Jika parameter market_id ada, tampilkan produk sesuai market_id
-        $(".card-product").prop('hidden', false)
-    }
-});
-@endif
 
 
 

@@ -8,7 +8,7 @@
     <div class="page-header d-flex justify-content-between align-items-center">
       <h4 class="page-title">Dashboard</h4>
     
-      @if(auth()->user()->role === 'admin')
+      {{-- @if(auth()->user()->role === 'admin')
       <div class=" period-form col-4">
         <div class="form-group">
               <p>Filter Berdasarkan Toko</p>
@@ -20,7 +20,7 @@
             </select>
         </div>
       </div>
-      @endif
+      @endif --}}
       
        
     
@@ -122,16 +122,15 @@
               <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
                 <h5 class="font-weight-semibold chart-title">Pemasukan 1 Minggu Terakhir</h5>
                 <div class="dropdown">
-                  {{-- <button class="btn btn-filter-chart" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Pemasukan
-                  </button>
                   <button class="btn btn-filter-chart icon-btn dropdown-toggle" type="button" id="dropdownMenuIconButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Pemasukan
+                    Minggu
                   </button>
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton1">
-                    <a class="dropdown-item chart-filter" href="#" data-filter="pemasukan">Pemasukan</a>
-                    <a class="dropdown-item chart-filter" href="#" data-filter="pelanggan">Pelanggan</a>
-                  </div> --}}
+                    <a class="dropdown-item chart-filter" href="#" data-filter="hari">Hari</a>
+                    <a class="dropdown-item chart-filter" href="#" data-filter="minggu">Minggu</a>
+                    <a class="dropdown-item chart-filter" href="#" data-filter="bulan">Bulan</a>
+                    <a class="dropdown-item chart-filter" href="#" data-filter="tahun">Tahun</a>
+                  </div>
                 </div>
               </div>
               <div class="col-12">
@@ -277,11 +276,11 @@ var myChart = new Chart(ctx, {
 $(document).on('click', '.chart-filter', function(e){
   e.preventDefault();
   var data_filter = $(this).attr('data-filter');
-  if(data_filter == 'pemasukan'){
-    $('.btn-filter-chart').html('Pemasukan');
-    $('.chart-title').html('Pemasukan 1 Minggu Terakhir');
-  }else if(data_filter == 'pelanggan'){
-    $('.btn-filter-chart').html('Pelanggan');
+  if(data_filter == 'hari'){
+    $('.btn-filter-chart').html('Hari');
+    $('.chart-title').html('Pemasukan 1 Hari Terakhir');
+  }else if(data_filter == 'minggu'){
+    $('.btn-filter-chart').html('Minggu');
     $('.chart-title').html('Pelanggan 1 Minggu Terakhir');
   }
   $.ajax({
