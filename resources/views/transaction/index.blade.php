@@ -1,6 +1,7 @@
 @extends('templates/main')
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/transaction/style.css') }}">
+<link rel="stylesheet" href="{{ asset('css/transaction/pagination.css') }}">
 @endsection
 @section('content')
 <div class="row page-title-header">
@@ -160,7 +161,7 @@
 </div>
 
   <div class="row">
-    <div class="col-lg-8 col-md-8 col-sm-12 mb-4">
+    <div class="col-lg-7 col-md-7 col-sm-12 mb-4">
       <div class="row">
         <div class="col-12 mb-4 bg-dark-blue">
           <div class="card card-noborder b-radius">
@@ -214,7 +215,7 @@
 
                     <div class="row card-product">
                         @foreach ($products as $product)
-                        <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-2">
+                        <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-2 product-item">
                             <div class="productCard border rounded shadow-sm h-100 d-flex flex-column">
                                 <div class="productImage position-relative pb-3" style="border-bottom: 1px solid #efefef;">
                                     
@@ -258,6 +259,9 @@
                         </div>
                         @endforeach
                     </div>
+                    <div class="pagination-container">
+                      <ul class="pagination"></ul>
+                  </div>
                     @if ($products->count() === 0)
                     <p>Produk Kosong</p>
                     @endif
@@ -268,7 +272,7 @@
       </div>
     </div>
     
-    <div class="col-lg-4 col-md-4 col-sm-12">
+    <div class="col-lg-5 col-md-5 col-sm-12">
       <div class="card card-noborder b-radius">
         <div class="card-body">
         <form method="POST" name="transaction_form" id="transaction_form" action="{{ url('/transaction/process') }}">
@@ -287,34 +291,34 @@
                   <tr>
                     <td>
                       <input type="text" name="kode_barang[]" hidden="" value="${kode}">
-                      <span class="nama-barang-td">{{$details['name']}}</span>
+                      <span class="nama-barang-td text-truncate">{{$details['name']}}</span>
                       <span class="kode-barang-td">{{$details['kode_barang']}}</span>
                     </td>
                     <td>
                       <input type="text" name="harga_barang[]" hidden="" value="${harga}">
-                      <span>Rp. {{$details['price']}}</span>
+                      <span class="numeric-barang-td">Rp. {{$details['price']}}</span>
                     </td>
                     <td>
                       <div class="d-flex justify-content-start align-items-center">
                         <input type="text" name="jumlah_barang[]" hidden="" value="1">
                         <a href="#" class="btn-operate mr-1 btn-tambah" onClick="increaseQuantity({{$id}})">
-                          <i class="mdi mdi-plus"></i>
+                          <i class="mdi mdi-plus-box" style="color: green; font-size:20px"></i>
                         </a>
                         <span class="ammount-product mr-1" unselectable="on" onselectstart="return false;" onmousedown="return false;">
                           <p class="jumlah_barang_text">{{$details['quantity']}}</p>
                         </span>
                         <a href="#" class="btn-operate btn-kurang" onClick="decreaseQuantity({{$id}})">
-                          <i class="mdi mdi-minus"></i>
+                          <i class="mdi mdi-minus-box" style="color: red; font-size: 20px"></i>
                         </a>
                       </div>
                     </td>
                     <td>
                       <input type="text" class="total_barang" name="total_barang[]" hidden="" value="${harga}">
-                      <span>Rp. {{$details['subtotal']}}</span>
+                      <span class="numeric-barang-td">Rp. {{$details['subtotal']}}</span>
                     </td>
                     <td>
-                      <a href="#" class="btn btn-icons btn-rounded btn-secondary btn-hapus" onClick="removeItem({{$id}})">
-                        <i class="mdi mdi-close"></i>
+                      <a href="#" class="btn btn-hapus" onClick="removeItem({{$id}})">
+                        <i class="mdi mdi-delete" style="font-size: 20px; color:red"></i>
                       </a>
                     </td>
                   </tr>
@@ -384,8 +388,9 @@
                   <td>
                     <div class="input-group">
                       <select name="payment_method" id="payment_method" class="form-control">
-                        <option value="manual">Manual</option>
-                        <option value="electronic">Elektronik</option>
+                        <option value="manual">Tunai</option>
+                        <option value="QRIS">QRIS</option>
+                        <option value="Transfer_Bank">Transfer Bank</option>
                       </select>
                     </div>
                   </td>
@@ -421,7 +426,8 @@
 
 <script src="{{ asset('plugins/js/quagga.min.js') }}"></script>
 <script src="{{ asset('js/transaction/script.js') }}"></script>
-<script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{config('midtrans.client_key')}}"></script>
+<script src="{{ asset('js/transaction/pagination.js') }}"></script>
+
 
 <script type="text/javascript">
 
@@ -771,119 +777,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </script>
 
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{config('midtrans.client_key')}}"></script>
 
-@if (session('snapToken'))
+    {{-- <!-- Tambahkan JavaScript untuk membuka dialog cetak -->
     <script>
-         snap.pay('{{ session('snapToken') }}', {
-            onSuccess: function(result) {
-                alert('Pembayaran berhasil!');
-                
-            },
-            onPending: function(result) {
-                alert('Pembayaran tertunda.');
-            },
-            onError: function(result) {
-                alert('Terjadi kesalahan pembayaran.');
-            },
-            onClose: function() {
-                alert('Anda belum menyelesaikan pembayaran.');
-            }
-        });
-    </script>
-    
-@endif
+      document.getElementById('printButton').addEventListener('click', function() {
+          // Unduh PDF
+          fetch('/transaction/receipt/{{ $transaction->id }}')
+              .then(response => response.blob())
+              .then(blob => {
+                  const url = URL.createObjectURL(blob);
+                  const iframe = document.createElement('iframe');
+                  iframe.style.display = 'none';
+                  iframe.src = url;
+                  document.body.appendChild(iframe);
+                  iframe.onload = function() {
+                      iframe.contentWindow.print();
+                  };
+              })
+              .catch(error => console.error('Error:', error));
+      });
+  </script> --}}
 
 
-
-<style>
-    .productCard {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.productCard:hover {
-    transform: scale(1.05);
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.productImage img {
-    object-fit:contain;
-    height: 100px;
-    width: 100%;
-}
-
-.overlay-cart {
-    padding: 5px 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.productImage:hover .overlay-cart {
-    opacity: 1;
-}
-
-.card-title {
-    text-transform: capitalize;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-.card-text {
-    font-size: 12px;
-}
-
-.chip {
-    display: inline-block;
-    padding: 5px 10px;
-    margin: 3px;
-    background-color: #f0f0f0;
-    border-radius: 15px;
-    font-size: 12px;
-    color: #333;
-    cursor: default;
-}
-
-.chip.more-chip {
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.chip:hover.more-chip {
-    background-color: #0056b3;
-}
-
-.more-chips {
-    margin-top: 5px;
-}
-
-.filter-chips-container {
-    white-space: nowrap;
-    padding: 10px 0;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.filter-chips-container a {
-    flex-shrink: 0;
-    border-radius: 50px;
-    text-decoration: none;
-}
-
-.filter-chips-container a.active {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-.filter-chips-container a:hover {
-    background-color: #0056b3;
-    color: white;
-    transition: background-color 0.3s ease;
-}
-
-
-</style>
 
 
 @endsection

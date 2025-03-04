@@ -52,7 +52,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/decrease/{id}', [TransactionController::class, 'decreaseQuantity']);
     Route::post('/cart/remove/{id}', [TransactionController::class, 'removeItem']);
     Route::post('/transaction/process', [TransactionController::class, 'transactionProcess']);
-    Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction']);
+    Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction2']);
+    Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
+    
 });
 
 Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(function () {

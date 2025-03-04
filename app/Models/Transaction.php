@@ -17,6 +17,7 @@ class Transaction extends Model
         'kode_transaksi',
         'total_harga',
         'diskon',
+        'total',
         'bayar',
         'kembali',
         'market_id',

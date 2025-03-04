@@ -9,22 +9,19 @@ use App\Models\OrderItems;
 use App\Models\Product;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use Midtrans\Snap;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 class TransactionController extends Controller
 {
-
-    public function __construct()
-    {
-        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        \Midtrans\Config::$isProduction = false; // Set true jika production
-        \Midtrans\Config::$isSanitized = true;
-        \Midtrans\Config::$is3ds = true;
-    }
 
     public function index(Request $request)
     {
@@ -266,20 +263,6 @@ class TransactionController extends Controller
             ]);
         }
 
-
-        // if ($product_check != 0) {
-        //     $product = Product::where('kode_barang', '=', $id)
-        //         ->first();
-        //     $check = "tersedia";
-        // } else {
-        //     $product = '';
-        //     $check = "tidak tersedia";
-        // }
-
-        // return response()->json([
-        //     'product' => $product,
-        //     'check' => $check
-        // ]);
     }
 
     public function transactionProcess(Request $req)
@@ -298,18 +281,19 @@ class TransactionController extends Controller
             $market_id = 0;
             $market_id = $user->market_id ?? $req->market_id;
 
-            $status = $req->payment_method === 'manual' ? 'completed' : 'pending';
+            // $status = $req->payment_method === 'manual' ? 'completed' : 'pending';
             $bayar = $req->payment_method === 'manual' ? $req->bayar : $req->total;
 
             $transaksi = Transaction::create([
                 'user_id' => $user_id,
                 'kode_transaksi' => $req->kode_transaksi,
                 'total_harga' => $req->subtotal,
+                'total' => $req->total,
                 'diskon' => $req->diskon,
                 'bayar' => $bayar,
                 'kembali' => $bayar - $req->total,
                 'market_id' => $market_id,
-                'status' => $status,
+                'status' => 'completed',
                 'metode' => $req->payment_method
             ]);
 
@@ -330,21 +314,9 @@ class TransactionController extends Controller
             // Hapus data keranjang di session
             session()->forget('cart');
 
-            if ($req->payment_method === 'manual') {
-                DB::commit();
+            DB::commit();
                 Session::flash('transaction_success', $transaksi);
                 return back();
-            } else {
-                DB::commit();
-                $snapToken = $this->createSnapToken($transaksi);
-                if ($snapToken) {
-                    session()->flash('transaksi', $transaksi);
-                    session()->flash('snapToken', $snapToken);
-                    return back();
-                } else {
-                    return back()->with('transaction_error', 'Gagal mendapatkan snap token.');
-                }
-            }
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('transaction_error', 'Terjadi kesalahan saat menambahkan transaksi. error' . $e->getMessage());
@@ -358,36 +330,106 @@ class TransactionController extends Controller
         $items = OrderItems::where('transaction_id', $id)->get();
         $diskon = $transaction->total_harga * $transaction->diskon / 100;
         $total = $transaction->total_harga - $diskon;
-        $customPaper = array(0, 0, 400.00, 283.80);
-        $pdf = Pdf::loadview('transaction.nota_transaksi', compact('transaction', 'market', 'items', 'diskon', 'total'))->setPaper($customPaper, 'landscape');
-        return $pdf->stream();
+        $customPaper = array(0, 0, 210, 500);
+        $pdf = Pdf::loadview('transaction.nota_transaksi', compact('transaction', 'market', 'items', 'diskon', 'total'))->setPaper($customPaper, 'portrait');
+        return $pdf->stream("nota_transaksi.pdf");
     }
 
+ 
 
 
-    public function createSnapToken(Transaction $transaksi)
-    {
-        $diskon = $transaksi->total_harga * $transaksi->diskon / 100;
-        $total = $transaksi->total_harga - $diskon;
+public function receiptTransaction2($id)
+{
+    $transaction = Transaction::find($id);
+    $market = Market::find($transaction->market_id);
+    $items = OrderItems::where('transaction_id', $id)->get();
+    $diskon = $transaction->total_harga * $transaction->diskon / 100;
+    $total = $transaction->total_harga - $diskon;
 
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transaksi->kode_transaksi,
-                'gross_amount' => $total,
-            ],
+   
 
-            'customer_details' => [
-                'first_name' => auth()->user()->nama,
-                'email' => auth()->user()->email
-            ]
+     // Coba dengan WindowsPrintConnector
+     try {
+            $connector = new WindowsPrintConnector("POS-58");
+         
+            // $connector = new FilePrintConnector(storage_path('app/tes_print.txt'));
 
-        ];
+            
+    } catch (Exception $e) {
+        // Jika gagal, coba dengan FilePrintConnector
+        $connector = new FilePrintConnector("USB004"); // atau "USB001" tergantung port yang digunakan
+    }
 
-        try {
-            $snapToken = Snap::getSnapToken($params);
-            return $snapToken;
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+    $printer = new Printer($connector);
+
+    try {
+        // Header
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->setTextSize(2, 2);
+        $printer->text($market->nama_toko . "\n");
+        $printer->setTextSize(1, 1);
+        $printer->text($market->alamat . "\n");
+        $printer->text($market->no_telp . "\n");
+        $printer->feed();
+
+        // Info Transaksi
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text("Kode Transaksi: " . $transaction->kode_transaksi . "\n");
+        $printer->text("Kasir: " . explode(' ', $transaction->kasir->nama)[0] . "\n");
+        $printer->text("Tanggal: " . date('d M, Y', strtotime($transaction->created_at)) . "\n");
+        $printer->feed();
+
+        // Items
+        $printer->text("--------------------------------\n");
+        foreach ($items as $item) {
+            $printer->text($item->product->nama_barang . "\n");
+            $printer->text($item->total_barang . " x " . number_format($item->product->harga_jual, 2, ',', '.') . " = " . number_format($item->subtotal, 2, ',', '.') . "\n");
         }
+        $printer->text("--------------------------------\n");
+
+        // Total
+        $printer->text("Subtotal: " . number_format($transaction->total_harga, 2, ',', '.') . "\n");
+        $printer->text("Diskon: " . number_format($diskon, 2, ',', '.') . "\n");
+        $printer->text("Total: " . number_format($total, 2, ',', '.') . "\n");
+        $printer->text("Bayar: " . number_format($transaction->bayar, 2, ',', '.') . "\n");
+        $printer->text("Kembali: " . number_format($transaction->kembali, 2, ',', '.') . "\n");
+        $printer->feed();
+
+        // Footer
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Terima Kasih Telah Berkunjung\n");
+        $printer->text("barang yang telah dibeli tidak boleh dikembalikan\n");
+        $printer->feed(2);
+
+        // Potong kertas
+        $printer->cut();
+        return back()->with('success', 'Nota berhasil dicetak.');
+    } catch (Exception $e) {
+        Log::error($e->getMessage());
+
+    }finally {
+        $printer->close();
     }
+
+    // return back()->with('success', 'Nota berhasil dicetak.');
+}
+
+public function bismillah () {
+
+
+$connector = new WindowsPrintConnector("POS-58");
+$printer = new Printer($connector);
+
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->text("Toko ABC\n");
+$printer->text("Jl. Contoh No.1\n");
+$printer->feed();
+$printer->text("Terima kasih!\n");
+$printer->cut();
+
+$printer->close();
+}
+
+
+
 }

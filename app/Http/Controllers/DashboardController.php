@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Market;
+use App\Models\Pengeluaran;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,101 +11,93 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    function viewDashboard(Request $request)
+
+
+    public function viewDashboard(Request $request)
     {
-        $user = auth()->user();
+        $filter = $request->get('filter', 'tahun');
 
-        if ($user->role === 'admin') {
+        $startDate = now();
+        $endDate = now();
 
+        $startDateExp = now();
+        $endDateExp = now();
 
+        if ($filter == 'hari') {
+            $startDate = $startDate->startOfDay();
+            $endDate = $endDate->endOfDay();
 
-            // $marketId = $request->query('market_id');
+            $startDateExp = $startDate->startOfDay();
+            $endDateExp = $endDate->endOfDay();
 
+        } elseif ($filter == 'minggu') {
+            $startDate = $startDate->startOfWeek();
+            $endDate = $endDate->endOfWeek();
 
-            // $kd_transaction = Transaction::select('kode_transaksi')
-            //     ->when($marketId, function ($query) use ($marketId) {
-            //         return $query->where('market_id', $marketId);
-            //     })
-            //     ->latest()
-            //     ->distinct()
-            //     ->take(5)
-            //     ->get();
+            $startDateExp = $startDate->startOfWeek();
+            $endDateExp = $endDate->endOfWeek();
+        } elseif ($filter == 'bulan') {
+            $startDate = $startDate->startOfMonth();
+            $endDate = $endDate->endOfMonth();
 
-            $transactions = Transaction::get();
+            $startDateExp = $startDate->startOfMonth();
+            $endDateExp = $endDate->endOfMonth();
+        } elseif ($filter == 'tahun') {
+            $startDate = $startDate->startOfYear();
+            $endDate = $endDate->endOfYear();
 
-            $kode_transaksi_dis = Transaction::select('kode_transaksi')
-                ->distinct()
-                ->get();
+            $startDateExp = $startDate->startOfYear();
+            $endDateExp = $endDate->endOfYear();
+        } else {
+            $startDate = Transaction::min('created_at'); // Ambil data dari transaksi pertama
+            $endDate = Transaction::max('created_at');
 
-            $kode_transaksi_dis_daily = Transaction::
-                  whereDate('created_at', Carbon::now())
-                ->select('kode_transaksi')
-                ->distinct()
-                ->get();
-        } elseif ($user->role === 'kasir') {
-            // $kd_transaction = Transaction::where('market_id', $user->market_id)
-            //     ->select('kode_transaksi')
-            //     ->latest()
-            //     ->distinct()
-            //     ->take(5)
-            //     ->get();
-
-            $transactions = Transaction::where('market_id', $user->market_id)->get();
-
-            $kode_transaksi_dis = Transaction::where('market_id', $user->market_id)
-                ->select('kode_transaksi')
-                ->distinct()
-                ->get();
-
-            $kode_transaksi_dis_daily = Transaction::where('market_id', $user->market_id)
-                ->whereDate('created_at', Carbon::now())
-                ->select('kode_transaksi')
-                ->distinct()
-                ->get();
+            $startDateExp = Pengeluaran::min('created_at');
+            $endDateExp = Pengeluaran::max('created_at');
         }
 
-        $array = array();
-        foreach ($transactions as $no => $transaction) {
-            array_push($array, $transactions[$no]->created_at->toDateString());
-        }
 
-        $dates = array_unique($array);
-        rsort($dates);
+        // Hitung total pelanggan (jumlah transaksi unik)
+        $total_pelanggan = Transaction::whereBetween('created_at', [$startDate, $endDate])->distinct('kode_transaksi')->count('kode_transaksi');
 
-        $arr_ammount = count($dates);
+        // Hitung total pemasukan
+        $total_pemasukan = Transaction::whereBetween('created_at', [$startDate, $endDate])
+        ->sum('total');
 
-        $incomes_data = array();
+        // Hitung total pengeluaran
+        $total_pengeluaran = Pengeluaran::whereBetween('created_at', [$startDateExp, $endDateExp])
+        ->sum('jumlah');
 
-        if ($arr_ammount > 7) {
-            for ($i = 0; $i < 7; $i++) {
-                array_push($incomes_data, $dates[$i]);
-            }
-        } elseif ($arr_ammount > 0) {
-            for ($i = 0; $i < $arr_ammount; $i++) {
-                array_push($incomes_data, $dates[$i]);
-            }
-        }
+        // Hitung total keuntungan
+        $total_keuntungan = $total_pemasukan - $total_pengeluaran;
 
-        $incomes = array_reverse($incomes_data);
+          // Ambil data pemasukan & pengeluaran untuk chart
+          $incomeData = Transaction::whereBetween('created_at', [$startDate, $endDate])
+          ->selectRaw('DATE(created_at) as tanggal, SUM(total) as total')
+          ->groupBy('tanggal')
+          ->orderBy('tanggal')
+          ->pluck('total', 'tanggal');
 
+      $expenseData = Pengeluaran::whereBetween('created_at', [$startDateExp, $endDateExp])
+          ->selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
+          ->groupBy('tanggal')
+          ->orderBy('tanggal')
+          ->pluck('total', 'tanggal');
 
-        $all_incomes = 0;
-        // $incomes_daily = 0;
-
-        foreach ($kode_transaksi_dis as $kode) {
-            $transaksi = Transaction::where('kode_transaksi', $kode->kode_transaksi)->first();
-            $all_incomes += $transaksi->total_harga;
-        }
-
-        // foreach ($kode_transaksi_dis_daily as $kode) {
-        //     $transaksi_daily = Transaction::where('kode_transaksi', $kode->kode_transaksi)->first();
-        //     $incomes_daily += $transaksi_daily->total_harga;
-        // }
-        $customers_daily = count($kode_transaksi_dis);
+        // Ambil tanggal transaksi tertua dan terbaru
         $min_date = Transaction::min('created_at');
         $max_date = Transaction::max('created_at');
-        
 
-        return view('dashboard', compact('incomes', 'customers_daily', 'all_incomes', 'min_date', 'max_date'));
+        return view('dashboard', compact(
+            'incomeData', 
+            'total_pelanggan', 
+            'total_pemasukan', 
+            'total_pengeluaran', 
+            'total_keuntungan', 
+            'filter',
+            'expenseData',
+            'min_date', 
+            'max_date'
+        ));
     }
 }

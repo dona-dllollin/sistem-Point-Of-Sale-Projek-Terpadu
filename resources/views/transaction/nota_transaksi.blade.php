@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html>
 <head>
 	<title></title>
@@ -158,5 +158,133 @@
 	<div class="footer">
 		<p class="center">Terima Kasih Telah Berkunjung</p>
 	</div>
+</body>
+</html> --}}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nota Transaksi</title>
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            width: 58mm;
+            padding: 5px;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .right {
+            text-align: right;
+        }
+        
+        .bold {
+            font-weight: bold;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        td {
+            padding: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header center">
+        <p class="bold">{{ $market->nama_toko }}</p>
+        <p>{{ $market->alamat }}</p>
+        <p>{{ $market->no_telp }}</p>
+        <hr>
+    </div>
+    
+    <div class="details">
+        <table>
+            <tr>
+                <td>Kode:</td>
+                <td class="right">{{ $transaction->kode_transaksi }}</td>
+            </tr>
+            <tr>
+                <td>Kasir:</td>
+                <td class="right">{{ explode(' ', $transaction->kasir->nama)[0] }}</td>
+            </tr>
+            <tr>
+                <td>Tanggal:</td>
+                <td class="right">{{ date('d M, Y', strtotime($transaction->created_at)) }}</td>
+            </tr>
+        </table>
+        <hr>
+    </div>
+    
+    <div class="items">
+        <table>
+            <tr class="bold">
+                <td>Barang</td>
+                <td class="right">Qty</td>
+                <td class="right">Harga</td>
+                <td class="right">Total</td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr></td>
+            </tr>
+            @foreach($items as $transaksi)
+            <tr>
+                <td>{{ $transaksi->product->nama_barang }}</td>
+                <td class="right">{{ $transaksi->total_barang }}</td>
+                <td class="right">{{ number_format($transaksi->product->harga_jual, 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($transaksi->subtotal, 0, ',', '.') }}</td>
+            </tr>
+            @endforeach
+        </table>
+        <hr>
+    </div>
+    
+    <div class="summary">
+        <table>
+            <tr>
+                <td>Subtotal:</td>
+                <td class="right">{{ number_format($transaction->total_harga, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td>Diskon ({{ $transaction->diskon }}%):</td>
+                <td class="right">{{ number_format($diskon, 0, ',', '.') }}</td>
+            </tr>
+            <tr class="bold">
+                <td>Total:</td>
+                <td class="right">{{ number_format($total, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td>Bayar:</td>
+                <td class="right">{{ number_format($transaction->bayar, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td>Kembali:</td>
+                <td class="right">{{ number_format($transaction->kembali, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+        <hr>
+    </div>
+    
+    <div class="footer center">
+        <p>Terima Kasih Telah Berkunjung</p>
+    </div>
 </body>
 </html>
