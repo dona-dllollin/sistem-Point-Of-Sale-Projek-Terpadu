@@ -643,14 +643,11 @@ $(document).on('click', '.btn-continue', function(e){
           $('.close-btn').click();  
       
       }else if (response.errorBarang){
-        swal(
-                    "",
-                    response.message,
-                    "error"
-                );
-      } else {
+        swal("", response.message,"error");
+      }  else if (response.errorKode){
         $('.kode_barang_error').prop('hidden', false);
-
+      } else {
+        swal("", "Terjadi kesalahan", "error");
       }
     }
   });

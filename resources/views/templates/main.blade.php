@@ -239,9 +239,9 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{{Auth::user()->role === 'admin' ? route('admin.product') : route('kasir.product', ['slug_market' => session('slug_market')]) }}">Daftar Barang</a>
                   </li>
-                  {{-- <li class="nav-item">
-                    <a class="nav-link" href="">Pasok Barang</a>
-                  </li> --}}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{url('/supply')}}">Pasok Barang</a>
+                  </li>
                 </ul>
               </div>
             </li>

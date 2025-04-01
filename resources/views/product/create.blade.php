@@ -133,44 +133,8 @@
 							  	</div>
 					  		</div>
 					  	</div>
-					  	<div class="col-lg-6 col-md-6 col-sm-12">
-					  		<div class="row">
-					  			<label class="col-12 font-weight-bold col-form-label">Toko</label>
-							  	<div class="col-12">
-                                    @if(Auth::user()->role === 'admin')
-                                    <select class="form-control" name="toko">
-                                        @foreach($toko as $tk)
-							  			<option value="{{$tk->id}}">{{$tk->nama_toko}}</option>
-							  			@endforeach
-							  		</select>
-                                    @else
-                                    <input type="text" class="form-control" disabled value="{{Auth::user()->market->nama_toko}}">
-                                    <input type="hidden" name="toko" value="{{ Auth::user()->market->id }}">
-                                    @endif
-							  	</div>
-								  @error('toko')
-								  <div class="col-12 error-notice text-danger">{{$message}}</div>
-								  @enderror
-					  		</div>
-					  	</div>
-					</div>
-                    <div class="form-group row">
-						
-                        <div class="col-lg-6 col-md-6 col-sm-12 space-bottom">
-                            <div class="row">
-                                <label class="col-12 font-weight-bold col-form-label"> Stok <span class="text-danger">*</span></label>
-                                <div class="col-12">
-                                  
-                                    <input type="text" class="form-control number-input" name="stok" placeholder="Masukkan jumlah stok barang">
-                               
-                              </div>
-							  @error('stok')
-							  <div class="col-12 error-notice text-danger">{{$message}}</div>
-							  @enderror
-                            </div>
-                        </div>
-                    
-                        <div class="col-lg-6 col-md-6 col-sm-12">
+			
+						  <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="row">
                                 <label class="col-12 font-weight-bold col-form-label">Kategori </label>
                                 <div class="col-12">
@@ -184,7 +148,9 @@
                                 </div>
                             </div>
                         </div>
-                  </div>
+
+					</div>
+                   
 					<div class="form-group row">
 						
 					  	<div class="col-lg-6 col-md-6 col-sm-12 space-bottom">

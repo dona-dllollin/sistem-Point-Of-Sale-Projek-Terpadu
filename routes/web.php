@@ -8,6 +8,7 @@ use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/product/create', [ProductController::class, 'createProduct']);
     Route::get('/product/edit/{id}', [ProductController::class, 'editProduct']);
     Route::post('/product/update', [ProductController::class, 'updateProduct']);
+
+
+    //supply
+    Route::get('/supply', [SupplyController::class, 'index']);
+    Route::get('/supply/new', [SupplyController::class, 'viewNewSupply']);
+    Route::get('/supply/take/{id}', [SupplyController::class, 'takeSupplyProduct']);
+    Route::get('/supply/check/{id}', [SupplyController::class, 'checkSupplyProduct']);
+    Route::post('/supply/store', [SupplyController::class, 'storeSupply']);
 
     // transaction
     Route::post('/transaction/product/{id}', [TransactionController::class, 'transactionProduct']);

@@ -10,8 +10,25 @@ class Supply extends Model
 {
     use HasFactory;
 
-    public function market(): BelongsTo
+    public $table = 'supplies';
+
+    protected $fillable = [
+        'kode_barang',
+        'product_id',
+        'harga_beli',
+        'jumlah',
+        'pemasok',
+        'user_id'
+        
+    ];
+
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Market::class, 'market_id');
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

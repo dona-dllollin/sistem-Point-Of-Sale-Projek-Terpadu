@@ -18,6 +18,7 @@ return new class extends Migration
             $table->bigInteger('harga_beli');
             $table->integer('jumlah');
             $table->foreignId('pemasok')->nullable();
+            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }

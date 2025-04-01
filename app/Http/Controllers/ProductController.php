@@ -40,9 +40,9 @@ class ProductController extends Controller
     function viewNewProduct()
     {
         $kategori = Categories::all();
-        $toko = Market::all();
+        
         $satuan = Satuan::all();
-        return view('product.create', compact('kategori', 'toko', 'satuan'));
+        return view('product.create', compact('kategori', 'satuan'));
     }
 
     // fungsi tambah barang
@@ -55,10 +55,10 @@ class ProductController extends Controller
             [
                 'nama_barang' => 'required',
                 'kode_barang' => 'required',
-                'stok' => 'required|integer',
+                
                 'harga_beli' => 'required|numeric',
                 'harga_jual' => 'required|numeric',
-                'toko' => 'required',
+               
 
             ],
             [
@@ -89,16 +89,17 @@ class ProductController extends Controller
 
         if ($check_product == 0) {
 
-
+            $market = Market::first();
             $product = Product::create([
                 'kode_barang' => $request->kode_barang,
                 'image' => $nama_gambar,
                 'nama_barang' => $request->nama_barang,
                 'satuan' => $request->satuan . ' ' . $request->satuan_berat,
-                'stok' => $request->stok,
+                'stok' => 0,
                 'harga_beli' => $request->harga_beli,
                 'harga_jual' => $request->harga_jual,
-                'market_id' => $request->toko
+                'market_id' => $market->id,
+                'keterangan' => 'habis'
 
             ]);
 

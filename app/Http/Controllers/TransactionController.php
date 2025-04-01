@@ -208,17 +208,12 @@ class TransactionController extends Controller
     public function transactionProductCheck($id)
     {
 
-        $product = Product::where('kode_barang', '=', $id)
-            ->first();
+        $product = Product::where('kode_barang', '=', $id)->first();
 
         $cart = session()->get('cart', []);
-
-        $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
-
-        $product_check = Product::where('kode_barang', '=', $id)
-            ->count();
-
-        if ($product_check != 0) {
+        
+        if ($product) {
+            $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
             // Jika barang sudah ada di keranjang, tambahkan jumlahnya
             if ($jumlahStok > 0) {
 
