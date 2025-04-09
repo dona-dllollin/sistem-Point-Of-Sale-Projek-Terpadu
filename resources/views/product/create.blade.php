@@ -121,14 +121,14 @@
 					  			<label class="col-12 font-weight-bold col-form-label">Satuan Barang</label>
 							  	<div class="col-12">
 							  		<div class="input-group">
-							  			<input type="text" class="form-control number-input" name="satuan" placeholder="Masukkan Satuan Barang">
-							  			<div class="input-group-append">
+							  			{{-- <input type="text" class="form-control number-input" name="satuan" placeholder="Masukkan Satuan Barang">
+							  			<div class="input-group-append"> --}}
 							  				<select class="form-control" name="satuan_berat">
 												@foreach ($satuan as $item)						
 												<option value="{{$item->nama}}">{{$item->nama}}</option>
 												@endforeach
 							  				</select>
-							  			</div>
+							  			{{-- </div> --}}
 							  		</div>
 							  	</div>
 					  		</div>

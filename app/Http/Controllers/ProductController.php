@@ -94,7 +94,7 @@ class ProductController extends Controller
                 'kode_barang' => $request->kode_barang,
                 'image' => $nama_gambar,
                 'nama_barang' => $request->nama_barang,
-                'satuan' => $request->satuan . ' ' . $request->satuan_berat,
+                'satuan' =>  $request->satuan_berat,
                 'stok' => 0,
                 'harga_beli' => $request->harga_beli,
                 'harga_jual' => $request->harga_jual,
@@ -148,7 +148,7 @@ class ProductController extends Controller
             $product = Product::find($request->id);
             $product->kode_barang = $request->kode_barang;
             $product->nama_barang = $request->nama_barang;
-            $product->satuan = $request->satuan . ' ' . $request->satuan_berat;
+            $product->satuan =  $request->satuan_berat;
             $product->stok = $request->stok;
             if ($request->stok <= 0) {
                 $product->keterangan = "habis";

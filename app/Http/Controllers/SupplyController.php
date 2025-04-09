@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Market;
+use App\Models\Pengeluaran;
 use App\Models\Product;
 use App\Models\Supply;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class SupplyController extends Controller
 {
@@ -56,18 +61,19 @@ class SupplyController extends Controller
             
         }
 
+        // Store Supply
         public function storeSupply(Request $request) {
-    $supplyData = $request->input('supply');
+            $supplyData = $request->input('supply');
 
-    DB::beginTransaction();
-    try {
-        foreach ($supplyData as $supply) {
-            // Cari produk berdasarkan kode_barang
-            $product = Product::where('kode_barang', $supply['kode_barang'])->first();
+             DB::beginTransaction();
+             try {
+              foreach ($supplyData as $supply) {
+                // Cari produk berdasarkan kode_barang
+                $product = Product::where('kode_barang', $supply['kode_barang'])->first();
 
-            if (!$product) {
-                return response()->json(['message' => 'Produk tidak ditemukan!'], 404);
-            }
+                if (!$product) {
+                    return response()->json(['message' => 'Produk tidak ditemukan!'], 404);
+                 }
 
             // Simpan data supply ke tabel supplies
             Supply::create([
@@ -78,6 +84,16 @@ class SupplyController extends Controller
                 'pemasok' => $supply['pemasok'] ?? null, // Pastikan input memiliki pemasok
                 'user_id' => auth()->id(),
             ]);
+
+            // $satuan = explode(' ', $product->satuan)[1] ?? '';
+
+            Pengeluaran::create([
+                'user_id' => auth()->id(),
+                'kategori' => 'tambah stok barang',
+                'deskripsi' => 'Pengeluaran untuk supply produk ' . $product->nama_barang . ' sebanyak ' . $supply['jumlah'] . ' ' . $product->satuan,
+                'jumlah' => $supply['jumlah'] * $supply['harga_beli'],
+            ]);
+           
 
             // Update stok dan keterangan produk
             $updateData = [
@@ -104,6 +120,53 @@ class SupplyController extends Controller
 }
 
 
+// Export Supply
+public function exportSupply(Request $req)
+{
+    $jenis_laporan = $req->jns_laporan;
+    $current_time = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+
+    if ($jenis_laporan == 'period') {
+        if ($req->period == 'minggu') {
+            $last_time = Carbon::now()->subWeeks($req->time)->format('Y-m-d') . ' 00:00:00';
+        } elseif ($req->period == 'bulan') {
+            $last_time = Carbon::now()->subMonths($req->time)->format('Y-m-d') . ' 00:00:00';
+        } elseif ($req->period == 'tahun') {
+            $last_time = Carbon::now()->subYears($req->time)->format('Y-m-d') . ' 00:00:00';
+        }
+        $tgl_awal = $last_time;
+        $tgl_akhir = $current_time;
+    } else {
+        $tgl_awal = $req->tgl_awal_export;
+        $tgl_akhir = $req->tgl_akhir_export;
+    }
+
+    $supplies = Supply::whereBetween('created_at', [$tgl_awal, $tgl_akhir])
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy(function ($item) {
+            return $item->created_at->format('Y-m-d');
+        });
+
+    $pengeluaran = 0;
+    foreach ($supplies as $supplyGroup) {
+        foreach ($supplyGroup as $supply) {
+            $pengeluaran += $supply->jumlah * $supply->harga_beli;
+        }
+    }
+
+    $market = Market::first();
+
+    $pdf = PDF::loadView('product.export_report_supply', [
+        'groupedSupplies' => $supplies,
+        'tgl_awal' => $tgl_awal,
+        'tgl_akhir' => $tgl_akhir,
+        'market' => $market,
+        'pengeluaran' => $pengeluaran,
+    ]);
+
+    return $pdf->stream();
+}
 
     
 }

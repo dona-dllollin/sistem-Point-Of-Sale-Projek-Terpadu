@@ -97,14 +97,14 @@
                     @php
                        $satuan = explode(" ", $product->satuan)
                     @endphp
-                      <input type="text" class="form-control number-input input-notzero" name="satuan" value="{{$satuan[0]}}">
-                      <div class="input-group-append">
+                      {{-- <input type="text" class="form-control number-input input-notzero" name="satuan" value="{{$satuan[0]}}"> --}}
+                      {{-- <div class="input-group-append"> --}}
                         <select class="form-control" name="satuan_berat">
                           @foreach ($satuans as $item)           
-                          <option value="{{$item->nama}}" {{$item->nama == $satuan[1] ? 'selected' : ''}}>{{$item->nama}}</option>
+                          <option value="{{$item->nama}}" {{$item->nama == $product->satuan ? 'selected' : ''}}>{{$item->nama}}</option>
                           @endforeach
                         </select>
-                      </div>
+                      {{-- </div> --}}
                     </div>
                 </div>
               </div>

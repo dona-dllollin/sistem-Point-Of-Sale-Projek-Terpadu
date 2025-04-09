@@ -261,7 +261,7 @@
             @endif
          
            
-            <li class="nav-item">
+            {{-- <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#kelola_laporan" aria-expanded="false" aria-controls="kelola_laporan">
                 <span class="menu-title">Kelola Laporan</span>
                 <i class="menu-arrow"></i>
@@ -269,13 +269,16 @@
               <div class="collapse" id="kelola_laporan">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="">Laporan Transaksi</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="">Laporan Barang</a>
+                    <a class="nav-link" href="{{route("report.transaction")}}">Laporan Transaksi</a>
                   </li>
                 </ul>
               </div>
+            </li> --}}
+
+            <li class="nav-item">
+              <a class="nav-link"  href="{{route("report.transaction")}}">
+                <span class="menu-title"> Laporan Transaksi</span>
+              </a>
             </li>
             
           </ul>

@@ -7,6 +7,7 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\TransactionController;
@@ -53,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supply/take/{id}', [SupplyController::class, 'takeSupplyProduct']);
     Route::get('/supply/check/{id}', [SupplyController::class, 'checkSupplyProduct']);
     Route::post('/supply/store', [SupplyController::class, 'storeSupply']);
+    Route::post('/supply/statistics/export', [SupplyController::class, 'exportSupply']);
 
     // transaction
     Route::post('/transaction/product/{id}', [TransactionController::class, 'transactionProduct']);
@@ -63,6 +65,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/transaction/process', [TransactionController::class, 'transactionProcess']);
     Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction2']);
     Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
+
+    // report
+    Route::get('/report/transaction', [ReportController::class, 'reportTransaction'])->name('report.transaction');
+    Route::post('/report/transaction/export', [ReportController::class, 'exportTransaction'])->name('report.transaction.export');
     
 });
 
