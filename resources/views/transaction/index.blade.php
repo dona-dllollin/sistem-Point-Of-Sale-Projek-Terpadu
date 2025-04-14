@@ -158,6 +158,7 @@
     </div>
   </div>
   @endif
+
 </div>
 
   <div class="row">
@@ -259,7 +260,7 @@
                         </div>
                         @endforeach
                     </div>
-                    <div class="pagination-container">
+                  <div class="pagination-container">
                       <ul class="pagination"></ul>
                   </div>
                     @if ($products->count() === 0)
@@ -388,7 +389,7 @@
                   <td>
                     <div class="input-group">
                       <select name="payment_method" id="payment_method" class="form-control">
-                        <option value="manual">Tunai</option>
+                        <option value="Tunai">Tunai</option>
                         <option value="QRIS">QRIS</option>
                         <option value="Transfer_Bank">Transfer Bank</option>
                       </select>
@@ -409,11 +410,49 @@
                   <td class="text-danger nominal-min">Nominal bayar kurang</td>
                 </tr>
                 <tr>
+                  
                   <td class="text-right">
-                    <button class="btn btn-bayar" type="button">Bayar</button>
+                    <button class="btn btn-bayar" type="button"> <i class="mdi mdi-check"></i> Bayar</button>
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#utangModal">
+                      <i class="mdi mdi-cash"></i> Utang
+                    </button>
                   </td>
                 </tr>
               </table>
+
+              <!-- Modal Utang -->
+              <div class="modal fade" id="utangModal" tabindex="-1" role="dialog" aria-labelledby="utangModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <!-- input lain dari transaksi -->
+                    <input type="hidden" name="action" value="utang">
+                    <!-- isian transaksi (produk, total, dll) bisa dikirim ulang via input hidden atau disimpan di session -->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="utangModalLabel">Data Pengutang</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="form-group">
+                          <label>Nama Pengutang</label>
+                          <input type="text" name="nama_pengutang" id="nama_pengutang" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                          <label>DP (Uang Muka)</label>
+                          <input type="number" name="dp" id="dp" class="form-control" min="0" placeholder="Boleh kosong">
+                          <input type="hidden" class="total_utang" value="{{$totalSubtotal}}">
+                          <span class="nominal-utang-error text-danger nominal-min" hidden="">dp tidak boleh lebih besar atau sama dengan total</span>
+                        </div>
+
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" id="submitUtangBtn" class="btn btn-primary">Simpan Utang</button>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -443,7 +482,7 @@
     );
   @endif
 
-
+// Fungsi untuk menambahkan data ke keranjang
 function addToCart(kodeBarang) {
         $.ajax({
             url: '/transaction/product/' + kodeBarang, // Sesuaikan dengan route Anda
@@ -484,7 +523,7 @@ function addToCart(kodeBarang) {
         });
     }
 
-    
+   // Fungsi untuk mengurangi quantity produk 
 function decreaseQuantity(id) {
   $.ajax({
       url: '/cart/decrease/' + id,
@@ -516,6 +555,7 @@ function decreaseQuantity(id) {
   });
 }
 
+// Fungsi untuk menghapus item dari keranjang
 function removeItem(id) {
   $.ajax({
       url: '/cart/remove/' + id,
@@ -545,6 +585,7 @@ function removeItem(id) {
   });
 }
 
+// Fungsi untuk menambah quantity produk
 function increaseQuantity(id) {
   $.ajax({
       url: '/cart/increase/' + id,
@@ -630,6 +671,7 @@ $(document).on('click', '.btn-repeat', function(){
   startScan();
 });
 
+// Menangani klik pada tombol "Lanjutkan scan"
 $(document).on('click', '.btn-continue', function(e){
   e.stopPropagation();
   var kode_barang = $('.barcode-result-text').text();
@@ -654,11 +696,14 @@ $(document).on('click', '.btn-continue', function(e){
 });
 
 
-
+// Menangani klik pada tombol "Bayar"
 $(document).on('click', '.btn-bayar', function(){
   let paymentMethod = $('select[name="payment_method"]').val();
   var check_barang = parseInt($('.jumlah_barang_text').length);
-  if (paymentMethod === 'manual') {
+
+ 
+  
+  if (paymentMethod === 'Tunai') {
   var total = parseInt($('.nilai-total2-td').val());
   var bayar = parseInt($('.bayar-input').val());
   if(bayar >= total){
@@ -667,6 +712,13 @@ $(document).on('click', '.btn-bayar', function(){
       if($('.diskon-input').attr('hidden') != 'hidden'){
         $('.diskon-input').addClass('is-invalid');
       }else{
+
+        $('<input>').attr({
+        type: 'hidden',
+        name: 'action',
+        value: 'bayar'
+    }).appendTo('#transaction_form');
+    
         sessionStorage.removeItem('disc')
         sessionStorage.removeItem('diskon')
         $('#transaction_form').submit();
@@ -712,8 +764,36 @@ $(document).on('click', '.btn-bayar', function(){
 }
 });
 
+// Menangani klik pada tombol "Simpan Utang"
+$(document).on('click', '#submitUtangBtn', function () {
 
+// Cek apakah ada barang dalam keranjang
+    var check_barang = parseInt($('.jumlah_barang_text').length);
+    const bayarRow = document.getElementById("bayar-row");
 
+    var total = parseInt($('.total_utang').val());
+    var bayar = parseInt($('#dp').val());
+    if (check_barang != 0) {
+      if ($('.diskon-input').attr('hidden') != 'hidden') {
+        $('.diskon-input').addClass('is-invalid');
+      } else {
+        if (isNaN(bayar) || bayar < total) {
+          sessionStorage.removeItem('disc')
+          sessionStorage.removeItem('diskon')
+          bayarRow.style.display = "none"; 
+          $('#transaction_form').submit();
+        } else {
+          $('.nominal-utang-error').prop('hidden', false);
+        }
+      }
+    } else {
+      swal(
+          "",
+          "Pesanan Kosong",
+          "error"
+      );
+    }
+});
 
 
 
@@ -756,7 +836,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Fungsi untuk mengontrol tampilan input
     function toggleBayarInput() {
-      if (paymentMethod.value === "manual") {
+      if (paymentMethod.value === "Tunai") {
         bayarRow.style.display = ""; // Tampilkan
       } else {
         bayarRow.style.display = "none"; // Sembunyikan
@@ -772,28 +852,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
 </script>
-
-
-    {{-- <!-- Tambahkan JavaScript untuk membuka dialog cetak -->
-    <script>
-      document.getElementById('printButton').addEventListener('click', function() {
-          // Unduh PDF
-          fetch('/transaction/receipt/{{ $transaction->id }}')
-              .then(response => response.blob())
-              .then(blob => {
-                  const url = URL.createObjectURL(blob);
-                  const iframe = document.createElement('iframe');
-                  iframe.style.display = 'none';
-                  iframe.src = url;
-                  document.body.appendChild(iframe);
-                  iframe.onload = function() {
-                      iframe.contentWindow.print();
-                  };
-              })
-              .catch(error => console.error('Error:', error));
-      });
-  </script> --}}
 
 
 

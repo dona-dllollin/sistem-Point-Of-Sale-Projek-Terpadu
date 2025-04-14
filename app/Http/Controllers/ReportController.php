@@ -15,6 +15,9 @@ class ReportController extends Controller
     $user = auth()->user();
 
     $chartFilter = $request->get('filter', 'tahun');
+    $statusChart = $request->statusChart ?? 'all';
+
+    $statusExport = $request->statusExport ?? 'all';
 
     if ($chartFilter == 'hari') {
         $startDate = Carbon::now()->startOfDay();
@@ -41,10 +44,15 @@ class ReportController extends Controller
     // Filter tanggal awal dan akhir
     $dataStart = $request->tgl_awal ?? Transaction::min('created_at');
     $dataEnd = $request->tgl_akhir ?? Transaction::max('created_at');
+    $status = $request->status ?? 'all';
+
 
     // Ambil data transaksi dengan order_items dan product terkait (eager loading)
     $transactions = Transaction::with(['item.product', 'kasir'])
         ->whereBetween('created_at', [$dataStart, $dataEnd])
+        ->when($status != 'all', function ($query) use ($status) {
+            return $query->where('status', $status);
+        })
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -54,6 +62,9 @@ class ReportController extends Controller
     // Siapkan data untuk chart: group by tanggal dan jumlahkan total
     $chartData = Transaction::whereBetween('created_at', [$startDate, $endDate])
         ->selectRaw('DATE(created_at) as tanggal, SUM(total) as total')
+        ->when($statusChart != 'all', function ($query) use ($statusChart) {
+            return $query->where('status', $statusChart);
+        })
         ->groupBy('tanggal')
         ->orderBy('tanggal', 'asc')
         ->get();
@@ -64,7 +75,10 @@ class ReportController extends Controller
         'chartData' => $chartData,
         'dataStart' => $dataStart,
         'dataEnd' => $dataEnd,
-        'filter' => $chartFilter
+        'filter' => $chartFilter,
+        'status' => $status,
+        'statusChart' => $statusChart,
+        'statusExport' => $statusExport
     ]);
 }
 
@@ -73,6 +87,7 @@ public function exportTransaction(Request $req)
 {
     $jenis_laporan = $req->jns_laporan;
     $current_time = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+    $statusExport = $req->statusExport;
 
     if ($jenis_laporan == 'period') {
         if ($req->period == 'minggu') {
@@ -90,6 +105,9 @@ public function exportTransaction(Request $req)
     }
 
     $transactions = Transaction::whereBetween('created_at', [$tgl_awal, $tgl_akhir])
+        ->when($statusExport != 'all', function ($query) use ($statusExport){
+            return $query->where('status', $statusExport);
+        })
         ->orderBy('created_at')
         ->get()
         ->groupBy(function ($item) {
@@ -113,7 +131,13 @@ public function exportTransaction(Request $req)
         'pemasukan' => $pemasukan,
     ]);
 
-    return $pdf->stream();
+    $tgl_awal_judul = Carbon::parse($tgl_awal)->format('Y-m-d');
+    $tgl_akhir_judul = Carbon::parse($tgl_akhir)->format('Y-m-d');
+    $status_judul =  $statusExport == 'all' ? 'Semua' : ($statusExport == 'completed' ? 'Lunas' : 'Belum_Lunas');
+
+    return $pdf->stream("laporan_pemasukan_{$tgl_awal_judul}_sampai_{$tgl_akhir_judul}_status_{$status_judul}.pdf", [
+        'Attachment' => false
+    ]);
 }
 
 

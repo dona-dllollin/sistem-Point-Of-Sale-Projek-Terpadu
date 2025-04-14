@@ -35,6 +35,12 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function debt()
+    {
+        return $this->hasOne(Debt::class, 'transaction_id');
+    }
+    
+
     public function item()
     {
         return $this->hasMany(OrderItems::class);

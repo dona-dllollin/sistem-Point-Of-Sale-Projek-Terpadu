@@ -12,16 +12,29 @@
       <div class=" period-form col-4">
         <div class="form-group">
           <form action="{{ Auth::user()->role === 'admin' ? url('/dashboard') : route('kasir.dashboard', ['slug_market' => session('slug_market')])}}" method="GET">
-              <p>Filter Berdasarkan periode</p>
-            <select name="filter" class="form-control form-control-lg market-select" onchange="this.form.submit()" style="width: 100%">
-              <option value="hari" {{ $filter === 'hari' ? 'selected' : '' }}>Hari Ini</option>
-              <option value="minggu" {{ $filter === 'minggu' ? 'selected' : '' }}>1 Minggu Terakhir</option>
-              <option value="bulan" {{ $filter === 'bulan' ? 'selected' : '' }}>1 Bulan Terakhir</option>
-              <option value="tahun" {{ $filter === 'tahun' ? 'selected' : '' }}>1 Tahun Terakhir</option>
-              <option value="semua" {{ $filter === 'semua' ? 'selected' : '' }}>semua periode</option>
+            <div class="d-flex align-items-center">
+              {{-- Filter status --}}
+              <div class="me-3 mr-2" style="flex: 1;">
+                <p>Filter Berdasarkan Status</p>
+                  <select name="statusChart" class="form-control form-control-lg" onchange="this.form.submit()">
+                      <option value="all" {{ $statusChart === 'all' ? 'selected' : '' }}>Semua</option>
+                      <option value="completed" {{ $statusChart === 'completed' ? 'selected' : '' }}>Lunas</option>
+                      <option value="pending" {{ $statusChart === 'pending' ? 'selected' : '' }}>Belum Lunas</option>
+                  </select>
+              </div>
 
-               
-            </select>
+              {{-- Filter periode --}}
+              <div style="flex: 1;">
+                <p>Filter Berdasarkan periode</p>
+                  <select name="filter" class="form-control form-control-lg market-select" onchange="this.form.submit()" style="width: 100%">
+                      <option value="hari" {{ $filter === 'hari' ? 'selected' : '' }}>Hari Ini</option>
+                      <option value="minggu" {{ $filter === 'minggu' ? 'selected' : '' }}>1 Minggu Terakhir</option>
+                      <option value="bulan" {{ $filter === 'bulan' ? 'selected' : '' }}>1 Bulan Terakhir</option>
+                      <option value="tahun" {{ $filter === 'tahun' ? 'selected' : '' }}>1 Tahun Terakhir</option>
+                      <option value="semua" {{ $filter === 'semua' ? 'selected' : '' }}>semua periode</option>
+                  </select>
+              </div>
+          </div>
           </form>
         </div>
       </div>

@@ -2,6 +2,7 @@
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/manage_product/supply_product/supply/style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/manage_product/supply_product/statistics_supply/style.css') }}">
+<link rel="stylesheet" href="{{ asset('css/manage_product/product/pagination.css') }}">
 @endsection
 @section('content')
 <div class="row page-title-header">
@@ -119,6 +120,7 @@
         	<div class="col-12">
             <ul class="list-date">
               @foreach($suppliesByDate as $date => $supplies)
+              <div class="product-item">
               <li class="txt-light">{{ date('d M, Y', strtotime($date)) }}</li>
               <div class="table-responsive">
                 <table class="table table-custom">
@@ -128,25 +130,27 @@
                     <th>Jumlah</th>
                     <th>Harga Beli</th>
                     <th>Total</th>
-                    <th>Pemasok</th>
                   </tr>
                   @foreach($supplies as $supply)
                   <tr>
                     <td class="td-1">
-                      <span class="d-block font-weight-bold big-font">{{ $supply->product->nama_barang }}</span>
+                      <span class="d-block font-weight-bold big-font">{{ $supply->product?->nama_barang }}</span>
                       <span class="d-block mt-2 txt-light">{{ date('d M, Y', strtotime($supply->created_at)) . ' pada ' . date('H:i', strtotime($supply->created_at)) }}</span>
                     </td>
                     <td class="td-2 font-weight-bold">{{ $supply->kode_barang }}</td>
                     <td class="td-3 font-weight-bold"><span class="ammount-box bg-secondary"><i class="mdi mdi-cube-outline"></i></span>{{ $supply->jumlah }}</td>
                     <td class="font-weight-bold td-4"><input type="text" name="harga" value="{{ $supply->harga_beli }}" hidden=""><span class="ammount-box bg-green"><i class="mdi mdi-coin"></i></span>Rp. {{ number_format($supply->harga_beli,2,',','.') }}</td>
                     <td class="total-field font-weight-bold text-success"></td>
-                    <td class="font-weight-bold">{{ $supply->pemasok }}</td>
                   </tr>
                   @endforeach
                 </table>
               </div>
+            </div>
               @endforeach
             </ul>
+            <div class="pagination-container">
+              <ul class="pagination"></ul>
+            </div>
         	</div>
         </div>
       </div>
@@ -156,6 +160,7 @@
 @endsection
 @section('script')
 <script src="{{ asset('js/manage_product/supply_product/supply/script.js') }}"></script>
+<script src="{{ asset('js/report/report_transaction/pagination.js') }}"></script>
 <script type="text/javascript">
   @if ($message = Session::get('create_success'))
     swal(

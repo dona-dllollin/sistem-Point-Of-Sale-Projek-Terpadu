@@ -2,6 +2,7 @@
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/manage_product/product/style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/manage_product/new_product/multiSelect.css') }}">
+<link rel="stylesheet" href="{{ asset('css/manage_product/product/pagination.css') }}">
 @endsection
 @section('content')
 <div class="row page-title-header">
@@ -195,6 +196,71 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Detail Produk -->
+<div class="modal fade" id="detailProdukModal{{ $product->id }}" tabindex="-1" aria-labelledby="detailProdukModalLabel{{ $product->id }}" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailProdukModalLabel-{{ $product->id }}">Detail Produk</h5>
+        <button type="button" class="close close-btn" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-4">
+          <img src="{{ asset('pictures/product/' . $product->image) }}" alt="{{ $product->nama_barang }}" class="img-fluid" style="max-height: 250px;">
+        </div>
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th scope="row">Kode Barang</th>
+              <td>{{ $product->kode_barang }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Nama Barang</th>
+              <td>{{ $product->nama_barang }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Satuan</th>
+              <td>{{ $product->satuan }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Stok</th>
+              <td>{{ $product->stok }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Harga Beli</th>
+              <td>Rp {{ number_format($product->harga_beli, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Harga Jual</th>
+              <td>Rp {{ number_format($product->harga_jual, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Keterangan</th>
+              <td>{{ $product->keterangan }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Toko</th>
+              <td>{{ $product->market->nama_toko ?? '-' }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Kategori</th>
+              <td>
+                @foreach($product->categories as $category)
+                  <span class="badge bg-secondary me-1">{{ $category->name }}</span>
+                @endforeach
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 @endforeach
 <div class="row">
   <div class="col-12 grid-margin">
@@ -217,7 +283,7 @@
               </thead>
               <tbody>
                 @foreach($products as $product)
-              	<tr>
+              <tr class="product-item">
                     <td>
                         <img src="{{asset('pictures/product/'. $product->image)}}" alt="" >
                     </td>
@@ -253,6 +319,10 @@
                         <i class="mdi mdi-pencil"></i>
                     </button>
 
+                    <button type="button" class="btn btn-view btn-icons btn-rounded" style="background-color: rgb(0, 190, 79)" data-toggle="modal" data-target="#detailProdukModal{{$product->id}}" data-detail="{{ $product->id }}">
+                      <i class="mdi mdi-eye"></i>
+                  </button>
+
                  <form action="{{ Auth::user()->role === 'admin' ?  url('/product/delete/'. $product->id) : route('product.delete', ['slug_market' => session('slug_market'), 'id' => $product->id])}}" method="POST" onsubmit="return confirmDelete(event)" class="d-inline">
                     @csrf
                     <button type="submit" class="btn btn-icons btn-rounded btn-secondary ml-1 btn-delete" style="background-color: rgb(255, 75, 75)" >
@@ -260,24 +330,31 @@
                     </button>
                 </form>
                   </td>
-                </tr>
+              </tr>
                 @endforeach
               </tbody>
             </table>
+            
         	</div>
         </div>
       </div>
     </div>
-    <div style="margin-top: 10px; position: absolute; right:30px">
+    {{-- <div style="margin-top: 10px; position: absolute; right:30px">
       {{$products->links()}}
+    </div> --}}
+    <div class="pagination-container">
+      <ul class="pagination"></ul>
     </div>
   </div>
+
 </div>
+
 @endsection
 @section('script')
 <script src="{{ asset('plugins/js/quagga.min.js') }}"></script>
 <script src="{{ asset('js/manage_product/product/script.js') }}"></script>
 <script src="{{ asset('js/manage_product/new_product/multiSelect.js') }}"></script>
+<script src="{{ asset('js/manage_product/product/pagination.js') }}"></script>
 <script type="text/javascript">
   @if ($message = Session::get('create_success'))
     swal(

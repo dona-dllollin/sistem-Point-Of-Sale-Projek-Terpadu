@@ -279,6 +279,23 @@
                 <td>Kembali:</td>
                 <td class="right">{{ number_format($transaction->kembali, 0, ',', '.') }}</td>
             </tr>
+            <tr>
+                <td>Metode:</td>
+                <td class="right">{{ $transaction->metode }}</td>
+            </tr>
+			@if($transaction->status == 'pending')
+            <tr>
+                <td>Status:</td>
+                <td class="right">Utang</td>
+            </tr>
+			@endif
+
+			@if($transaction->debt)
+			<tr>
+                <td>Nama Pengutang:</td>
+                <td class="right">{{$transaction->debt->nama_pengutang ?? "-"}}</td>
+            </tr>
+			@endif
         </table>
         <hr>
     </div>

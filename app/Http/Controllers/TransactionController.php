@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Categories;
+use App\Models\Debt;
 use App\Models\Market;
 use App\Models\OrderItems;
 use App\Models\Product;
@@ -260,6 +261,7 @@ class TransactionController extends Controller
 
     }
 
+    // Process Transaction
     public function transactionProcess(Request $req)
     {
         DB::beginTransaction();
@@ -277,8 +279,9 @@ class TransactionController extends Controller
             $market_id = $user->market_id ?? $req->market_id;
 
             // $status = $req->payment_method === 'manual' ? 'completed' : 'pending';
-            $bayar = $req->payment_method === 'manual' ? $req->bayar : $req->total;
+            $bayar = $req->payment_method === 'Tunai' ? $req->bayar : $req->total;
 
+        if($req->action === "bayar"){
             $transaksi = Transaction::create([
                 'user_id' => $user_id,
                 'kode_transaksi' => $req->kode_transaksi,
@@ -312,6 +315,56 @@ class TransactionController extends Controller
             DB::commit();
                 Session::flash('transaction_success', $transaksi);
                 return back();
+                
+        } else if($req->action === "utang"){
+
+                $transaksi = Transaction::create([
+                    'user_id' => $user_id,
+                    'kode_transaksi' => $req->kode_transaksi,
+                    'total_harga' => $req->subtotal,
+                    'total' => $req->total,
+                    'diskon' => $req->diskon,
+                    'bayar' => $req->dp ?? 0,
+                    'kembali' => 0,
+                    'market_id' => $market_id,
+                    'status' => 'pending',
+                    'metode' => $req->payment_method
+                ]);
+
+                foreach ($cart as $product_id => $item) {
+                    OrderItems::create([
+                        'transaction_id' => $transaksi->id,
+                        'product_id' => $product_id,
+                        'total_barang' => $item['quantity'],
+                        'subtotal' => $item['subtotal']
+                    ]);
+
+                    $product = Product::find($product_id);
+                    if ($product_id) {
+                        $product->decrement('stok', $item['quantity']);
+                    }
+                }
+
+                // Simpan data utang
+                $utang = Debt::create([
+                    'transaction_id' => $transaksi->id,
+                    'nama_pengutang' => $req->nama_pengutang,
+                    'dp' => $req->dp ?? 0,
+                    'sisa' => $req->total - ($req->dp ?? 0),
+                    'total_hutang' => $req->total - ($req->dp ?? 0),
+                    'status' => 'pending',
+                ]);
+
+
+                // Hapus data keranjang di session
+                session()->forget('cart');
+
+                DB::commit();
+                Session::flash('transaction_success', $transaksi);
+                return back();
+            }
+            
+
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('transaction_error', 'Terjadi kesalahan saat menambahkan transaksi. error' . $e->getMessage());
@@ -388,6 +441,13 @@ public function receiptTransaction2($id)
         $printer->text("Total: " . number_format($total, 2, ',', '.') . "\n");
         $printer->text("Bayar: " . number_format($transaction->bayar, 2, ',', '.') . "\n");
         $printer->text("Kembali: " . number_format($transaction->kembali, 2, ',', '.') . "\n");
+
+        // Tambahkan teks UTANG jika statusnya pending
+            if ($transaction->status == "pending") {
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->text("*** UTANG ***\n");
+            }
+            
         $printer->feed();
 
         // Footer
@@ -409,21 +469,21 @@ public function receiptTransaction2($id)
     // return back()->with('success', 'Nota berhasil dicetak.');
 }
 
-public function bismillah () {
+// public function bismillah () {
 
 
-$connector = new WindowsPrintConnector("POS-58");
-$printer = new Printer($connector);
+// $connector = new WindowsPrintConnector("POS-58");
+// $printer = new Printer($connector);
 
-$printer->setJustification(Printer::JUSTIFY_CENTER);
-$printer->text("Toko ABC\n");
-$printer->text("Jl. Contoh No.1\n");
-$printer->feed();
-$printer->text("Terima kasih!\n");
-$printer->cut();
+// $printer->setJustification(Printer::JUSTIFY_CENTER);
+// $printer->text("Toko ABC\n");
+// $printer->text("Jl. Contoh No.1\n");
+// $printer->feed();
+// $printer->text("Terima kasih!\n");
+// $printer->cut();
 
-$printer->close();
-}
+// $printer->close();
+// }
 
 
 

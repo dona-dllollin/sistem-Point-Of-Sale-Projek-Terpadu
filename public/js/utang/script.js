@@ -55,22 +55,33 @@ $(document).on("click", ".btn-selengkapnya", function () {
     }
 });
 
-// $('.date').dateDropper({
-//   format: 'd-m-Y'
-// });
-
 $(document).ready(function () {
     $("input[name=search]").on("keyup", function () {
         var searchTerm = $(this).val().toLowerCase();
         $(".list-date table").each(function () {
-            var lineStr = $(this).text().toLowerCase();
-            if (lineStr.indexOf(searchTerm) == -1) {
-                $(this).hide();
-                $(this).parent().prev().hide();
-            } else {
-                $(this).show();
-                $(this).parent().prev().show();
-            }
+            var hasMatch = false;
+
+            // Iterasi setiap baris dalam tabel
+            $(this)
+                .find(".debt-row")
+                .each(function () {
+                    var lineStr = $(this).text().toLowerCase();
+                    if (lineStr.indexOf(searchTerm) == -1) {
+                        $(this).hide(); // Sembunyikan baris yang tidak cocok
+                    } else {
+                        $(this).show(); // Tampilkan baris yang cocok
+                        hasMatch = true; // Tandai bahwa ada kecocokan
+                    }
+                });
+
+            // // Sembunyikan tabel jika tidak ada baris yang cocok
+            // if (!hasMatch) {
+            //     $(this).hide();
+            //     $(this).parent().prev().hide(); // Sembunyikan header tanggal
+            // } else {
+            //     $(this).show();
+            //     $(this).parent().prev().show(); // Tampilkan header tanggal
+            // }
         });
     });
 });
@@ -113,6 +124,21 @@ $(document).on("click", ".btn-filter", function () {
         swal("", "Tanggal akhir tidak boleh kurang dari tanggal awal", "error");
     } else {
         $("form[name=filter_form]").submit();
+    }
+});
+
+$(document).on("click", ".btn-filter-chart", function () {
+    var tgl_awal = $("input[name=tgl_awal_chart]").val();
+    var tgl_akhir = $("input[name=tgl_akhir_chart]").val();
+
+    var sArray = tgl_awal.split("-");
+    var sDate = new Date(sArray[2], sArray[1], sArray[0]);
+    var eArray = tgl_akhir.split("-");
+    var eDate = new Date(eArray[2], eArray[1], eArray[0]);
+    if (eDate < sDate) {
+        swal("", "Tanggal akhir tidak boleh kurang dari tanggal awal", "error");
+    } else {
+        $("form[name=filter_form_chart]").submit();
     }
 });
 

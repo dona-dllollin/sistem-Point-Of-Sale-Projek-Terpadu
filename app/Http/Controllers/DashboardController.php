@@ -56,12 +56,18 @@ class DashboardController extends Controller
             $endDateExp = Pengeluaran::max('created_at');
         }
 
+        $statusChart = $request->statusChart ?? 'all';
 
         // Hitung total pelanggan (jumlah transaksi unik)
-        $total_pelanggan = Transaction::whereBetween('created_at', [$startDate, $endDate])->distinct('kode_transaksi')->count('kode_transaksi');
+        $total_pelanggan = Transaction::whereBetween('created_at', [$startDate, $endDate])->when($statusChart != 'all', function ($query) use ($statusChart) {
+            return $query->where('status', $statusChart);
+        })->distinct('kode_transaksi')->count('kode_transaksi');
 
         // Hitung total pemasukan
         $total_pemasukan = Transaction::whereBetween('created_at', [$startDate, $endDate])
+        ->when($statusChart != 'all', function ($query) use ($statusChart) {
+            return $query->where('status', $statusChart);
+        })
         ->sum('total');
 
         // Hitung total pengeluaran
@@ -73,6 +79,9 @@ class DashboardController extends Controller
 
           // Ambil data pemasukan & pengeluaran untuk chart
           $incomeData = Transaction::whereBetween('created_at', [$startDate, $endDate])
+          ->when($statusChart != 'all', function ($query) use ($statusChart) {
+            return $query->where('status', $statusChart);
+        })
           ->selectRaw('DATE(created_at) as tanggal, SUM(total) as total')
           ->groupBy('tanggal')
           ->orderBy('tanggal')
@@ -97,7 +106,8 @@ class DashboardController extends Controller
             'filter',
             'expenseData',
             'min_date', 
-            'max_date'
+            'max_date',
+            'statusChart'
         ));
     }
 }

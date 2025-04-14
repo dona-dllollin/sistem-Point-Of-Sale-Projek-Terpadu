@@ -165,7 +165,12 @@ public function exportSupply(Request $req)
         'pengeluaran' => $pengeluaran,
     ]);
 
-    return $pdf->stream();
+    $tgl_awal_judul = Carbon::parse($tgl_awal)->format('Y-m-d');
+    $tgl_akhir_judul = Carbon::parse($tgl_akhir)->format('Y-m-d');
+
+    return $pdf->stream("laporan_pengeluaran_{$tgl_awal_judul}_sampai_{$tgl_akhir_judul}.pdf", [
+        'Attachment' => false,
+    ]);
 }
 
     

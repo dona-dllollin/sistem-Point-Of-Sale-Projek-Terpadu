@@ -12,6 +12,7 @@ $(document).ready(function () {
                 parseInt(sessionStorage.getItem("diskon") || 0).toLocaleString()
         );
         $(".nilai-total2-td").val(sessionStorage.getItem("diskon"));
+        $(".total_utang").val(sessionStorage.getItem("diskon"));
         $(".ubah-diskon-td").prop("hidden", false);
         $(".simpan-diskon-td").prop("hidden", true);
     }
@@ -89,6 +90,7 @@ function diskonBarang() {
     console.log(coba);
     $(".nilai-total1-td").html("Rp. " + parseInt(coba).toLocaleString());
     $(".nilai-total2-td").val(coba);
+    $(".total_utang").val(coba);
 
     $(".diskon-input").val(parseInt(disc));
     $(".nilai-diskon-td").html(disc);

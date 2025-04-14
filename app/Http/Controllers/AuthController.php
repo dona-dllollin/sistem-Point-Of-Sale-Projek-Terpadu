@@ -107,7 +107,7 @@ class AuthController extends Controller
             'role' => 'kasir',
             'market_id' => $checkKaryawan->market_id
         ];
-        var_dump($dataRegister);
+
         User::create($dataRegister);
 
         return redirect()->route('login')->with('create_success', 'Akun baru berhasil dibuat');

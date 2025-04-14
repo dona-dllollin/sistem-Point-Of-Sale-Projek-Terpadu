@@ -3,14 +3,18 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DebtController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
+use App\Models\Debt;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -64,11 +68,27 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/remove/{id}', [TransactionController::class, 'removeItem']);
     Route::post('/transaction/process', [TransactionController::class, 'transactionProcess']);
     Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction2']);
+    Route::get('/transaction/cetak/{id}', [TransactionController::class, 'receiptTransaction']);
     Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
 
     // report
     Route::get('/report/transaction', [ReportController::class, 'reportTransaction'])->name('report.transaction');
     Route::post('/report/transaction/export', [ReportController::class, 'exportTransaction'])->name('report.transaction.export');
+
+    //Debt
+    Route::get('/debt', [DebtController::class, 'index']);
+    Route::post('/debt/payment/{id}', [DebtController::class, 'debtPayment']);
+    Route::post('/debt/export/utang', [DebtController::class, 'exportUtang']);
+    Route::post('/debt/export/histori/utang', [DebtController::class, 'exportAngsuran']);
+    Route::get('/debt/payment/history', [DebtController::class, 'viewAngsuran']);
+    Route::post('/debt/delete/{id}', [DebtController::class, 'deleteUtang']);
+
+
+    //profile 
+    Route::get('/profile', [ProfilController::class, 'profile'])->name('profile');
+    Route::post('/profile/change', [ProfilController::class, 'changeData']);
+    Route::post('/profile/change/picture', [ProfilController::class, 'changePicture']); 
+    Route::post('/profile/change/password', [ProfilController::class, 'changePassword']);
     
 });
 
@@ -103,6 +123,13 @@ Route::middleware(['auth', 'role:admin', 'check.toko', 'inject.toko'])->group(fu
     Route::post('/toko', [MarketController::class, 'create']);
     Route::post('/toko/update', [MarketController::class, 'update']);
     Route::post('/toko/delete/{id}', [MarketController::class, 'delete']);
+
+    //account
+    Route::get('/account', [UserController::class, 'viewAccount'])->name('admin.account');
+    Route::post('/account/update', [UserController::class, 'updateAccount']);
+    Route::get('/account/add', [UserController::class, 'addAccount']);
+    Route::post('/account/create', [UserController::class, 'register']);
+    Route::post('/account/delete/{id}', [UserController::class, 'deleteAccount']);
 });
 
 Route::middleware(['auth', 'role:kasir', 'check.toko', 'inject.toko'])->group(function () {

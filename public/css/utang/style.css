@@ -151,6 +151,13 @@
     font-size: 18px;
 }
 
+.btn-filter-chart,
+.btn-filter-chart:hover {
+    background-color: #435df2;
+    color: #fff;
+    font-weight: bold;
+}
+
 .btn-filter,
 .btn-filter:hover {
     background-color: #435df2;
@@ -194,13 +201,6 @@
     background-color: transparent;
     border: 1px solid #ced4da;
     color: #000;
-    font-weight: bold;
-}
-
-.btn-filter-chart,
-.btn-filter-chart:hover {
-    border: 1px solid #ced4da;
-    color: #435df2;
     font-weight: bold;
 }
 

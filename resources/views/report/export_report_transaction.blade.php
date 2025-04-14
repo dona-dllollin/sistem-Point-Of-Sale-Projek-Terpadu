@@ -123,6 +123,18 @@
 		.w-300p{
 			width: 300px;
 		}
+
+		.tersedia-span {
+			color: #19d895;
+		
+			
+		}
+
+		.habis-span {
+			color: #cbd819;
+			
+		}
+
 	</style>
 </head>
 @php
@@ -184,6 +196,14 @@ $nama_user = $nama_users[0];
 						<td>
 							<span class="text-10 txt-light d-block">Kembali</span>
 							<span class="txt-dark text-12 d-block">Rp. {{ number_format($transaction->kembali,2,',','.') }}</span>
+						</td>
+						<td>
+							<span class="text-10 txt-light d-block">Status</span>
+							@if($transaction->status == 'completed')
+							<span class="btn tersedia-span text-12 d-block">Lunas</span>
+							@elseif($transaction->status == 'pending')
+							<span class="btn habis-span text-12 d-block">Belum Lunas</span>
+							@endif
 						</td>
 						<td>
 							<span class="txt-dark2 text-12 d-block">{{ $transaction->kasir?->nama }}</span>

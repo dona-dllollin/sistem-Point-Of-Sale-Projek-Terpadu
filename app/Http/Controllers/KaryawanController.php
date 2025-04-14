@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
 use App\Models\Market;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -105,6 +106,14 @@ class KaryawanController extends Controller
 
             return redirect()->back()->withErrors($validator);
         }
+
+        $user = User::where('no_karyawan', $karyawan->no_karyawan)->first();
+        if ($user) {
+            $user->update([
+                'no_karyawan' => $req->no_karyawan,
+            ]);
+        }
+        // Menyimpan data ke database
 
         $karyawan->update([
             'nama' => $req->nama,

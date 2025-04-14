@@ -164,7 +164,7 @@
         <nav class="sidebar sidebar-visible sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item nav-profile">
-              <a href="" class="nav-link">
+              <a href="{{url('/profile')}}" class="nav-link">
                 <div class="profile-image">
                   <img class="img-xs rounded-circle" src="{{ asset('pictures/acounts/' . auth()->user()->foto) }}" alt="profile image">
                   <div class="dot-indicator bg-success"></div>
@@ -202,7 +202,7 @@
               <div class="collapse" id="kelola_akun">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="">Daftar Akun</a>
+                    <a class="nav-link" href="{{url('/account')}}">Daftar Akun</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.karyawan')}}">Daftar Karyawan</a>
@@ -241,6 +241,23 @@
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{url('/supply')}}">Pasok Barang</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#kelola_utang" aria-expanded="false" aria-controls="kelola_utang">
+                <span class="menu-title">Kelola Utang</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="kelola_utang">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{url('/debt')}}">Daftar Utang</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{url('/debt/payment/history')}}">Histori Angsuran</a>
                   </li>
                 </ul>
               </div>

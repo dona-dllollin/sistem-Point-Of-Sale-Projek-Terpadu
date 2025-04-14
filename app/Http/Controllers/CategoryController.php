@@ -86,7 +86,7 @@ class CategoryController extends Controller
 
         $kategori = Categories::find($req->id);
         if (!$kategori) {
-            Categories::flash('error', 'data Satuan tidak tersedia');
+            Categories::flash('error', 'data Kategori tidak tersedia');
             return;
         }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Laporan Pengeluaran ({{ date('d M, Y', strtotime($tgl_awal)) . ' - ' . date('d M, Y', strtotime($tgl_akhir))}})</title>
+	<title>Laporan Pemasukan ({{ date('d M, Y', strtotime($tgl_awal)) . ' - ' . date('d M, Y', strtotime($tgl_akhir))}})</title>
 	<style type="text/css">
 		html{
 			font-family: "Arial", sans-serif;
@@ -43,9 +43,6 @@
 		.text-right{
 			text-align: right;
 		}
-		.text-center{
-			text-align: center;
-		}
 		.txt-dark{
 			color: #5b5b5b;
 		}
@@ -60,6 +57,9 @@
 		}
 		.txt-green{
 			color: #19d895;
+		}
+		.txt-red{
+			color: #d83619;
 		}
 		p{
 			margin: 0;
@@ -76,6 +76,9 @@
 		}
 		.img-td img{
 			width: 3rem;
+		}
+		.mt-2{
+			margin-top: 10px;
 		}
 		.mb-1{
 			margin-bottom: 5px;
@@ -102,7 +105,7 @@
 			border-bottom: 0.5px solid #d9dbe4;
 			color: #7e94f6;
 			font-size: 12px;
-			padding: 10px;
+			padding: 5px;
 			text-transform: uppercase;
 		}
 		tbody tr td{
@@ -110,6 +113,9 @@
 		}
 		.border-top-foot{
 			border-top: 0.5px solid #d9dbe4;
+		}
+		.mr-20{
+			margin-right: 20px;
 		}
 		ul{
 			padding: 0;
@@ -120,9 +126,18 @@
 		.w-300p{
 			width: 300px;
 		}
-		.mr-20{
-			margin-right: 20px;
+
+		.tersedia-span {
+			color: #19d852;
+		
+			
 		}
+
+		.habis-span {
+			color: #d5d819;
+			
+		}
+
 	</style>
 </head>
 @php
@@ -134,15 +149,14 @@ $nama_user = $nama_users[0];
 	<div class="header">
 		<table class="w-100">
 			<tr>
-				<td class="img-td text-left"><img src="{{ public_path('icons/logo-mini2.png') }}" style="width: 100px;">
-				</td>
+				<td class="img-td text-left"><img src="{{ public_path('icons/logo-mini2.png') }}"></td>
 				<td class="text-left">
 					<p class="text-12 txt-dark d-block mb-1">{{ $market->nama_toko }}</p>
 					<p class="text-10 txt-dark d-block">{{ $market->alamat }}</p>
 					<p class="text-10 txt-dark d-block">{{ $market->no_telp }}</p>
 				</td>
 				<td class="text-right">
-					<p class="text-20 txt-blue font-bold">LAPORAN PENGELUARAN</p>
+					<p class="text-20 txt-blue font-bold">LAPORAN UTANG</p>
 				</td>
 			</tr>
 			<tr>
@@ -157,58 +171,68 @@ $nama_user = $nama_users[0];
 			</tr>
 		</table>
 	</div>
-
 	<div class="body">
 		<ul>
-			@foreach($groupedSupplies as $date => $supplies)
+			@foreach($groupedDebt as $date => $debts)
 			<li class="text-10 txt-light">{{ date('d M, Y', strtotime($date)) }}</li>
 			<table class="w-100 mb-4">
 				<thead>
 					<tr>
-						<td>Waktu</td>
-						<td>Barang</td>
-						<td>Jumlah</td>
-						<td>Harga</td>
+						<td>Nama Pengutang</td>
+						<td>Jumlah Bayar</td>
+						<td>Sisa Angsuran</td>
 						<td>Total</td>
-						<td>pelaku</td>
+						<td>Dibayar Oleh</td>
+						<td>Status</td>
 						{{-- <td>Pemasok</td> --}}
 					</tr>
 				</thead>
 				<tbody>
-					@foreach($supplies as $supply)
+					@foreach($debts as $debt)
 					<tr>
-						<td class="text-left text-12 txt-dark">{{ date('H:i', strtotime($supply->created_at)) }}</td>
 						<td>
-							<span class="text-left d-block text-12 txt-dark2">{{ $supply->product->nama_barang }}</span>
-							<span class="text-left d-block text-10 txt-light">{{ $supply->kode_barang }}</span>
+							<span class="text-12 txt-dark2 d-block">{{ $debt->debt->nama_pengutang }}</span>
+							<span class="text-10 txt-light d-block">Waktu : {{ date('H:i', strtotime($debt->created_at)) }}</span>
 						</td>
-						<td class="text-left text-12 txt-dark2">{{ $supply->jumlah }}</td>
-						<td class="text-left text-12 txt-dark">Rp. {{ number_format($supply->harga_beli,2,',','.') }}</td>
-						<td class="text-left text-12 txt-green">
-							Rp. {{ number_format($supply->jumlah * $supply->harga_beli,2,',','.') }}
+						<td>
+							<span class="txt-dark2 text-12 d-block">Rp. {{ number_format($debt->jumlah_bayar,2,',','.') }}</span>
 						</td>
-						<td class="text-left text-12">{{ $supply->user?->nama }}</td>
+						<td>
+							<span class="txt-green text-12 d-block">Rp. {{ number_format($debt->sisa_angsuran,2,',','.') }}</span>
+						</td>
+						<td>
+							<span class="txt-red text-12 d-block">Rp. {{ number_format($debt->debt->transaction->total,2,',','.') }}</span>
+						</td>
+					
+						<td>
+							{{$debt->dibayar_oleh}}
+						</td>
+						<td>
+							@if($debt->debt->status == 'lunas')
+							<span class="btn tersedia-span text-12 d-block">Lunas</span>
+							@elseif($debt->debt->status == 'pending')
+							<span class="btn habis-span text-12 d-block">Belum Lunas</span>
+							@endif
+						</td>
 					</tr>
 					@endforeach
 				</tbody>
 			</table>
 			@endforeach
 		</ul>
-
 		<table class="w-100">
 			<tfoot>
 				<tr>
 					<td class="border-top-foot"></td>
 				</tr>
 				<tr>
-					<td class="text-14 pt-15 text-right">
-						<span class="mr-20">PENGELUARAN</span>
-						<span class="txt-blue font-bold">Rp. {{ number_format($pengeluaran,2,',','.') }}</span>
+                    <td class="text-14 pt-15 text-right">
+                        <span class="mr-20">Total Angsuran Dibayar</span>
+						<span class="txt-green font-bold">Rp. {{ number_format($totalAngsuran,2,',','.') }}</span>
 					</td>
-				</tr>
+                </tr>
 			</tfoot>
 		</table>
 	</div>
 </body>
-
 </html>
