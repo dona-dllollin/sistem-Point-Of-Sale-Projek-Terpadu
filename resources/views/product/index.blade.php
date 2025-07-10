@@ -76,7 +76,7 @@
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Nama Barang</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                  <input type="text" class="form-control" name="nama_barang" value="{{$product->nama_barang}}">
+                  <input type="text" class="form-control" name="nama_barang" value="{{ old('nama_barang', $product->nama_barang)}}">
                 </div>
               </div>
               <div class="form-group row">
@@ -103,6 +103,13 @@
                         </select>
                       
                     </div>
+                </div>
+              </div>
+               <div class="form-group row">
+              
+                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Masukkan Stok Baru (≤ {{ $product->stok }})</label>
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                  <input type="text" class="form-control" name="stok" value="{{ old('stok', $product->stok) }}" min="0" max="{{ $product->stok }}" required>
                 </div>
               </div>
               <div class="form-group row">
