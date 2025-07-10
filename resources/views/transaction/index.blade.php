@@ -62,7 +62,7 @@
               </div>  
             </div>
             <div class="col-12">
-              <!-- <ul class="list-group product-list">
+              <ul class="list-group product-list">
                 @foreach($products as $product)    
                 @if($product->stok != 0)
                 <li class="list-group-item d-flex justify-content-between align-items-center active-list">
@@ -90,7 +90,7 @@
                   </li>
                 @endif
                 @endforeach
-              </ul> -->
+              </ul> 
             </div>
           </div>
         </div>
@@ -162,9 +162,9 @@
 </div>
 
   <div class="row">
-    <div class="col-lg-7 col-md-7 col-sm-12 mb-4">
+    <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
       <div class="row">
-        <div class="col-12 mb-4 bg-dark-blue">
+        {{-- <div class="col-12 mb-1 bg-dark-blue">
           <div class="card card-noborder b-radius">
             <div class="card-body">
               <div class="row">
@@ -179,17 +179,12 @@
                       <input type="text" name="kode_transaksi" value="T{{ date('dmYHis') }}" hidden="">
                     </div>
                   </div>
-                  <div class="btn-group mt-h">
-                 
-                    <!-- <button class="btn btn-search btn-scan" data-toggle="modal" data-target="#scanModal" type="button">
-                      <i class="mdi mdi-crop-free" style="font-size: 20px"></i>
-                    </button> -->
-                  </div>
+                  
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </div> --}}
         <div class="col-12">
             <div class="card card-noborder b-radius shadow-sm">
                 <div class="card-body">
@@ -204,7 +199,7 @@
                   </div>
                     <div class="form-group col-5 position-relative">
                       <i class="mdi mdi-crop-free position-absolute btn-search" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
-                      <input type="text" class="form-control pl-4" name="scan" id="scanInput" placeholder="Cari barang">
+                      <input type="text" class="form-control pl-4" name="scan" id="scanInput" placeholder="Scan barang">
                   </div>
                   </div>
                 
@@ -224,7 +219,7 @@
 
                 </div>
 
-                    <div class="row card-product">
+                    {{-- <div class="row card-product">
                         @foreach ($products as $product)
                         <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-2 product-item">
                             <div class="productCard border rounded shadow-sm h-100 d-flex flex-column">
@@ -269,8 +264,53 @@
                             </div>
                         </div>
                         @endforeach
-                    </div>
-                  <div class="pagination-container">
+                    </div> --}}
+
+                        <div class="col-12 card-product">
+                          <ul class="list-group product-list">
+                            @foreach($products as $product)    
+                              @php
+                                $cart = session()->get('cart', []);
+                                $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
+                              @endphp
+                         
+                            <li class="list-group-item d-flex justify-content-between my-1 align-items-center product-item">
+
+                              <img  class="card-img-top gambar img-fluid rounded-top p-1"
+                                            src="{{ asset('pictures/product/'. $product->image) }}"
+                                            alt="{{ $product->nama_barang }}"
+                                            style="cursor: {{ $jumlahStok == 0 ? 'not-allowed' : 'pointer' }}; width: 60px; height: 60px; object-fit: cover;"
+                                            onclick="{{ $product->stok > 0 ? 'this.closest(\'form\').submit();return false;' : '' }}">
+                              <div class="text-group">
+                                <p class="m-0 text-bold">{{ $product->nama_barang }}</p>
+                                <p class="m-0 txt-light">{{ $product->kode_barang }}</p>
+                              </div>
+                              <div class="text-group">
+                                <p class="card-text text-success font-weight-bold">Rp. {{ number_format($product->harga_jual, 2, ',', '.') }}</p>
+                              </div>
+                              <div class="d-flex align-items-center">
+                                <span class="ammount-box bg-secondary mr-1"><i class="mdi mdi-cube-outline"></i></span>
+                                <p class="m-0 stok-display" data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}" >{{ $jumlahStok}}</p>
+                              </div>
+                              {{-- <a href="#" class="btn btn-icons btn-rounded btn-inverse-outline-primary font-weight-bold btn-pilih" role="button"><i class="mdi mdi-chevron-right"></i></a> --}}
+
+                               <div
+                                  data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}"
+                                  class="overlay-cart  ml-2 mb-1 rounded text-center {{ $jumlahStok == 0 ? 'bg-secondary disabled' : 'bg-primary' }}"
+                                  style="bottom: 0; opacity: 0.9;">
+                                  <p style="display:none">{{$product->kode_barang}}</p>
+                                  <button type="submit" onclick="addToCart('{{$product->kode_barang}}')" data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}"  class="btn btn-sm btn-pilih text-white {{ $jumlahStok == 0 ? 'disabled' : '' }}">
+                                      <i class="mdi mdi-cart"></i>
+                                  </button>
+                               </div>
+                            </li>
+                            
+                            @endforeach
+                          </ul> 
+                        </div>
+
+
+                  <div class="pagination-container pt-3">
                       <ul class="pagination"></ul>
                   </div>
                     @if ($products->count() === 0)
@@ -283,7 +323,7 @@
       </div>
     </div>
     
-    <div class="col-lg-5 col-md-5 col-sm-12">
+    <div class="col-lg-6 col-md-6 col-sm-12">
       <div class="card card-noborder b-radius">
         <div class="card-body">
         <form method="POST" name="transaction_form" id="transaction_form" action="{{ url('/transaction/process') }}">
@@ -633,78 +673,7 @@ function increaseQuantity(id) {
   });
 }
 
-// function startScan() {
-//   Quagga.init({
-//     inputStream : {
-//       name : "Live",
-//       type : "LiveStream",
-//       target: document.querySelector('#area-scan')
-//     },
-//     decoder : {
-//       readers : ["ean_reader", "upc_reader", "code_128_reader", "code_39_reader"],
-//       multiple: false
-//     },
-//     locate: false
-//   }, function(err) {
-//       if (err) {
-//           console.log(err);
-//           return
-//       }
-//       console.log("Initialization finished. Ready to start");
-//       Quagga.start();
-//   });
 
-//   Quagga.onDetected(function(data){
-//     $('#area-scan').prop('hidden', true);
-//     $('#btn-scan-action').prop('hidden', false);
-//     $('.barcode-result').prop('hidden', false);
-//     $('.barcode-result-text').html(data.codeResult.code);
-//     $('.kode_barang_error').prop('hidden', true);
-//     stopScan();
-//   });
-// }
-
-// $(document).on('click', '.btn-scan', function(){
-//   $('#area-scan').prop('hidden', false);
-//   $('#btn-scan-action').prop('hidden', true);
-//   $('.barcode-result').prop('hidden', true);
-//   $('.barcode-result-text').html('');
-//   $('.kode_barang_error').prop('hidden', true);
-//   startScan();
-// });
-
-// $(document).on('click', '.btn-repeat', function(){
-//   $('#area-scan').prop('hidden', false);
-//   $('#btn-scan-action').prop('hidden', true);
-//   $('.barcode-result').prop('hidden', true);
-//   $('.barcode-result-text').html('');
-//   $('.kode_barang_error').prop('hidden', true);
-//   startScan();
-// });
-
-// // Menangani klik pada tombol "Lanjutkan scan"
-// $(document).on('click', '.btn-continue', function(e){
-//   e.stopPropagation();
-//   var kode_barang = $('.barcode-result-text').text();
-//   $.ajax({
-//     url: "{{ url('/transaction/product/check') }}/" + kode_barang,
-//     method: "GET",
-//     success:function(response){
-//       if(response.success){
-//           tambahData(response.cart);
-//           $(`.stok-display[data-product-kode="${kode_barang}"]`).text(response.jumlahStok);
-//           $('.close-btn').click();  
-      
-//       }else if (response.errorBarang){
-//         swal("", response.message,"error");
-//       }  else if (response.errorKode){
-//         $('.kode_barang_error').prop('hidden', false);
-//       } else {
-//         swal("", "Terjadi kesalahan", "error");
-//       }
-//     }
-//   });
-// });
 
 
 // Menangani klik pada tombol "Bayar"

@@ -1,7 +1,5 @@
-
-
 document.addEventListener("DOMContentLoaded", function () {
-    const itemsPerPage = 8; // Jumlah item per halaman
+    const itemsPerPage = 10; // Jumlah item per halaman
     const productItems = document.querySelectorAll(".product-item");
     const paginationContainer = document.querySelector(".pagination");
 
@@ -13,8 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         productItems.forEach((item, index) => {
             if (index >= start && index < end) {
-                item.style.display = "block";
+                item.classList.add("active-list");
+                item.classList.remove("non-active-list");
+                // item.style.display = "block";
             } else {
+                item.classList.add("non-active-list");
+                item.classList.remove("active-list");
                 item.style.display = "none";
             }
         });
@@ -54,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const li = document.createElement("li");
             li.classList.add("page-item");
             li.innerHTML = `<a href="#" class="page-link">${p}</a>`;
-           if (p === "...") {
+            if (p === "...") {
                 li.classList.add("disabled");
             } else {
                 if (p === currentPage) li.classList.add("active");

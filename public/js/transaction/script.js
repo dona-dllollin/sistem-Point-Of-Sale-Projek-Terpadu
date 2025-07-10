@@ -283,16 +283,33 @@ $("#scanModal").on("hidden.bs.modal", function (e) {
     stopScan();
 });
 
+// $(document).ready(function () {
+//     $("input[name=search]").on("keyup", function () {
+//         var searchTerm = $(this).val().toLowerCase();
+//         $(".productCard").each(function () {
+//             var lineStr = $(this).text().toLowerCase();
+//             console.log(lineStr);
+//             if (lineStr.indexOf(searchTerm) == -1) {
+//                 $(this).closest(".col-12").css("display", "none"); // Sembunyikan parent card
+//             } else {
+//                 $(this).closest(".col-12").css("display", "block"); // Tampilkan parent card
+//             }
+//         });
+//     });
+// });
+
 $(document).ready(function () {
     $("input[name=search]").on("keyup", function () {
         var searchTerm = $(this).val().toLowerCase();
-        $(".productCard").each(function () {
+        $(".product-list li").each(function () {
             var lineStr = $(this).text().toLowerCase();
             console.log(lineStr);
             if (lineStr.indexOf(searchTerm) == -1) {
-                $(this).closest(".col-12").css("display", "none"); // Sembunyikan parent card
+                $(this).addClass("non-active-list");
+                $(this).removeClass("active-list");
             } else {
-                $(this).closest(".col-12").css("display", "block"); // Tampilkan parent card
+                $(this).addClass("active-list");
+                $(this).removeClass("non-active-list");
             }
         });
     });
