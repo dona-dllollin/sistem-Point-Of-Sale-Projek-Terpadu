@@ -335,7 +335,7 @@ class ProductController extends Controller
         $product = Product::find($id);
 
 
-        if ($product) {
+        if ($product && $product->stok <= 0) {
 
             $product->categories()->detach();
 
@@ -355,6 +355,7 @@ class ProductController extends Controller
 
             return redirect()->back();
         } else {
+            Session::flash('delete_failed', 'Stok Barang Masih Ada, Produk Tidak Boleh Dihapus');
             return redirect()->back();
         }
     }
@@ -367,7 +368,7 @@ class ProductController extends Controller
         $product = Product::find($id);
         // Jika produk ditemukan, hapus relasi kategori
 
-        if ($product) {
+        if ($product && $product->stok <= 0) {
 
             // Menghapus relasi kategori di tabel pivot
             $product->categories()->detach();
@@ -382,6 +383,7 @@ class ProductController extends Controller
                 }
             }
 
+
             // Menghapus produk
             $product->delete();
 
@@ -389,6 +391,7 @@ class ProductController extends Controller
 
             return redirect()->back();
         } else {
+            Session::flash('delete_failed', 'Stok Barang Masih Ada, Produk Tidak Boleh Dihapus');
             return redirect()->back();
         }
     }

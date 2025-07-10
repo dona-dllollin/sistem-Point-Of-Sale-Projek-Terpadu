@@ -375,6 +375,13 @@
         "success"
     );
   @endif  
+  @if ($message = Session::get('delete_failed'))
+    swal(
+        "",
+        "{{ $message }}",
+        "error"
+    );
+  @endif  
 
   @if ($message = Session::get('import_success'))
     swal(
