@@ -142,6 +142,22 @@
                   </div>
                 </div>
               </div>
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-2  offset-col-1">
+                    <div class="form-radio">
+                      <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="format" value="pdf" checked> pdf</label>
+                    </div>
+                  </div>
+                  <div class="col-2 ">
+                    <div class="form-radio">
+                      <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="format" value="excel"> excel</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>

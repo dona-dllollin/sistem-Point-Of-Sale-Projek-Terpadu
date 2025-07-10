@@ -205,7 +205,8 @@ $nama_user = $nama_users[0];
 						</td>
 					
 						<td>
-							{{$debt->dibayar_oleh}}
+							<span class="text-12 txt-dark2 d-block"> {{$debt->dibayar_oleh}}</span>
+							
 						</td>
 						<td>
 							@if($debt->debt->status == 'lunas')

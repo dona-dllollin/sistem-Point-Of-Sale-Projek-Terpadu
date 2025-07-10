@@ -62,7 +62,7 @@
               </div>  
             </div>
             <div class="col-12">
-              <ul class="list-group product-list">
+              <!-- <ul class="list-group product-list">
                 @foreach($products as $product)    
                 @if($product->stok != 0)
                 <li class="list-group-item d-flex justify-content-between align-items-center active-list">
@@ -90,7 +90,7 @@
                   </li>
                 @endif
                 @endforeach
-              </ul>
+              </ul> -->
             </div>
           </div>
         </div>
@@ -181,9 +181,9 @@
                   </div>
                   <div class="btn-group mt-h">
                  
-                    <button class="btn btn-search btn-scan" data-toggle="modal" data-target="#scanModal" type="button">
+                    <!-- <button class="btn btn-search btn-scan" data-toggle="modal" data-target="#scanModal" type="button">
                       <i class="mdi mdi-crop-free" style="font-size: 20px"></i>
-                    </button>
+                    </button> -->
                   </div>
                 </div>
               </div>
@@ -193,10 +193,20 @@
         <div class="col-12">
             <div class="card card-noborder b-radius shadow-sm">
                 <div class="card-body">
-                  <div class="form-group col-4 position-relative">
-                    <i class="mdi mdi-magnify position-absolute btn-search" style="left: 20px; top: 50%; transform: translateY(-50%);"></i>
-                    <input type="text" class="form-control pl-4" name="search" placeholder="Cari barang">
-                </div>
+                  <div class="row">
+
+                    <div class="form-group col-5 position-relative">
+                      <i class="mdi mdi-magnify position-absolute btn-search" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
+                      <input type="text" class="form-control pl-4" name="search" placeholder="Cari barang">
+                  </div>
+                  <div class="col-2">
+
+                  </div>
+                    <div class="form-group col-5 position-relative">
+                      <i class="mdi mdi-crop-free position-absolute btn-search" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
+                      <input type="text" class="form-control pl-4" name="scan" id="scanInput" placeholder="Cari barang">
+                  </div>
+                  </div>
                 
                     <div class="row d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex overflow-auto filter-chips-container">
@@ -392,6 +402,7 @@
                         <option value="Tunai">Tunai</option>
                         <option value="QRIS">QRIS</option>
                         <option value="Transfer_Bank">Transfer Bank</option>
+                        <option value="Card">Card</option>
                       </select>
                     </div>
                   </td>
@@ -622,78 +633,78 @@ function increaseQuantity(id) {
   });
 }
 
-function startScan() {
-  Quagga.init({
-    inputStream : {
-      name : "Live",
-      type : "LiveStream",
-      target: document.querySelector('#area-scan')
-    },
-    decoder : {
-      readers : ["ean_reader", "upc_reader", "code_128_reader", "code_39_reader"],
-      multiple: false
-    },
-    locate: false
-  }, function(err) {
-      if (err) {
-          console.log(err);
-          return
-      }
-      console.log("Initialization finished. Ready to start");
-      Quagga.start();
-  });
+// function startScan() {
+//   Quagga.init({
+//     inputStream : {
+//       name : "Live",
+//       type : "LiveStream",
+//       target: document.querySelector('#area-scan')
+//     },
+//     decoder : {
+//       readers : ["ean_reader", "upc_reader", "code_128_reader", "code_39_reader"],
+//       multiple: false
+//     },
+//     locate: false
+//   }, function(err) {
+//       if (err) {
+//           console.log(err);
+//           return
+//       }
+//       console.log("Initialization finished. Ready to start");
+//       Quagga.start();
+//   });
 
-  Quagga.onDetected(function(data){
-    $('#area-scan').prop('hidden', true);
-    $('#btn-scan-action').prop('hidden', false);
-    $('.barcode-result').prop('hidden', false);
-    $('.barcode-result-text').html(data.codeResult.code);
-    $('.kode_barang_error').prop('hidden', true);
-    stopScan();
-  });
-}
+//   Quagga.onDetected(function(data){
+//     $('#area-scan').prop('hidden', true);
+//     $('#btn-scan-action').prop('hidden', false);
+//     $('.barcode-result').prop('hidden', false);
+//     $('.barcode-result-text').html(data.codeResult.code);
+//     $('.kode_barang_error').prop('hidden', true);
+//     stopScan();
+//   });
+// }
 
-$(document).on('click', '.btn-scan', function(){
-  $('#area-scan').prop('hidden', false);
-  $('#btn-scan-action').prop('hidden', true);
-  $('.barcode-result').prop('hidden', true);
-  $('.barcode-result-text').html('');
-  $('.kode_barang_error').prop('hidden', true);
-  startScan();
-});
+// $(document).on('click', '.btn-scan', function(){
+//   $('#area-scan').prop('hidden', false);
+//   $('#btn-scan-action').prop('hidden', true);
+//   $('.barcode-result').prop('hidden', true);
+//   $('.barcode-result-text').html('');
+//   $('.kode_barang_error').prop('hidden', true);
+//   startScan();
+// });
 
-$(document).on('click', '.btn-repeat', function(){
-  $('#area-scan').prop('hidden', false);
-  $('#btn-scan-action').prop('hidden', true);
-  $('.barcode-result').prop('hidden', true);
-  $('.barcode-result-text').html('');
-  $('.kode_barang_error').prop('hidden', true);
-  startScan();
-});
+// $(document).on('click', '.btn-repeat', function(){
+//   $('#area-scan').prop('hidden', false);
+//   $('#btn-scan-action').prop('hidden', true);
+//   $('.barcode-result').prop('hidden', true);
+//   $('.barcode-result-text').html('');
+//   $('.kode_barang_error').prop('hidden', true);
+//   startScan();
+// });
 
-// Menangani klik pada tombol "Lanjutkan scan"
-$(document).on('click', '.btn-continue', function(e){
-  e.stopPropagation();
-  var kode_barang = $('.barcode-result-text').text();
-  $.ajax({
-    url: "{{ url('/transaction/product/check') }}/" + kode_barang,
-    method: "GET",
-    success:function(response){
-      if(response.success){
-          tambahData(response.cart);
-          $(`.stok-display[data-product-kode="${kode_barang}"]`).text(response.jumlahStok);
-          $('.close-btn').click();  
+// // Menangani klik pada tombol "Lanjutkan scan"
+// $(document).on('click', '.btn-continue', function(e){
+//   e.stopPropagation();
+//   var kode_barang = $('.barcode-result-text').text();
+//   $.ajax({
+//     url: "{{ url('/transaction/product/check') }}/" + kode_barang,
+//     method: "GET",
+//     success:function(response){
+//       if(response.success){
+//           tambahData(response.cart);
+//           $(`.stok-display[data-product-kode="${kode_barang}"]`).text(response.jumlahStok);
+//           $('.close-btn').click();  
       
-      }else if (response.errorBarang){
-        swal("", response.message,"error");
-      }  else if (response.errorKode){
-        $('.kode_barang_error').prop('hidden', false);
-      } else {
-        swal("", "Terjadi kesalahan", "error");
-      }
-    }
-  });
-});
+//       }else if (response.errorBarang){
+//         swal("", response.message,"error");
+//       }  else if (response.errorKode){
+//         $('.kode_barang_error').prop('hidden', false);
+//       } else {
+//         swal("", "Terjadi kesalahan", "error");
+//       }
+//     }
+//   });
+// });
 
 
 // Menangani klik pada tombol "Bayar"
@@ -750,6 +761,11 @@ $(document).on('click', '.btn-bayar', function(){
       if($('.diskon-input').attr('hidden') != 'hidden'){
         $('.diskon-input').addClass('is-invalid');
       }else{
+        $('<input>').attr({
+        type: 'hidden',
+        name: 'action',
+        value: 'bayar'
+        }).appendTo('#transaction_form');
         sessionStorage.removeItem('disc')
         sessionStorage.removeItem('diskon')
         $('#transaction_form').submit();
@@ -798,20 +814,20 @@ $(document).on('click', '#submitUtangBtn', function () {
 
 
 
-$(document).on('change', '.market-select', function () {
-    const url = new URL(window.location.href); // Ambil URL saat ini
+// $(document).on('change', '.market-select', function () {
+//     const url = new URL(window.location.href); // Ambil URL saat ini
 
-    // Tambahkan atau ubah query parameter 'market_id'
-    if ($(this).val() !== 'all') {
-        url.searchParams.set('market_id', $(this).val());
-    } else {
-        url.searchParams.delete('market_id');
-    }
+//     // Tambahkan atau ubah query parameter 'market_id'
+//     if ($(this).val() !== 'all') {
+//         url.searchParams.set('market_id', $(this).val());
+//     } else {
+//         url.searchParams.delete('market_id');
+//     }
 
-    // Redirect ke URL yang diperbarui
-    window.location.href = url.toString();
+//     // Redirect ke URL yang diperbarui
+//     window.location.href = url.toString();
 
-});
+// });
 
 $(document).on('click', '.category-link', function (e) {
     e.preventDefault(); // Mencegah aksi default link
@@ -851,7 +867,35 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-
+$('#scanInput').on('keypress', function(e) {
+  if(e.which === 13){
+    e.preventDefault();
+    let kode = $(this).val();
+    if(kode){
+      $.ajax({
+        url: "{{url('/transaction/product/check')}}/" + kode,
+        type: 'GET',
+        success: function (response) {
+          if(response.success){
+            tambahData(response.cart)
+          } else if (response.errorBarang){
+            swal("", response.message, "error")
+          } else if (response.errorKode){
+                swal("", response.message, "error")
+          } else {
+              swal("", "terjadi kesalahan","error")
+          }
+        },
+        error: function () {
+          swal("", "terjadi kesalahan saat memproses","error")
+        }, 
+        complete: function () {
+          $('#scanInput').val('').focus();
+        }
+      })
+    }
+  }
+})
 
 </script>
 

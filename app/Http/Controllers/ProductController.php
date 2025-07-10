@@ -22,14 +22,14 @@ class ProductController extends Controller
     {
         $kategori = Categories::all();
         $toko = Market::all();
-        $filter = $request->query('filter', 'kode_barang');
+        $filter = $request->query('filter', 'created_at');
         $satuans = Satuan::all();
         $user = Auth::user();
         if ($user->role === 'admin') {
 
-            $products = Product::orderBy($filter)->get();
+            $products = Product::orderBy($filter, 'desc')->get();
         } elseif ($user->role === 'kasir') {
-            $products = Product::where('market_id', $user->market_id)->orderBy($filter)->paginate(20);
+            $products = Product::where('market_id', $user->market_id)->orderBy($filter, 'desc')->get();
         } else {
             return back();
         }
@@ -132,7 +132,6 @@ class ProductController extends Controller
             [
                 'nama_barang' => 'required',
                 'kode_barang' => 'required',
-                'stok' => 'required|integer',
                 'harga_beli' => 'required|numeric',
                 'harga_jual' => 'required|numeric',
                 'toko' => 'required',
@@ -149,12 +148,12 @@ class ProductController extends Controller
             $product->kode_barang = $request->kode_barang;
             $product->nama_barang = $request->nama_barang;
             $product->satuan =  $request->satuan_berat;
-            $product->stok = $request->stok;
-            if ($request->stok <= 0) {
-                $product->keterangan = "habis";
-            } else {
-                $product->keterangan = "tersedia";
-            }
+            // $product->stok = $request->stok;
+            // if ($request->stok <= 0) {
+            //     $product->keterangan = "habis";
+            // } else {
+            //     $product->keterangan = "tersedia";
+            // }
             $product->harga_beli = $request->harga_beli;
             $product->harga_jual = $request->harga_jual;
             $product->market_id = $request->toko;
@@ -207,7 +206,7 @@ class ProductController extends Controller
         } else {
             Session::flash('update_failed', 'Kode barang telah digunakan');
 
-            return;
+            return back()->withInput();
         }
     }
 

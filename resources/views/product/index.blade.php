@@ -65,12 +65,12 @@
               </div>
               <div class="form-group row">
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Kode Barang</label>
-                <div class="col-lg-7 col-md-7 col-sm-10 col-10">
+                <div class="col-lg-9col-md-7 col-sm-10 col-10">
                   <input type="text" class="form-control" name="kode_barang" value="{{$product->kode_barang}}">
                 </div>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-2">
+                <!-- <div class="col-lg-2 col-md-2 col-sm-2 col-2">
                   <button class="btn btn-inverse-primary btn-sm btn-scan shadow-sm" type="button"><i class="mdi mdi-crop-free"></i></button>
-                </div>
+                </div> -->
                
               </div>
               <div class="form-group row">
@@ -95,17 +95,13 @@
                 <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Satuan Barang</label>
                 <div class="col-lg-9 col-md-9 col-sm-12">
                   <div class="input-group">
-                    @php
-                       $satuan = explode(" ", $product->satuan)
-                    @endphp
-                      {{-- <input type="text" class="form-control number-input input-notzero" name="satuan" value="{{$satuan[0]}}"> --}}
-                      {{-- <div class="input-group-append"> --}}
+                 
                         <select class="form-control" name="satuan_berat">
                           @foreach ($satuans as $item)           
-                          <option value="{{$item->nama}}" {{$item->nama == $product->satuan ? 'selected' : ''}}>{{$item->nama}}</option>
+                          <option value="{{$item->id}}" {{$item->id == $product->satuan ? 'selected' : ''}}>{{$item->nama}}</option>
                           @endforeach
                         </select>
-                      {{-- </div> --}}
+                      
                     </div>
                 </div>
               </div>
@@ -123,14 +119,6 @@
                   <input type="hidden" name="toko" value="{{ Auth::user()->market->id }}">
                   @endif
                 </div>
-              </div>
-
-              <div class="form-group row">
-                <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Stok</label>
-                <div class="col-lg-9 col-md-9 col-sm-12">
-                  <input type="text" class="form-control number-input" name="stok" value="{{$product->stok}}">
-                </div>
-                <div class="col-lg-9 col-md-9 col-sm-12 offset-lg-3 offset-md-3 error-notice" id="stok_error"></div>
               </div>
               
               <div class="form-group row">
@@ -223,7 +211,7 @@
             </tr>
             <tr>
               <th scope="row">Satuan</th>
-              <td>{{ $product->satuan }}</td>
+              <td>{{ $product->satuanId->nama ?? '-' }}</td>
             </tr>
             <tr>
               <th scope="row">Stok</th>
@@ -277,7 +265,7 @@
                   <th>Stok</th>
                   <th>Harga</th>
                   <th>keterangan</th>
-                  <th>Toko</th>
+                
                   <th></th>
                 </tr>
               </thead>
@@ -303,17 +291,7 @@
                     <span class="btn habis-span">{{ $product->keterangan }}</span>
                     @endif
                   </td>
-                  {{-- <td>
-                    @foreach($product->categories->take(1) as $index => $kategori)
-                    <span class="btn kategori-span">{{$kategori->name}}</span>
-                    @endforeach
-                    @if($product->categories->count() > 1)
-                    <span class="btn" style="font-size: 20px">...</span>
-                @endif
-                  </td> --}}
-                  <td>
-                    <span class="nama-barang-field">{{ $product->market->nama_toko }}</span>
-                  </td>
+               
                   <td>
                     <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#editModal{{$product->id}}" data-edit="{{ $product->id }} " data-gambar="{{$product->image}}">
                         <i class="mdi mdi-pencil"></i>
@@ -339,9 +317,7 @@
         </div>
       </div>
     </div>
-    {{-- <div style="margin-top: 10px; position: absolute; right:30px">
-      {{$products->links()}}
-    </div> --}}
+   
     <div class="pagination-container">
       <ul class="pagination"></ul>
     </div>

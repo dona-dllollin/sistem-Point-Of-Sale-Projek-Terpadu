@@ -43,6 +43,7 @@
   <div class="col-12">
     <div class="page-header d-flex justify-content-between align-items-center">
       <h4 class="page-title">Transaksi Utang</h4>
+      @if(auth()->user()->role == 'admin')
       <div class="print-btn-group">
         <div class="input-group">
           <div class="input-group-prepend">
@@ -53,6 +54,7 @@
           </div>
         </div>
       </div>
+      @endif
     </div>
   </div>
 </div>
@@ -138,6 +140,22 @@
                       <option value="pending" {{ $statusExport === 'pending' ? 'selected' : '' }}>Belum Lunas</option>
                     </select>
                   <div class="input-group-append">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-2  offset-col-1">
+                    <div class="form-radio">
+                      <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="format" value="pdf" checked> pdf</label>
+                    </div>
+                  </div>
+                  <div class="col-2 ">
+                    <div class="form-radio">
+                      <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="format" value="excel"> excel</label>
                     </div>
                   </div>
                 </div>
@@ -264,12 +282,14 @@
                         @if($trx->status == 'pending')
                         <button class="btn btn-sm btn-cetak" data-toggle="modal" data-target="#angsurModal{{$trx->id}}" style=" background-color: #03c02c; color: #fff; font-weight: bold;">Angsur</button>
                         @else
+                        @if(auth()->user()->role == 'admin')
                         <form action="{{url('/debt/delete/'. $trx->id)}}" method="POST" onsubmit="return confirmDelete(event)" class="d-inline">
                           @csrf
                           <button type="submit" class="btn btn-secondary ml-1 btn-delete" style="background-color: rgb(255, 0, 0);color: #fff; font-weight: bold;" >
                               Hapus
                           </button>
                       </form>
+                        @endif
                         @endif
                     </td>
                     <td>

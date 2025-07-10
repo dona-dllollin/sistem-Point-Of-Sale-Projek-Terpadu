@@ -57,7 +57,7 @@
 	      	<div class="row">
 	      		<div class="col-12">
 	      			<div class="form-group">
-	      				<input type="text" class="form-control" name="search" placeholder="Cari barang">
+	      				<input type="text" class="form-control" id="search" name="search" placeholder="Cari barang">
 	      			</div>	
 	      		</div>
 	      		<div class="col-12">
@@ -97,17 +97,17 @@
 								<form method="post" name="manual_form">
 									<div class="form-group row">
 										<label class="col-12 font-weight-bold col-form-label">Kode Barang</label>
-										<div class="col-8">
+										<div class="col-10">
 											<input type="text" class="form-control" name="kode_barang" readonly="">
 										</div>
-										<div class="col-4 left-min d-flex">
+										<div class="col-2 left-min d-flex">
 											<div class="btn-group">
 												<button class="btn btn-search" data-toggle="modal" data-target="#tableModal" type="button">
 													<i class="mdi mdi-magnify"></i>
 												</button>
-												<button class="btn btn-scan" data-toggle="modal" data-target="#scanModal" type="button">
+												<!-- <button class="btn btn-scan" data-toggle="modal" data-target="#scanModal" type="button">
 													<i class="mdi mdi-crop-free"></i>
-												</button>
+												</button> -->
 											</div>
 										</div>
 										<div class="col-12 error-notice" id="kode_barang_error"></div>

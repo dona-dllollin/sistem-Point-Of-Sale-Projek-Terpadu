@@ -36,4 +36,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Categories::class, 'category_product', 'product_id', 'category_id');
     }
+
+    public function satuanId(): BelongsTo
+    {
+        return $this->belongsTo(Satuan::class, 'satuan', 'id');
+    }
 }

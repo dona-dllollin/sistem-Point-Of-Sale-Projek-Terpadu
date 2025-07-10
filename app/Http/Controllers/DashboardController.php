@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Market;
 use App\Models\Pengeluaran;
+use App\Models\Supply;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -52,8 +53,8 @@ class DashboardController extends Controller
             $startDate = Transaction::min('created_at'); // Ambil data dari transaksi pertama
             $endDate = Transaction::max('created_at');
 
-            $startDateExp = Pengeluaran::min('created_at');
-            $endDateExp = Pengeluaran::max('created_at');
+            $startDateExp = Supply::min('created_at');
+            $endDateExp = Supply::max('created_at');
         }
 
         $statusChart = $request->statusChart ?? 'all';
@@ -71,8 +72,11 @@ class DashboardController extends Controller
         ->sum('total');
 
         // Hitung total pengeluaran
-        $total_pengeluaran = Pengeluaran::whereBetween('created_at', [$startDateExp, $endDateExp])
-        ->sum('jumlah');
+        $total_pengeluaran = Supply::whereBetween('created_at', [$startDateExp, $endDateExp])
+        ->get()
+        ->sum(function ($supply) {
+            return $supply->jumlah * $supply->harga_beli;
+        });
 
         // Hitung total keuntungan
         $total_keuntungan = $total_pemasukan - $total_pengeluaran;
@@ -87,8 +91,8 @@ class DashboardController extends Controller
           ->orderBy('tanggal')
           ->pluck('total', 'tanggal');
 
-      $expenseData = Pengeluaran::whereBetween('created_at', [$startDateExp, $endDateExp])
-          ->selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
+          $expenseData = Supply::whereBetween('created_at', [$startDateExp, $endDateExp])
+          ->selectRaw('DATE(created_at) as tanggal, SUM(jumlah * harga_beli) as total')
           ->groupBy('tanggal')
           ->orderBy('tanggal')
           ->pluck('total', 'tanggal');

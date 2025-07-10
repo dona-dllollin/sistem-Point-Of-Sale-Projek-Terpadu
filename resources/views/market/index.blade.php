@@ -30,7 +30,7 @@
                     {{$item->nama_toko}}
                 </td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td>
                     Kas
                 </td>
@@ -38,7 +38,7 @@
                 <td>
                     {{$item->kas}}
                 </td>
-            </tr>
+            </tr> -->
             <tr>
                 <td>
                     Nomor HP
@@ -104,12 +104,12 @@
                   </div>
                 </div>
                 
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                   <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Kas</label>
                   <div class="col-lg-9 col-md-9 col-sm-12">
                     <input type="text" class="form-control" name="kas" id="kas" value="{{old('kas')}}">
                   </div>
-                </div>
+                </div> -->
                 
                 <div class="form-group row">
                   <label class="col-lg-3 col-md-3 col-sm-12 col-form-label font-weight-bold">Nomor Telepon</label>

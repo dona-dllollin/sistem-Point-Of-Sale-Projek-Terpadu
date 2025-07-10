@@ -157,10 +157,13 @@ $(document).on("click", ".btn-pilih", function (e) {
             $("input[name=nama_barang]").val(response.product.nama_barang);
             $("input[name=harga_satuan]").val(response.product.harga_beli);
             $("input[name=harga_jual]").val(response.product.harga_jual);
+
+             $('input[name=search], #search').val('');
         },
     });
     $(".close-btn").click();
     $("input[name=kode_barang]").valid();
+    
 });
 
 $(document).ready(function () {

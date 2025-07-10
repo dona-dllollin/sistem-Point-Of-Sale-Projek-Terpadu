@@ -256,9 +256,11 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{{url('/debt')}}">Daftar Utang</a>
                   </li>
+                  @if(auth()->user()->role === 'admin')
                   <li class="nav-item">
                     <a class="nav-link" href="{{url('/debt/payment/history')}}">Histori Angsuran</a>
                   </li>
+                  @endif
                 </ul>
               </div>
             </li>
@@ -292,11 +294,13 @@
               </div>
             </li> --}}
 
+            @if(auth()->user()->role === 'admin')
             <li class="nav-item">
               <a class="nav-link"  href="{{route("report.transaction")}}">
                 <span class="menu-title"> Laporan Transaksi</span>
               </a>
             </li>
+            @endif
             
           </ul>
           

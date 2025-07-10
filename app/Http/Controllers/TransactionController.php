@@ -398,7 +398,7 @@ public function receiptTransaction2($id)
 
      // Coba dengan WindowsPrintConnector
      try {
-            $connector = new WindowsPrintConnector("POS-58");
+            $connector = new WindowsPrintConnector("POS80");
          
             // $connector = new FilePrintConnector(storage_path('app/tes_print.txt'));
 
@@ -425,6 +425,7 @@ public function receiptTransaction2($id)
         $printer->text("Kode Transaksi: " . $transaction->kode_transaksi . "\n");
         $printer->text("Kasir: " . explode(' ', $transaction->kasir->nama)[0] . "\n");
         $printer->text("Tanggal: " . date('d M, Y', strtotime($transaction->created_at)) . "\n");
+        $printer->text("Metode: " . $transaction->metode . "\n");
         $printer->feed();
 
         // Items
@@ -446,6 +447,8 @@ public function receiptTransaction2($id)
             if ($transaction->status == "pending") {
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
                 $printer->text("*** UTANG ***\n");
+                $printer->setJustification(Printer::JUSTIFY_LEFT);
+                   $printer->text("Pengutang: " . $transaction->debt->nama_pengutang . "\n");
             }
             
         $printer->feed();
@@ -472,7 +475,7 @@ public function receiptTransaction2($id)
 // public function bismillah () {
 
 
-// $connector = new WindowsPrintConnector("POS-58");
+// $connector = new WindowsPrintConnector("POS80");
 // $printer = new Printer($connector);
 
 // $printer->setJustification(Printer::JUSTIFY_CENTER);
