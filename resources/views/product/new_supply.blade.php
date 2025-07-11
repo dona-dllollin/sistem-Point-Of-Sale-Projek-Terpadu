@@ -143,13 +143,13 @@
 										<div class="col-12 error-notice" id="jumlah_error"></div>
 									</div>
 									<div class="form-group row top-min">
-										<label class="col-12 font-weight-bold col-form-label">Harga Satuan (Opsional)</label>
+										{{-- <label class="col-12 font-weight-bold col-form-label">Harga Satuan (Opsional)</label> --}}
 										<div class="col-12">
 											<div class="input-group">
-												<div class="input-group-prepend">
+												{{-- <div class="input-group-prepend">
 													<div class="input-group-text">Rp.</div>
-												</div>
-												<input type="text" class="form-control number-input input-notzero" name="harga_beli" placeholder="Boleh Kosong">
+												</div> --}}
+												<input type="hidden" class="form-control number-input input-notzero" name="harga_beli" placeholder="Boleh Kosong">
 											</div>
 										</div>
 										<div class="col-12 error-notice" id="harga_beli_error"></div>

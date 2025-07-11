@@ -274,7 +274,7 @@ class ProductController extends Controller
                 if ($stokToReduce > 0) {
                     $supplies = Supply::where('kode_barang', $product->kode_barang)
                         ->where('jumlah', '>', 0)
-                        ->orderBy('created_at')
+                        ->orderBy('created_at', 'desc')
                         ->get();
 
                     foreach ($supplies as $supply) {
