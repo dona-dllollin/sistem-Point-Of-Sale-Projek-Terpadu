@@ -1,8 +1,53 @@
 @extends('templates/main')
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/manage_product/supply_product/supply/style.css') }}">
-<link rel="stylesheet" href="{{ asset('css/manage_product/supply_product/statistics_supply/style.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('css/manage_product/supply_product/statistics_supply/style.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('css/manage_product/product/pagination.css') }}">
+
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" rel="stylesheet" />
+
+
+   <style>
+    /* Select2 v3.5.4 custom style agar mirip Bootstrap 4/5 */
+.select2-container {
+  display: block;
+  width: 100% !important;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.select2-container .select2-choice {
+  height: 38px;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  background-image: none;
+  line-height: 1.5;
+  color: #495057;
+}
+
+.select2-container .select2-choice .select2-arrow {
+  border-left: none;
+  background: none;
+}
+
+.select2-drop {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.05);
+  margin-top: 2px;
+  padding: 4px;
+}
+
+.select2-results .select2-highlighted {
+  background-color: #007bff;
+  color: white;
+}
+
+   </style>
 @endsection
 @section('content')
 <div class="row page-title-header">
@@ -41,6 +86,35 @@
     </div>
   </div>
 </div>
+
+@forEach($supply as $trx)
+  {{-- Modal untuk menampilkan form edit stok --}}
+    <div class="modal fade" id="stokModal{{$trx->id}}" tabindex="-1" role="dialog" aria-labelledby="StokModalLabel{{$trx->id}}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Stok : {{$trx->product?->nama_barang}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form method="post" action="{{url('/supply/update/'. $trx->id)}}" id="stok_form_{{$trx->id}}" name="stok_form">
+                @csrf
+                <div class="form-group">
+                <label>Jumlah Stok</label>
+               <input type="text" class="form-control" name="jumlah" value="{{ old('jumlah', $trx->jumlah) }}" min="0" max="{{ $trx->jumlah }}" required>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="submitAngsurBtn{{$trx->id}}" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </div>
+    </form>
+        </div>
+    </div>
+  @endforeach
 <div class="row">
 
   <div class="modal fade" id="cetakModal" tabindex="-1" role="dialog" aria-labelledby="cetakModalLabel" aria-hidden="true">
@@ -55,7 +129,7 @@
         <div class="modal-body">
           <form action="{{ url('/supply/statistics/export') }}" name="export_form" method="POST" target="_blank">
             @csrf
-            <div class="row">
+            <div class="row ml-5">
               <div class="col-12">
                 <div class="form-group row">
                   <div class="col-5 border rounded-left offset-col-1">
@@ -118,6 +192,26 @@
                   </div>
                 </div>
               </div>
+              <div class="col-12 period-form">
+                <div class="form-group row">
+                  <div class="col-10 p-0 offset-col-1">
+                    <p>Pilih Barang</p>
+                  </div>
+                  
+                  <div class="col-10 p-0">
+                     
+                    <select name="kode_barang" id="kode_barang" class=" form-select select2">
+                        <option value="">-- Pilih Produk --</option>
+                        @foreach($produkList as $produk)
+                            <option value="{{ $produk->kode_barang }}">
+                                {{ $produk->nama_barang }} ({{ $produk->kode_barang }})
+                            </option>
+                        @endforeach
+                    </select>
+                  
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -156,6 +250,11 @@
                     <td class="td-3 font-weight-bold"><span class="ammount-box bg-secondary"><i class="mdi mdi-cube-outline"></i></span>{{ $supply->jumlah }}</td>
                     <td class="font-weight-bold td-4"><input type="text" name="harga" value="{{ $supply->harga_beli }}" hidden=""><span class="ammount-box bg-green"><i class="mdi mdi-coin"></i></span>Rp. {{ number_format($supply->harga_beli,2,',','.') }}</td>
                     <td class="total-field font-weight-bold text-success"></td>
+                    <td>
+                         <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#stokModal{{$supply->id}}" >
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+                    </td>
                   </tr>
                   @endforeach
                 </table>
@@ -176,6 +275,7 @@
 @section('script')
 <script src="{{ asset('js/manage_product/supply_product/supply/script.js') }}"></script>
 <script src="{{ asset('js/report/report_transaction/pagination.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
 <script type="text/javascript">
   @if ($message = Session::get('create_success'))
     swal(
@@ -184,5 +284,34 @@
         "success"
     );
   @endif
+
+  @if ($message = Session::get('success'))
+    swal(
+        "Berhasil!",
+        "{{ $message }}",
+        "success"
+    );
+  @endif
+
+   @if ($errors->any())
+  @foreach($errors->all() as $error)
+  
+      swal(
+          "",
+          "{{ $error }}",
+          "error"
+      );
+  
+  @endforeach
+@endif
+
+
+   $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Cari produk...",
+            allowClear: true,
+            width: '100%'
+        });
+    });
 </script>
 @endsection

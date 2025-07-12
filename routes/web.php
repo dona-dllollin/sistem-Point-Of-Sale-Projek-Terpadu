@@ -10,11 +10,13 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RugiController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Debt;
+use App\Models\Supply;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supply/check/{id}', [SupplyController::class, 'checkSupplyProduct']);
     Route::post('/supply/store', [SupplyController::class, 'storeSupply']);
     Route::post('/supply/statistics/export', [SupplyController::class, 'exportSupply']);
+    Route::post('/supply/update/{id}', [SupplyController::class, 'updateSupply']);
 
     // transaction
     Route::post('/transaction/product/{id}', [TransactionController::class, 'transactionProduct']);
@@ -70,6 +73,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction2']);
     Route::get('/transaction/cetak/{id}', [TransactionController::class, 'receiptTransaction']);
     Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
+
+
+    //Rugi
+    Route::get('/rugi', [RugiController::class, 'index']);
+    Route::post('/rugi', [RugiController::class, 'store']);
+    Route::get('/supply/harga-beli/{kode_barang}', function ($kode_barang) {
+    return Supply::where('kode_barang', $kode_barang)
+        ->where('jumlah', '>', 0)
+        ->pluck('harga_beli')
+        ->unique()
+        ->sortDesc()
+        ->values();
+});
 
    
 

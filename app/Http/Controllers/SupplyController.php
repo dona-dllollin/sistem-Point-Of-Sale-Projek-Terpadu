@@ -25,7 +25,11 @@ class SupplyController extends Controller
             ->get()
             ->groupBy(fn($supply) => $supply->created_at->toDateString());
     
-                return view('product.supply', compact('suppliesByDate'));
+            $produkList = Product::all();
+
+            $supply = Supply::all();
+                return view('product.supply', compact('suppliesByDate', 'produkList', 'supply'));
+
         
         }
 
@@ -121,6 +125,61 @@ class SupplyController extends Controller
     }
 }
 
+public function updateSupply(Request $request, $id)
+{
+    DB::beginTransaction();
+
+    try {
+        $request->validate([
+            'jumlah' => 'required|numeric|min:0',
+        ]);
+
+        // Ambil supply lama
+        $supply = Supply::findOrFail($id);
+        $oldJumlah = $supply->jumlah;
+
+        // Ambil produk
+        $product = Product::where('kode_barang', $supply->kode_barang)->firstOrFail();
+
+        $newJumlah = $request->jumlah;
+
+          if ($newJumlah > $oldJumlah) {
+                    return back()->withErrors(['updated_failed' => 'Stok hanya boleh dikurangi, tidak boleh ditambah']);;
+                }
+
+
+        // Hitung selisih (positif berarti mengurangi, negatif berarti menambah stok)
+        $selisih = $oldJumlah - $newJumlah;
+
+        if ($selisih > 0) {
+            // Akan mengurangi stok
+            if ($product->stok < $selisih) {
+                return back()->withErrors(['jumlah' => 'Jumlah pengurangan melebihi stok yang tersedia.']);
+            }
+
+            $product->stok -= $selisih;
+        } else {
+            // Akan menambah stok
+            $product->stok += abs($selisih);
+        }
+
+        // Simpan perubahan
+        $product->save();
+
+        // Update supply
+        $supply->jumlah = $newJumlah;
+        $supply->save();
+
+        DB::commit();
+
+        return redirect()->back()->with('success', 'Supply berhasil diperbarui.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+    }
+}
+
+
 
 // Export Supply
 public function exportSupply(Request $req)
@@ -143,9 +202,23 @@ public function exportSupply(Request $req)
         $tgl_akhir = $req->tgl_akhir_export;
     }
 
-    $supplies = Supply::whereBetween('created_at', [$tgl_awal, $tgl_akhir])
-        ->orderBy('created_at')
-        ->get()
+    // $supplies = Supply::whereBetween('created_at', [$tgl_awal, $tgl_akhir])
+    //     ->orderBy('created_at')
+    //     ->get()
+    //     ->groupBy(function ($item) {
+    //         return $item->created_at->format('Y-m-d');
+    //     });
+
+     // Ambil query supply dan filter tanggal
+    $query = Supply::whereBetween('created_at', [$tgl_awal, $tgl_akhir]);
+
+    // Jika kode_barang dikirim, tambahkan filter
+    if ($req->filled('kode_barang')) {
+        $query->where('kode_barang', $req->kode_barang);
+    }
+
+    // Eksekusi query
+    $supplies = $query->orderBy('created_at')->get()
         ->groupBy(function ($item) {
             return $item->created_at->format('Y-m-d');
         });

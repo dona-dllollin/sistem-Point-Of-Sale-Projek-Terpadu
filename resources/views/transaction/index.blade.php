@@ -282,7 +282,7 @@
                                             style="cursor: {{ $jumlahStok == 0 ? 'not-allowed' : 'pointer' }}; width: 60px; height: 60px; object-fit: cover;"
                                             onclick="{{ $product->stok > 0 ? 'this.closest(\'form\').submit();return false;' : '' }}">
                               <div class="text-group">
-                                <p class="m-0 text-bold">{{ $product->nama_barang }}</p>
+                                <p class="m-0 text-bold" title="{{$product->nama_barang}}">{{ Str::words($product->nama_barang, 6) }}</p>
                                 <p class="m-0 txt-light">{{ $product->kode_barang }}</p>
                               </div>
                               <div class="text-group">

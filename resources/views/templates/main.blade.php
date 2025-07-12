@@ -271,6 +271,12 @@
               </a>
             </li>
 
+            {{-- <li class="nav-item">
+              <a class="nav-link" href="{{url('/rugi')}}">
+                <span class="menu-title">Stok Opname</span>
+              </a>
+            </li> --}}
+
             @if(auth()->user()->role === 'admin')
             <li class="nav-item">
               <a class="nav-link" href="{{route('admin.toko')}}">
