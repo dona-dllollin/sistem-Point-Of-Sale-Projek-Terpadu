@@ -23,6 +23,7 @@
 
   </head>
   <body>
+    
     <div class="container-scroller">
       <!-- TopNav -->
       <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -286,19 +287,7 @@
             @endif
          
            
-            {{-- <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#kelola_laporan" aria-expanded="false" aria-controls="kelola_laporan">
-                <span class="menu-title">Kelola Laporan</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="kelola_laporan">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{route("report.transaction")}}">Laporan Transaksi</a>
-                  </li>
-                </ul>
-              </div>
-            </li> --}}
+       
 
             @if(auth()->user()->role === 'admin')
             <li class="nav-item">
@@ -307,6 +296,14 @@
               </a>
             </li>
             @endif
+
+            
+            <li class="nav-item">
+              <a class="nav-link"  href="{{url('/order_items')}}">
+                <span class="menu-title"> Barang Terjual </span>
+              </a>
+            </li>
+    
             
           </ul>
           
@@ -395,38 +392,7 @@
     <script src="{{ asset('plugins/js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('plugins/js/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('js/templates/script.js') }}"></script>
-    {{-- <script type="text/javascript">
-      $(document).on('input', 'input[name=search_page]', function(){
-        if($(this).val() != ''){
-          $('#content-web-page').prop('hidden', true);
-          $('#content-web-search').prop('hidden', false);
-          var search_word = $(this).val();
-          $.ajax({
-            url: "{{ url('/search') }}/" + search_word,
-            method: "GET",
-            success:function(response){
-              $('.result-1').html(response.length + ' Hasil Pencarian');
-              $('.result-2').html('dari "' + search_word + '"');
-              var lengthLoop = response.length - 1;
-              var searchResultList = '';
-              for(var i = 0; i <= lengthLoop; i++){
-                var page_url = "{{ url('/', ':id') }}";
-                page_url = page_url.replace('%3Aid', response[i].page_url);
-                searchResultList += '<a href="'+ page_url +'" class="page-result-child mb-4 w-100"><div class="col-12"><div class="card card-noborder b-radius"><div class="card-body"><div class="row"><div class="col-12"><h5 class="d-block page_url">'+ response[i].page_name +'</h5><p class="align-items-center d-flex justify-content-start"><span class="icon-in-search mr-2"><i class="mdi mdi-chevron-double-right"></i></span> <span class="breadcrumbs-search page_url">'+ response[i].page_title +'</span></p><div class="search-description"><p class="m-0 p-0 page_url">'+ response[i].page_content.substring(0, 500) +'...</p></div></div></div></div></div></div></a>';
-              }
-              $('#page-result-parent').html(searchResultList);
-              $('.page_url:contains("'+search_word+'")').each(function(){
-                  var regex = new RegExp(search_word, 'gi');
-                  $(this).html($(this).text().replace(regex, '<span style="background-color: #607df3;">'+search_word+'</span>'));
-              });
-            }
-          });
-        }else{
-          $('#content-web-page').prop('hidden', false);
-          $('#content-web-search').prop('hidden', true);
-        }
-      });
-    </script> --}}
+ 
     
     @yield('script')
     <!-- End-Javascript -->

@@ -46,7 +46,7 @@ class DebtController extends Controller
         // Ambil daftar tanggal unik dari transaksi
         $dates = $debts->pluck('created_at')->map(fn($dt) => $dt->toDateString())->unique()->values()->all();
     
-        // Siapkan data untuk chart: group by tanggal dan jumlahkan total
+        // data for chart
         $chartData = Debt::whereBetween('created_at', [$dataStartChart, $dataEndChart])
             ->selectRaw('DATE(created_at) as tanggal, COUNT(id) as jumlah')
             ->when($statusChart != 'all', function ($query) use ($statusChart) {
@@ -296,6 +296,25 @@ public function deleteUtang($id)
         DB::rollBack();
         return redirect()->back()->with('error', 'Gagal menghapus utang: ' . $e->getMessage());
     }
+}
+
+public function editUtang(Request $request, $id)
+{
+    $debt = Debt::findOrFail($id);
+    
+    // Validasi input
+    $request->validate([
+        'nama_pengutang' => 'required|string|max:255',
+    ]);
+
+    // Update data utang
+    $debt->update([
+        'nama_pengutang' => $request->nama_pengutang,
+    ]);
+
+
+    return redirect()->back()->with('success', 'Data utang berhasil diperbarui.');
+
 }
 
 }

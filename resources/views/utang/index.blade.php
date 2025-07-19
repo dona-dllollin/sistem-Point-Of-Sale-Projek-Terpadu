@@ -291,6 +291,10 @@
                       </form>
                         @endif
                         @endif
+
+                         <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary ml-4" style="background-color: yellow" data-toggle="modal" data-target="#editModal{{$trx->id}}">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
                     </td>
                     <td>
                       <button class="btn btn-selengkapnya font-weight-bold" type="button" data-target="#dropdownTransaksi{{ $trx->id }}"><i class="mdi mdi-chevron-down arrow-view"></i></button>
@@ -394,7 +398,41 @@
     </form>
         </div>
     </div>
-
+    
+    {{-- Modal untuk Edit Nama Pengutang --}}
+      <div class="modal fade" id="editModal{{$trx->id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{$trx->id}}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Edit Data Utang</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                @if($errors->any())
+                  <div class="alert alert-danger">
+                      <ul>
+                          @foreach($errors->all() as $error)
+                              <li>{{ $error }}</li>
+                          @endforeach
+                      </ul>
+                  </div>
+                  @endif
+                  <form method="post" action="{{url('/debt/edit/'. $trx->id)}}">
+                  @csrf
+                  <div class="form-group">
+                      <label>Nama Pengutang</label>
+                      <input type="text" name="nama_pengutang" id="nama_pengutang" value="{{$trx->nama_pengutang}}" class="form-control" >
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="Submit" class="btn btn-primary">Simpan Perubahan</button>
+              </div>
+          </div>
+      </form>
+          </div>
+      </div>
   
     <div class="row modal-group">
       <div class="modal fade" id="detailModal{{$trx->id}}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{$trx->id}}" aria-hidden="true">

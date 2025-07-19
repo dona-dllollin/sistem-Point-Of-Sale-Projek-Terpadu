@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\MarketController;
+use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfilController;
@@ -74,6 +75,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transaction/cetak/{id}', [TransactionController::class, 'receiptTransaction']);
     // Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
 
+    //order items
+    Route::get('/order_items', [OrderItemController::class, 'index']);
+
 
 
 
@@ -86,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/debt/export/histori/utang', [DebtController::class, 'exportAngsuran']);
     Route::get('/debt/payment/history', [DebtController::class, 'viewAngsuran']);
     Route::post('/debt/delete/{id}', [DebtController::class, 'deleteUtang']);
+    Route::post('/debt/edit/{id}', [DebtController::class, 'editUtang']);
 
 
     //profile 

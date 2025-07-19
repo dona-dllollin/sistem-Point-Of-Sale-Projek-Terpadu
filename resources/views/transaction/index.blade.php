@@ -4,6 +4,14 @@
 <link rel="stylesheet" href="{{ asset('css/transaction/pagination.css') }}">
 @endsection
 @section('content')
+<!-- Overlay dan Spinner -->
+<div id="overlay-spinner" style="display: none;">
+  <div class="spinner-container">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+</div>
+
 <div class="row page-title-header">
   <div class="col-12">
     <div class="page-header d-flex justify-content-start align-items-center">
@@ -270,10 +278,12 @@
                 <p class="m-0 text-black-50">Daftar Pesanan</p>
               </div>
               <div class="col-12 mt-3 table-responsive">
-                 <span class="input-group-text" id="spinner" style="display: none; background: transparent; border: none;">
-                    <div class="spinner-border spinner-border-sm text-primary" role="status" style="width: 1rem; height: 1rem;"></div>
-                    <span class="ms-2" style="font-size: 0.85rem;">Loading...</span>
-                  </span>
+                <div class="d-flex justify-content-center align-items-center" style="min-height: 50px;">
+                  <span class="input-group-text" id="spinner" style="display: none; background: transparent; border: none;">
+                     <div class="spinner-border spinner-border-sm text-primary" role="status" style="width: 1rem; height: 1rem;"></div>
+                     <span class="ms-2" style="font-size: 0.85rem;">Loading...</span>
+                   </span>
+                </div>
                 <table class="table table-checkout" style="font-size: 8px">
                   @if(session('cart'))
                   @foreach(session('cart') as $id => $details)
@@ -447,6 +457,7 @@
     </div>
   </div>
 </form>
+
 @endsection
 @section('script')
 
@@ -459,6 +470,18 @@
 
 @if ($message = Session::get('transaction_success'))
   $('#successModal').modal('show');
+@endif
+
+ @if ($errors->any())
+  @foreach($errors->all() as $error)
+  
+      swal(
+          "",
+          "{{ $error }}",
+          "error"
+      );
+  
+  @endforeach
 @endif
 
 @if ($message = Session::get('transaction_error'))
@@ -544,6 +567,7 @@ function decreaseQuantity(id) {
 
 // Fungsi untuk menghapus item dari keranjang
 function removeItem(id) {
+    $('#spinner').show();
   $.ajax({
       url: '/cart/remove/' + id,
       method: 'POST',
@@ -568,6 +592,8 @@ function removeItem(id) {
       },
       error: function (xhr) {
           alert('Error: ' + xhr.responseJSON.message);
+      }, complete: function() {
+          $('#spinner').hide();
       }
   });
 }
@@ -616,9 +642,8 @@ function increaseQuantity(id) {
 $(document).on('click', '.btn-bayar', function(){
   let paymentMethod = $('select[name="payment_method"]').val();
   var check_barang = parseInt($('.jumlah_barang_text').length);
-
- 
   
+
   if (paymentMethod === 'Tunai') {
   var total = parseInt($('.nilai-total2-td').val());
   var bayar = parseInt($('.bayar-input').val());
@@ -637,6 +662,7 @@ $(document).on('click', '.btn-bayar', function(){
     
         sessionStorage.removeItem('disc')
         sessionStorage.removeItem('diskon')
+        $('#overlay-spinner').show();
         $('#transaction_form').submit();
       }
     }else{
@@ -673,6 +699,7 @@ $(document).on('click', '.btn-bayar', function(){
         }).appendTo('#transaction_form');
         sessionStorage.removeItem('disc')
         sessionStorage.removeItem('diskon')
+        $('#overlay-spinner').show();
         $('#transaction_form').submit();
       }
     }else{
@@ -702,6 +729,7 @@ $(document).on('click', '#submitUtangBtn', function () {
           sessionStorage.removeItem('disc')
           sessionStorage.removeItem('diskon')
           bayarRow.style.display = "none"; 
+          $('#overlay-spinner').show();
           $('#transaction_form').submit();
         } else {
           $('.nominal-utang-error').prop('hidden', false);
