@@ -72,20 +72,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/transaction/process', [TransactionController::class, 'transactionProcess']);
     Route::get('/transaction/receipt/{id}', [TransactionController::class, 'receiptTransaction2']);
     Route::get('/transaction/cetak/{id}', [TransactionController::class, 'receiptTransaction']);
-    Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
+    // Route::get('/transaction/bismillah', [TransactionController::class, 'bismillah']);
 
 
-    //Rugi
-    Route::get('/rugi', [RugiController::class, 'index']);
-    Route::post('/rugi', [RugiController::class, 'store']);
-    Route::get('/supply/harga-beli/{kode_barang}', function ($kode_barang) {
-    return Supply::where('kode_barang', $kode_barang)
-        ->where('jumlah', '>', 0)
-        ->pluck('harga_beli')
-        ->unique()
-        ->sortDesc()
-        ->values();
-});
+
 
    
 

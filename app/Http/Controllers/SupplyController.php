@@ -90,15 +90,6 @@ class SupplyController extends Controller
                 'pemasok' =>  null, // Pastikan input memiliki pemasok
                 'user_id' => auth()->id(),
             ]);
-
-            // $satuan = explode(' ', $product->satuan)[1] ?? '';
-
-            // Pengeluaran::create([
-            //     'user_id' => auth()->id(),
-            //     'kategori' => 'tambah stok barang',
-            //     'deskripsi' => 'Pengeluaran untuk supply produk ' . $product->nama_barang . ' sebanyak ' . $supply['jumlah'] . ' ' . $product->satuan,
-            //     'jumlah' => $supply['jumlah'] * $supply['harga_beli'],
-            // ]);
            
 
             // Update stok dan keterangan produk
