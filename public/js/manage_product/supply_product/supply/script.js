@@ -6,17 +6,34 @@ $(document).ready(function () {
         $(this).text("- Rp. " + parseInt(total).toLocaleString() + ",00");
     });
 
-    $("input[name=search]").on("keyup", function () {
-        var searchTerm = $(this).val().toLowerCase().trim();
-        $(".list-date table").each(function () {
-            var lineStr = $(this).text().toLowerCase();
-            if (lineStr.indexOf(searchTerm) == -1) {
-                $(this).hide();
-                $(this).parent().prev().hide();
-            } else {
-                $(this).show();
-                $(this).parent().prev().show();
-            }
+    $(document).ready(function () {
+        $("input[name=search]").on("keyup", function () {
+            var searchTerm = $(this).val().toLowerCase();
+            $(".list-date table").each(function () {
+                var hasMatch = false;
+
+                // Iterasi setiap baris dalam tabel
+                $(this)
+                    .find(".supply-row")
+                    .each(function () {
+                        var lineStr = $(this).text().toLowerCase();
+                        if (lineStr.indexOf(searchTerm) == -1) {
+                            $(this).hide(); // Sembunyikan baris yang tidak cocok
+                        } else {
+                            $(this).show(); // Tampilkan baris yang cocok
+                            hasMatch = true; // Tandai bahwa ada kecocokan
+                        }
+                    });
+
+                // // Sembunyikan tabel jika tidak ada baris yang cocok
+                // if (!hasMatch) {
+                //     $(this).hide();
+                //     $(this).parent().prev().hide(); // Sembunyikan header tanggal
+                // } else {
+                //     $(this).show();
+                //     $(this).parent().prev().show(); // Tampilkan header tanggal
+                // }
+            });
         });
     });
 });

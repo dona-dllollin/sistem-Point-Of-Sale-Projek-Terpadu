@@ -162,29 +162,9 @@
 </div>
 
   <div class="row">
-    <div class="col-lg-5 col-md-6 col-sm-12 mb-4">
+    <div class="col-lg-5 col-md-5 col-sm-12 mb-4">
       <div class="row">
-        {{-- <div class="col-12 mb-1 bg-dark-blue">
-          <div class="card card-noborder b-radius">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-12 d-flex justify-content-between align-items-center transaction-header">
-                  <div class="d-flex justify-content-start align-items-center">
-                    <div class="icon-holder">
-                      <i class="mdi mdi-swap-horizontal"></i>
-                    </div>
-                    <div class="transaction-code ml-3">
-                      <p class="m-0 text-white">Kode Transaksi</p>
-                      <p class="m-0 text-white">T{{ date('dmYHis') }}</p>
-                      <input type="text" name="kode_transaksi" value="T{{ date('dmYHis') }}" hidden="">
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> --}}
+        
         <div class="col-12">
             <div class="card card-noborder b-radius shadow-sm">
                 <div class="card-body">
@@ -219,53 +199,7 @@
 
                 </div>
 
-                    {{-- <div class="row card-product">
-                        @foreach ($products as $product)
-                        <div class="col-12 col-md-6 col-lg-3 col-sm-4 mb-2 product-item">
-                            <div class="productCard border rounded shadow-sm h-100 d-flex flex-column">
-                                <div class="productImage position-relative pb-3" style="border-bottom: 1px solid #efefef;">
-                                    
-                                            @php
-                                      $cart = session()->get('cart', []);
-                                      $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
-                                      @endphp
-                                        <img class="card-img-top gambar img-fluid rounded-top p-1"
-                                            src="{{ asset('pictures/product/'. $product->image) }}"
-                                            alt="{{ $product->nama_barang }}"
-                                            style="cursor: {{ $jumlahStok == 0 ? 'not-allowed' : 'pointer' }};"
-                                            onclick="{{ $product->stok > 0 ? 'this.closest(\'form\').submit();return false;' : '' }}">
-                                        <div
-                                            data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}"
-                                            class="overlay-cart position-absolute ml-2 mb-1 rounded text-center {{ $jumlahStok == 0 ? 'bg-secondary disabled' : 'bg-primary' }}"
-                                            style="bottom: 0; opacity: 0.9;">
-                                            <p style="display:none">{{$product->kode_barang}}</p>
-                                            <button type="submit" onclick="addToCart('{{$product->kode_barang}}')" data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}"  class="btn btn-sm btn-pilih text-white {{ $jumlahStok == 0 ? 'disabled' : '' }}">
-                                                <i class="mdi mdi-cart"></i>
-                                            </button>
-                                        </div>
-                                  
-                                </div>
-                                <div class=" text-center flex-column flex-grow-1" style="margin-bottom: 2%; margin-top:2%; padding-bottom:5%">
-                                    
-                                    <h6 class="card-title font-weight-bold text-truncate"
-                                        title="{{ $product->nama_barang }}">{{ Str::words($product->nama_barang, 4) }}
-                                    </h6>
-                                    @php
-                                      $cart = session()->get('cart', []);
-                                      $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
-                                      @endphp
-                                    <h6 class="card-title font-weight-bold text-truncate">
-                                      (<span class="stok-display" data-product-id="{{ $product->id }}" data-product-kode="{{ $product->kode_barang }}">{{ $jumlahStok }}</span>)
-                                    </h6>
-                                    <p class="card-text">{{$product->market->nama_toko}}</p>
-                                    <p class="card-text text-success font-weight-bold">Rp. {{ number_format($product->harga_jual, 2, ',', '.') }}</p>
-                                  
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div> --}}
-
+                   
                         <div class="col-12 card-product">
                           <ul class="list-group product-list">
                             @foreach($products as $product)    
@@ -323,7 +257,7 @@
       </div>
     </div>
     
-    <div class="col-lg-6 col-md-6 col-sm-12">
+    <div class="col-lg-5 col-md-5 col-sm-12">
       <div class="card card-noborder b-radius">
         <div class="card-body">
         <form method="POST" name="transaction_form" id="transaction_form" action="{{ url('/transaction/process') }}">
@@ -336,22 +270,26 @@
                 <p class="m-0 text-black-50">Daftar Pesanan</p>
               </div>
               <div class="col-12 mt-3 table-responsive">
+                 <span class="input-group-text" id="spinner" style="display: none; background: transparent; border: none;">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status" style="width: 1rem; height: 1rem;"></div>
+                    <span class="ms-2" style="font-size: 0.85rem;">Loading...</span>
+                  </span>
                 <table class="table table-checkout" style="font-size: 8px">
                   @if(session('cart'))
                   @foreach(session('cart') as $id => $details)
                   <tr>
                     <td>
-                      <input type="text" name="kode_barang[]" hidden="" value="${kode}">
+                      {{-- <input type="text" name="kode_barang[]" hidden="" value="${kode}"> --}}
                       <span class="nama-barang-td text-truncate">{{$details['name']}}</span>
                       <span class="kode-barang-td">{{$details['kode_barang']}}</span>
                     </td>
                     <td>
-                      <input type="text" name="harga_barang[]" hidden="" value="${harga}">
+                      {{-- <input type="text" name="harga_barang[]" hidden="" value="${harga}"> --}}
                       <span class="numeric-barang-td">Rp. {{$details['price']}}</span>
                     </td>
                     <td>
                       <div class="d-flex justify-content-start align-items-center">
-                        <input type="text" name="jumlah_barang[]" hidden="" value="1">
+                        {{-- <input type="text" name="jumlah_barang[]" hidden="" value="1"> --}}
                         <a href="#" class="btn-operate mr-1 btn-tambah" onClick="increaseQuantity({{$id}})">
                           <i class="mdi mdi-plus-box" style="color: green; font-size:20px"></i>
                         </a>
@@ -364,7 +302,7 @@
                       </div>
                     </td>
                     <td>
-                      <input type="text" class="total_barang" name="total_barang[]" hidden="" value="${harga}">
+                      {{-- <input type="text" class="total_barang" name="total_barang[]" hidden="" value="${harga}"> --}}
                       <span class="numeric-barang-td">Rp. {{$details['subtotal']}}</span>
                     </td>
                     <td>
@@ -834,30 +772,57 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
+  let isScanning = false;
+
 $('#scanInput').on('keypress', function(e) {
-  if(e.which === 13){
+  if(e.which === 13 && !isScanning){
     e.preventDefault();
     let kode = $(this).val();
+
+      isScanning = true;
+    setTimeout(() => isScanning = false, 1500); 
+
     if(kode){
+      $('#spinner').show();
       $.ajax({
-        url: "{{url('/transaction/product/check')}}/" + kode,
-        type: 'GET',
-        success: function (response) {
-          if(response.success){
-            tambahData(response.cart)
-          } else if (response.errorBarang){
-            swal("", response.message, "error")
-          } else if (response.errorKode){
-                swal("", response.message, "error")
-          } else {
-              swal("", "terjadi kesalahan","error")
-          }
-        },
-        error: function () {
-          swal("", "terjadi kesalahan saat memproses","error")
-        }, 
-        complete: function () {
-          $('#scanInput').val('').focus();
+         url: '/transaction/product/' + kode, // Sesuaikan dengan route Anda
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.success) {
+                    // alert(response.message); 
+                    console.log(response); // Debug data keranjang
+                    tambahData(response.cart)
+                     // Update stok di tampilan
+                   $(`.stok-display[data-product-kode="${kode}"]`).text(response.jumlahStok);
+
+                   if(response.jumlahStok === 0){
+                    $(`.overlay-cart[data-product-kode="${kode}"]`).addClass('bg-secondary disabled')
+                    $(`.btn-pilih[data-product-kode="${kode}"]`).addClass('disabled')
+                   }else {
+                    $(`.overlay-cart[data-product-kode="${kode}"]`).removeClass('bg-secondary disabled').addClass('bg-primary')
+                    $(`.btn-pilih[data-product-kode="${kode}"]`).removeClass('disabled')
+                   }
+                   
+                } else if (response.error){
+                          swal(
+                    "",
+                    response.message,
+                    "error"
+                );
+                } else {
+
+                  alert('Terjadi kesalahan.');
+                }
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.responseJSON.error);
+            },
+            complete: function () {
+              $('#spinner').hide();
+            $('#scanInput').val('').focus();
         }
       })
     }

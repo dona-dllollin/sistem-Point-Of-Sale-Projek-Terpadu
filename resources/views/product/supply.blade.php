@@ -241,7 +241,7 @@
                     <th>Total</th>
                   </tr>
                   @foreach($supplies as $supply)
-                  <tr>
+                  <tr class="supply-row">
                     <td class="td-1">
                       <span class="d-block font-weight-bold big-font">{{ $supply->product?->nama_barang }}</span>
                       <span class="d-block mt-2 txt-light">{{ date('d M, Y', strtotime($supply->created_at)) . ' pada ' . date('H:i', strtotime($supply->created_at)) }}</span>

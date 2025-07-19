@@ -112,16 +112,12 @@ function tambahData(cart) {
         cartHtml += `
 <tr>
   <td>
-    <input type="text" name="kode_barang[]" hidden="" value="${
-        item.kode_barang
-    }">
+  
     <span class="nama-barang-td text-truncate">${item.name}</span>
     <span class="kode-barang-td">${item.kode_barang}</span>
   </td>
   <td>
-    <input type="text" name="harga_barang[]" hidden="" value="${
-        item.kode_barang
-    }">
+ 
     <span class="numeric-barang-td">Rp. ${parseInt(
         item.price
     ).toLocaleString()}</span>
@@ -141,9 +137,7 @@ function tambahData(cart) {
     </div>
   </td>
   <td>
-    <input type="text" class="total_barang" name="total_barang[]" hidden="" value="${
-        item.subtotal
-    }">
+  
     <span class="numeric-barang-td">Rp. ${parseInt(
         item.subtotal
     ).toLocaleString()}</span>

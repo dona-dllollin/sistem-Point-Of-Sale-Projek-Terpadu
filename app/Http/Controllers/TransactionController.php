@@ -84,8 +84,9 @@ class TransactionController extends Controller
             ->first();
 
         $cart = session()->get('cart', []);
+        $currentCartQty = $cart[$product->id]['quantity'] ?? 0;
 
-        $jumlahStok = $product->stok - (isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0);
+        $jumlahStok = $product->stok - $currentCartQty;
         // Jika barang sudah ada di keranjang, tambahkan jumlahnya
         if ($jumlahStok > 0) {
 
@@ -304,9 +305,10 @@ class TransactionController extends Controller
                 ]);
 
                 $product = Product::find($product_id);
-                if ($product_id) {
-                    $product->decrement('stok', $item['quantity']);
+               if ($product->stok < $item['quantity']) {
+                    throw new \Exception("Stok tidak mencukupi untuk produk: {$product->nama_barang}");
                 }
+                $product->decrement('stok', $item['quantity']);
             }
 
             // Hapus data keranjang di session
