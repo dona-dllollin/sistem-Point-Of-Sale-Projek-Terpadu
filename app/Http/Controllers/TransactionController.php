@@ -431,7 +431,7 @@ public function receiptTransaction2($id)
         // Items
         $printer->text("--------------------------------\n");
         foreach ($items as $item) {
-            $printer->text($item->product->nama_barang . "\n");
+            $printer->text($item->product?->nama_barang . "\n");
             $printer->text($item->total_barang . " x " . number_format($item->product->harga_jual, 2, ',', '.') . " = " . number_format($item->subtotal, 2, ',', '.') . "\n");
         }
         $printer->text("--------------------------------\n");

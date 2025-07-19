@@ -439,10 +439,8 @@
                   <td>
                     <div class="input-group">
                       <select name="payment_method" id="payment_method" class="form-control">
-                        <option value="Tunai">Tunai</option>
-                        <option value="QRIS">QRIS</option>
-                        <option value="Transfer_Bank">Transfer Bank</option>
                         <option value="Card">Card</option>
+                        <option value="Tunai">Tunai</option>
                       </select>
                     </div>
                   </td>
