@@ -44,13 +44,13 @@ class ReportController extends Controller
         $endDate = Transaction::max('created_at');
     }
     // Filter tanggal awal dan akhir
-    $dataStart = $request->tgl_awal ?? Transaction::min('created_at');
-    $dataEnd = $request->tgl_akhir ?? Transaction::max('created_at');
+    $dataStart = $request->tgl_awal ?? Carbon::today()->startOfDay();
+    $dataEnd = $request->tgl_akhir ?? Carbon::today()->endOfDay();
     $status = $request->status ?? 'all';
 
 
     // Ambil data transaksi dengan order_items dan product terkait (eager loading)
-    $transactions = Transaction::with(['item.product', 'kasir'])
+    $transactions = Transaction::with(['item.product:id,kode_barang,nama_barang,harga_jual', 'item:id,transaction_id,product_id,subtotal,total_barang', 'kasir:id,nama'])
         ->whereBetween('created_at', [$dataStart, $dataEnd])
         ->when($status != 'all', function ($query) use ($status) {
             return $query->where('status', $status);

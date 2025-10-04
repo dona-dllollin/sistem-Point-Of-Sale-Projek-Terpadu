@@ -18,16 +18,28 @@ use Maatwebsite\Excel\Facades\Excel;
 class SupplyController extends Controller
 {
         // Show View Supply
-        public function index()
+        public function index(Request $request)
         {
         
-            $suppliesByDate = Supply::orderBy('created_at', 'desc')
+             $startDate = $request->input('start_date') ?? Carbon::today()->startOfMonth(); // Ambil data dari supply pertama
+            $endDate = $request->input('end_date') ?? Carbon::today()->endOfMonth(); // Ambil data dari supply terakhir
+       
+
+        $query = Supply::select('id','kode_barang','product_id','jumlah', 'harga_beli', 'user_id', 'created_at')
+                ->whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($request->input('product_id')) {
+            $query->where('product_id', $request->input('product_id'));
+        }
+
+        $suppliesByDate = $query->orderBy('created_at', 'desc')
             ->get()
             ->groupBy(fn($supply) => $supply->created_at->toDateString());
-    
-            $produkList = Product::all();
 
-            $supply = Supply::all();
+            
+            $produkList = Product::select('id', 'kode_barang', 'nama_barang')->get();
+
+            $supply = Supply::select('id','kode_barang', 'jumlah')->get();
                 return view('product.supply', compact('suppliesByDate', 'produkList', 'supply'));
 
         
@@ -37,7 +49,7 @@ class SupplyController extends Controller
         public function viewNewSupply()
         {
            
-                $products = Product::all()
+                $products = Product::select('id', 'kode_barang', 'nama_barang', 'stok', 'harga_beli', 'harga_jual')->get()
                 ->sortBy('kode_barang');
 
                 return view('product.new_supply', compact('products'));

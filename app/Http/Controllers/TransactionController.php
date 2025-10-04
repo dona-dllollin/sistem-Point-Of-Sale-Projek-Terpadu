@@ -83,6 +83,13 @@ class TransactionController extends Controller
         $product = Product::where('kode_barang', '=', $id)
             ->first();
 
+            if (!$product) {
+                return response()->json([
+                    'errorKode' => true,
+                    'message' => 'kode barang tidak tersedia'
+                ]);
+            }
+
         $cart = session()->get('cart', []);
         $currentCartQty = $cart[$product->id]['quantity'] ?? 0;
 
@@ -400,7 +407,13 @@ public function receiptTransaction2($id)
 
      // Coba dengan WindowsPrintConnector
      try {
-            $connector = new WindowsPrintConnector("POS80");
+            $market = Market::first();
+            if (!$market || !$market->kas) {
+                return back()->with('error', 'Nama Printer tidak ditemukan.');
+            }
+
+            $connector = new WindowsPrintConnector($market->kas);
+            // $connector = new WindowsPrintConnector("POS80");
          
             // $connector = new FilePrintConnector(storage_path('app/tes_print.txt'));
 

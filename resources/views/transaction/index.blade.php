@@ -840,6 +840,12 @@ $('#scanInput').on('keypress', function(e) {
                     response.message,
                     "error"
                 );
+                } else if (response.errorKode) {
+                  swal(
+                    "",
+                    response.message,
+                    "error"
+                );
                 } else {
 
                   alert('Terjadi kesalahan.');
@@ -847,6 +853,7 @@ $('#scanInput').on('keypress', function(e) {
             },
             error: function (xhr) {
                 alert('Error: ' + xhr.responseJSON.error);
+               
             },
             complete: function () {
               $('#spinner').hide();

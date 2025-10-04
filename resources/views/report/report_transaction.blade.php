@@ -235,6 +235,7 @@
                   <tr  >
                     <th>Kode Transaksi</th>
                     <th>Total</th>
+                    <th>Diskon</th>
                     <th>Bayar</th>
                     <th>Kembali</th>
                     <th>Metode</th>
@@ -248,6 +249,7 @@
                       <span class="d-block mt-2 txt-light">{{ date('d M, Y', strtotime($trx->created_at)) . ' pada ' . date('H:i', strtotime($trx->created_at)) }}</span>
                     </td>
                     <td><span class="ammount-box bg-green"><i class="mdi mdi-coin"></i></span>Rp. {{ number_format($trx->total,2,',','.') }}</td>
+                    <td>{{ $trx->diskon}}%</td>
                     <td class="text-success font-weight-bold">- Rp. {{ number_format($trx->bayar,2,',','.') }}</td>
                     <td>Rp. {{ number_format($trx->kembali,2,',','.') }}</td>
                     <td>{{ $trx->metode}}</td>

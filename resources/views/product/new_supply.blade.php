@@ -334,10 +334,11 @@ $(document).on("click", ".btn-simpan", function () {
             supply: supplyData, // Kirim data JSON
         },
         success: function (response) {
-            swal("", "Data berhasil disimpan!", "success");
             localStorage.removeItem("supply"); // Hapus data setelah disimpan
+            swal("", "Data berhasil disimpan!", "success");
             $("tbody").empty(); // Kosongkan tabel
             $(".btn-simpan").prop("hidden", true);
+			window.location.href = '/supply';
         },
         error: function () {
             swal("", "Terjadi kesalahan saat menyimpan data!", "error");

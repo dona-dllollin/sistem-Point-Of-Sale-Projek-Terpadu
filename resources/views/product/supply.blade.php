@@ -223,6 +223,40 @@
   </div>
 
   <div class="col-md-12 grid-margin">
+    <div class="row align-items-center">
+            <div class="col-lg-2 col-md-2 col-sm-2 mb-3">
+               
+            </div>
+            <div class="col-lg-10 col-md-12 col-sm-12">
+                <form name="filter_form" method="GET" action="{{ url('/supply') }}">
+                    @csrf
+                    <div class="form-row align-items-center">
+                        <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
+                            <p>Pilih Produk</p>
+                            <select name="product_id" class=" select2">
+                                <option value="">-- Semua Produk --</option>
+                                @foreach($produkList as $produk)
+                                    <option value="{{ $produk->id }}">
+                                        {{ $produk->nama_barang }} ({{ $produk->kode_barang }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                              <p>Pilih tanggal awal</p>
+                            <input type="date" name="start_date" class="form-control form-control-lg date" placeholder="Tanggal awal">
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                              <p>Pilih tanggal akhir</p>
+                            <input type="date" name="end_date" class="form-control form-control-lg date" placeholder="Tanggal akhir">
+                        </div>
+                        <div class="col-lg-2 col-md-6 col-sm-12 mb-2 mt-4"> 
+                            <button class="btn btn-primary btn-sm btn-block button-filter" type="button">Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     <div class="card card-noborder b-radius">
       <div class="card-body">
         <div class="row">
@@ -239,6 +273,7 @@
                     <th>Jumlah</th>
                     <th>Harga Beli</th>
                     <th>Total</th>
+                    <th>Pemasok</th>
                   </tr>
                   @foreach($supplies as $supply)
                   <tr class="supply-row">
@@ -250,6 +285,7 @@
                     <td class="td-3 font-weight-bold"><span class="ammount-box bg-secondary"><i class="mdi mdi-cube-outline"></i></span>{{ $supply->jumlah }}</td>
                     <td class="font-weight-bold td-4"><input type="text" name="harga" value="{{ $supply->harga_beli }}" hidden=""><span class="ammount-box bg-green"><i class="mdi mdi-coin"></i></span>Rp. {{ number_format($supply->harga_beli,2,',','.') }}</td>
                     <td class="total-field font-weight-bold text-success"></td>
+                    <td class="font-weight-bold text-Primary">{{$supply->user?->nama}}</td>
                     <td>
                          <button type="button" class="btn btn-edit btn-icons btn-rounded btn-secondary" style="background-color: yellow" data-toggle="modal" data-target="#stokModal{{$supply->id}}" >
                         <i class="mdi mdi-pencil"></i>
@@ -313,5 +349,22 @@
             width: '100%'
         });
     });
+
+
+     $(document).on("click", ".button-filter", function () {
+    var tgl_awal = $("input[name=start_date]").val();
+    var tgl_akhir = $("input[name=end_date]").val();
+
+    var sArray = tgl_awal.split("-");
+    var sDate = new Date(sArray[2], sArray[1], sArray[0]);
+    var eArray = tgl_akhir.split("-");
+    var eDate = new Date(eArray[2], eArray[1], eArray[0]);
+    if (eDate < sDate) {
+        swal("", "Tanggal akhir tidak boleh kurang dari tanggal awal", "error");
+    } else {
+        $("form[name=filter_form]").submit();
+    }
+});
+     
 </script>
 @endsection
